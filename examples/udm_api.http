@@ -1,0 +1,14 @@
+# Delete group
+DELETE https://portal.example.org/univention/udm/groups/group/{{group_dn}}?cleanup=true&recursive=true
+accept: */*
+Authorization: Basic {{udm_username}} {{udm_password}}
+
+###
+
+# Delete organizational unit
+DELETE https://portal.example.org/univention/udm/container/ou/{{ou_dn}}?cleanup=true&recursive=true
+accept: */*
+Authorization: Basic {{udm_username}} {{udm_password}}
+
+###
+

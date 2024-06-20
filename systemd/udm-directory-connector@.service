@@ -1,0 +1,58 @@
+#-----------------------------------------------------------------------
+# initiate:   systemctl enable udm-directory-connector@.service
+# start:      systemctl start udm-directory-connector@.service
+# get status: systemctl status udm-directory-connector@.service
+#-----------------------------------------------------------------------
+
+[Unit]
+Description=udm-directory-connector@%i - LDAP directory to UDM sync instance
+Requires=local-fs.target network.target
+After=local-fs.target network.target
+
+[Service]
+Type=oneshot
+Environment=LDAPNOINIT=1
+ExecStart=/opt/udm-directory-connector/bin/python3 -OO -W error -I -bb -m udm_directory_connector /etc/udm-directory-connector/%i.yml
+RuntimeDirectory=udm-directory-connector
+WorkingDirectory=udm-directory-connector
+User=udm-directory-connector
+Group=udm-directory-connector
+KillSignal=SIGQUIT
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+# for external log files together with ProtectSystem=strict
+ReadWritePaths=/var/log/udm-directory-connector/%i
+
+# various hardening options
+CapabilityBoundingSet=
+AmbientCapabilities=
+StandardInput=null
+UMask=0077
+PrivateUsers=no
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectProc=invisible
+ProtectHome=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectHostname=yes
+ProtectClock=yes
+NoNewPrivileges=yes
+MountFlags=private
+SystemCallArchitectures=native
+LockPersonality=yes
+KeyringMode=private
+RestrictRealtime=yes
+RestrictNamespaces=yes
+RestrictSUIDSGID=yes
+DevicePolicy=closed
+PrivateIPC=yes
+RemoveIPC=yes
+MemoryDenyWriteExecute=yes
+SystemCallLog=@clock @cpu-emulation @debug @keyring @module @mount @raw-io @reboot @swap @obsolete @resources @pkey @timer fork splice
+SystemCallFilter=~ @clock @cpu-emulation @debug @keyring @module @mount @raw-io @reboot @swap @obsolete @resources @pkey @timer fork splice
+
+[Install]
+WantedBy=multi-user.target

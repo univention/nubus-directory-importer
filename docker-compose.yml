@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  udm_directory_connector:
+    build:
+      context: .
+      dockerfile: Dockerfile

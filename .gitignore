@@ -1,0 +1,16 @@
+*.py?
+.coverage
+.eggs
+.tox
+dist/*
+build/*
+*.egg-info
+docs/.build
+slapdtest-*
+.mypy_cache
+deb_dist/*
+*.tar.gz
+
+.idea
+examples/*.private.env.json
+python-ldap-test-*

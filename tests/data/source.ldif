@@ -1,0 +1,176 @@
+dn: o=source
+objectClass: organization
+o: source
+
+dn: ou=dept-1,o=source
+objectClass: organizationalUnit
+
+dn: uid=user-1,ou=dept-1,o=source
+cn: Foo Bar
+givenName: Foo
+mail: Foo_Bar@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+sn: Bar
+uid: user-1
+employeeNumber: p-1-00001
+
+dn: uid=user-2,ou=dept-1,o=source
+cn: Foo Bar2
+givenName: Foo
+mail: Foo_Bar2@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+sn: Bar2
+uid: user-2
+employeeNumber: p-1-00002
+
+dn: uid=user-3,ou=dept-1,o=source
+cn: Foo Bar3
+givenName: Foo
+mail: Foo_Bar3@example.org
+proxyAddresses: Foo_Bar3@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: customADUser
+sn: Bar3
+uid: user-3
+employeeNumber: p-1-00003
+
+dn: uid=user-4,ou=dept-1,o=source
+cn: Foo Bar4
+givenName: Foo
+mail: Foo_Bar4@example.org
+proxyAddresses: Foo_Bar4@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: customADUser
+sn: Bar4
+uid: user-4
+employeeNumber: p-1-00004
+
+dn: cn=group-even-1,ou=dept-1,o=source
+objectClass: groupOfNames
+cn: group-even-1
+member: uid=user-2,ou=dept-1,o=source
+member: uid=user-4,ou=dept-1,o=source
+member: uid=user-6,ou=dept-2,o=source
+
+dn: cn=group-odd-1,ou=dept-1,o=source
+objectClass: groupOfNames
+cn: group-odd-1
+member: uid=user-1,ou=dept-1,o=source
+member: uid=user-3,ou=dept-1,o=source
+member: uid=user-5,ou=dept-2,o=source
+member: uid=user-7,ou=dept-2,o=source
+
+dn: cn=group-nested-1,ou=dept-1,o=source
+objectClass: groupOfNames
+cn: group-nested-1
+member: uid=user-2,ou=dept-1,o=source
+member: uid=user-4,ou=dept-1,o=source
+member: uid=user-6,ou=dept-2,o=source
+member: cn=group-odd-1,ou=dept-1,o=source
+
+dn: ou=dept-2,o=source
+objectClass: organizationalUnit
+
+dn: uid=user-5,ou=dept-2,o=source
+cn: Foo Bar5
+givenName: Foo
+mail: Foo_Bar5@example.org
+proxyAddresses: Foo_Bar5@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: customADUser
+sn: Bar5
+uid: user-5
+employeeNumber: p-2-00005
+
+dn: uid=user-6,ou=dept-2,o=source
+cn: Foo Bar6
+givenName: Foo
+mail: Foo_Bar6@example.org
+proxyAddresses: Foo_Bar6@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: customADUser
+sn: Bar6
+uid: user-6
+employeeNumber: p-2-00006
+
+dn: uid=user-7,ou=dept-2,o=source
+cn: Foo Bar7
+givenName: Foo
+mail: Foo_Bar7@example.org
+proxyAddresses: Foo_Bar7@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: customADUser
+sn: Bar7
+uid: user-7
+employeeNumber: p-2-00007
+
+dn: uid=user-8,ou=dept-2,o=source
+cn: Foo Bar8
+givenName: Foo
+mail: Foo_Bar8@example.org
+proxyAddresses: Foo_Bar8@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: customADUser
+sn: Bar8
+uid: user-8
+employeeNumber: p-2-00008
+
+dn: uid=user-9,ou=dept-2,o=source
+cn: Foo Bar9
+givenName: Foo
+mail: Foo_Bar9@example.org
+proxyAddresses: Foo_Bar9@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: customADUser
+sn: Bar9
+uid: user-9
+employeeNumber: p-2-00009
+
+dn: uid=user-10,ou=dept-2,o=source
+cn: Foo Bar10
+givenName: Foo
+mail: Foo_Bar10@example.org
+proxyAddresses: Foo_Bar10@example.org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: customADUser
+sn: Bar10
+uid: user-10
+employeeNumber: p-2-00010
+
+dn: cn=group-even-2,ou=dept-2,o=source
+objectClass: groupOfNames
+cn: group-even-2
+member: uid=user-2,ou=dept-1,o=source
+member: uid=user-4,ou=dept-1,o=source
+member: uid=user-6,ou=dept-2,o=source
+member: uid=user-8,ou=dept-2,o=source
+member: uid=user-10,ou=dept-2,o=source
+
+dn: cn=group-odd-2,ou=dept-2,o=source
+objectClass: groupOfNames
+cn: group-odd-2
+member: uid=user-1,ou=dept-1,o=source
+member: uid=user-3,ou=dept-1,o=source
+member: uid=user-5,ou=dept-2,o=source
+member: uid=user-7,ou=dept-2,o=source
+member: uid=user-9,ou=dept-2,o=source
