@@ -176,13 +176,17 @@ class SourceConfig:
 
     __slots__ = (
         '_yml',
+        # Connection config
         'ldap_uri',
         'bind_dn',
         'bind_pw',
         'ca_cert',
+        # Logging config
         'trace_level',
+        # Performance config
         'timeout',
         'search_pagesize',
+        # Functional config
         'user_base',
         'user_scope',
         'user_filter',
@@ -254,13 +258,17 @@ class UDMConfig:
 
     __slots__ = (
         '_yml',
+        # Connection config
         'uri',
         'user',
         'password',
         'ca_cert',
+        # debug config
         'skip_writes',
+        # Performance config
         'connect_timeout',
         'read_timeout',
+        # Functional config
         'user_ou',
         'user_pkey_property',
         'user_properties',
