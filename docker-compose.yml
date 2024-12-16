@@ -4,4 +4,9 @@ services:
   udm_directory_connector:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/udm-directory-connector/Dockerfile
+    volumes:
+      - ./config/ad-domain-config.yaml.example:/etc/udm-directory-connector/config.yaml:ro
+    environment:
+      LOG_LEVEL: "INFO"
+      AD2UCS_CFG: "/etc/udm-directory-connector/config.yaml"
