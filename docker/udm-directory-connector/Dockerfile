@@ -40,11 +40,24 @@ RUN --mount=type=cache,target=/root/.cache \
 
 
 ##########################################################################
+FROM build AS test
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+WORKDIR /app
+
+RUN --mount=type=cache,target=/root/.cache \
+  uv sync
+
+COPY tests tests
+
+# RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
+#     && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
+#
+#
+
+
+##########################################################################
 FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS final
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
-
-# Optional: add the application virtualenv to search path.
-ENV PATH=/app/bin:$PATH
 
 RUN \
 groupadd -r app && \

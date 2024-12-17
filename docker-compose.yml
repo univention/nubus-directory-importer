@@ -1,12 +1,50 @@
 version: "3"
 
 services:
-  udm_directory_connector:
+  test:
     build:
       context: .
       dockerfile: docker/udm-directory-connector/Dockerfile
+      target: test
     volumes:
       - ./config/ad-domain-config.yaml.example:/etc/udm-directory-connector/config.yaml:ro
     environment:
       LOG_LEVEL: "INFO"
       AD2UCS_CFG: "/etc/udm-directory-connector/config.yaml"
+
+  udm-rest-api:
+    image: gitregistry.knut.univention.de/univention/customers/dataport/upx/container-udm-rest/udm-rest-api:latest
+    container_name: "udm-rest-api"
+    platform: "linux/amd64"
+    ports:
+      - 9979:9979
+    volumes:
+      - ./tests/base.conf:/etc/univention/base.conf:ro
+    environment:
+      DOMAINNAME: univention-organization.intranet
+      HOSTNAME: localhost:9979
+      LDAP_HOST: ldap-server
+      LDAP_PORT: 389
+      LDAP_BASE_DN: dc=univention-organization,dc=intranet
+      LDAP_HOST_DN: cn=admin,dc=univention-organization,dc=intranet
+      TLS_MODE: "off"
+      MACHINE_SECRET: univention
+      LDAP_CN_ADMIN_PW: univention
+
+  ldap-server:
+    platform: linux/amd64
+    image: gitregistry.knut.univention.de/univention/customers/dataport/upx/container-ldap/ldap-server:latest
+    container_name: "ldap-server"
+    environment:
+      LDAP_CN_ADMIN_PW: univention
+    ports:
+      - 389:389
+      - 636:636
+    volumes:
+      - ldap-shared-data:/var/lib/univention-ldap/:rw
+      - ldap-shared-run:/var/run/slapd/:rw
+      - ./tests/base-defaults.conf:/etc/univention/base-defaults.conf:ro
+
+volumes:
+  ldap-shared-data:
+  ldap-shared-run:

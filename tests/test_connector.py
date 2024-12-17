@@ -8,19 +8,16 @@ Tests require OpenLDAP to be installed
 import os
 import logging
 import unittest
-import uuid
-from os import environ
 
 import ldap
 from ldapurl import LDAPUrl
-from ldap.dn import str2dn, dn2str
 from ldap.ldapobject import ReconnectLDAPObject
 from slapdtest import SlapdObject, SlapdTestCase
 
 from udm_directory_connector import gen_password
 from udm_directory_connector.cfg import ConnectorConfig
 from udm_directory_connector.connector import Connector
-from udm_directory_connector.udm import UDMMethod, UDMModel, UDMClient
+from udm_directory_connector.udm import UDMMethod, UDMModel
 
 
 # a template string for generating simple slapd.d file
@@ -88,7 +85,7 @@ class ConnectorSlapd(SlapdObject):
         'cosine.ldif',
         'inetorgperson.ldif',
         'nis.ldif',
-        f'tests/data/customADUser.ldif',
+        'tests/data/customADUser.ldif',
     )
     slapd_conf_template = SLAPD_CONF_TEMPLATE
 

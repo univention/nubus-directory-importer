@@ -272,6 +272,29 @@ _mtail_, _promtail_ or similar.
 
 ## Running tests
 
+### Running the tests in docker compose
+
+The integration tests require a UDM REST API and an openldap server
+to act as the Nubus destination
+and a local slapd and related slaptest infrastructure
+to act as the source directory.
+This environment can be automatically set up
+with the `docker-compose-test.yaml` file.
+
+To run them, just execute the following commands:
+
+```bash
+# Start the test dependencies
+docker compose down -v && docker compose up --pull always udm-rest-api ldap-server
+
+./maildomain.sh
+
+# Run the integration tests
+docker compose run --build test .venv/bin/python3 -m pytest
+```
+
+### Running the tests locally (not recommended)
+
 For running the tests you need:
 
   * Locally installed OpenLDAP server software (aka _slapd_)

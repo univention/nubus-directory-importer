@@ -1,8 +1,8 @@
 ---
 
 udm:
-    uri: "https://portal.example.org/univention/udm/"
-    user: "Administrator"
+    uri: "http://udm-rest-api:9979/udm/"
+    user: "cn=admin"
     password: "univention"
     user_ou: "ou=unit-tests-connector-users"
     user_pkey_property: "univentionObjectIdentifier"
