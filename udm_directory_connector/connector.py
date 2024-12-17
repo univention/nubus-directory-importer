@@ -28,7 +28,7 @@ class Connector:
         '_cfg',
         '_error_count',
         '_ldap_conn',
-        '_src_results_count',
+        '_source_results_count',
         '_udm',
         'user_single_val_attrs',
         'group_single_val_attrs',
@@ -37,7 +37,7 @@ class Connector:
     _cfg: ConnectorConfig
     _error_count: int
     _ldap_conn: ReconnectLDAPObject
-    _src_results_count: int
+    _source_results_count: int
     _udm: UDMClient
 
     def __init__(
@@ -201,13 +201,13 @@ class Connector:
     def log_summary(
             self,
             sync_start_time: float,
-            src_results_count: int,
+            source_results_count: int,
             delete_count: int,
             error_count: int,
         ):
         logging.info(
             'Finished sync of %d entries from source %s in %0.2f secs',
-            src_results_count,
+            source_results_count,
             self._cfg.src.ldap_uri,
             time.time()-sync_start_time,
         )
@@ -306,17 +306,17 @@ class Connector:
             old_entries,
         ):
         new_id2dn = {}
-        src_results_count = error_count = 0
-        for src_dn, src_entry in source.items():
-            src_results_count += 1
-            logging.debug('src_dn = %r', src_dn)
-            logging.debug('src_entry = %r', src_entry)
+        source_results_count = error_count = 0
+        for source_dn, source_entry in source.items():
+            source_results_count += 1
+            logging.debug('source_dn = %r', source_dn)
+            logging.debug('source_entry = %r', source_entry)
             try:
-                target_props = self._udm.prep_properties(model, trans(src_entry))
+                target_props = self._udm.prep_properties(model, trans(source_entry))
             except Exception as err:
                 logging.error(
-                    'Error transforming to target properties, src_entry = %r : %s',
-                    src_entry,
+                    'Error transforming to target properties, source_entry = %r : %s',
+                    source_entry,
                     err,
                     exc_info=__debug__,
                 )
@@ -382,7 +382,7 @@ class Connector:
                 logging.error(
                     'UDMError adding/modifying %s from %s: %s',
                     target_props,
-                    src_dn,
+                    source_dn,
                     err,
                     exc_info = __debug__,
                 )
@@ -390,7 +390,7 @@ class Connector:
         #logging.debug('new_id2dn = %r', new_id2dn)
         # remove obsolete entries not found in source
         delete_count = self.delete_old_entries(model, old_entries, new_id2dn)
-        return src_results_count, error_count, delete_count, new_id2dn
+        return source_results_count, error_count, delete_count, new_id2dn
         # end of .sync_entries()
 
     def __call__(self):
@@ -406,13 +406,13 @@ class Connector:
             len(old_users)+len(old_groups), len(old_users), len(old_groups),
         )
 
-        src_count_all = delete_count_all = error_count_all = 0
+        source_count_all = delete_count_all = error_count_all = 0
 
         id2dn_users = {
             primary_key: dat[0]
             for primary_key, dat in old_users.items()
         }
-        src_users = dict(
+        source_users = dict(
             self.source_search(
                 self._cfg.src.user_base,
                 self._cfg.src.user_scope,
@@ -421,16 +421,16 @@ class Connector:
                 self._cfg.src.user_range_attrs,
             )
         )
-        src_count, error_count, delete_count, id2dn = self.sync_entries(
+        source_count, error_count, delete_count, id2dn = self.sync_entries(
             UDMModel.USER,
             f'{self._cfg.udm.user_ou},{self._udm.base_position}',
-            src_users,
+            source_users,
             self._cfg.udm.user_primary_key_property,
             self._cfg.udm.user_properties,
             self._cfg.src.user_trans,
             old_users,
         )
-        src_count_all += src_count
+        source_count_all += source_count
         delete_count_all += delete_count
         error_count_all += error_count
         id2dn_users.update(id2dn)
@@ -441,7 +441,7 @@ class Connector:
             for primary_key, dat in old_groups.items()
         }
         logging.debug('id2dn_groups = %r', id2dn_groups)
-        src_groups = dict(
+        source_groups = dict(
             self.source_search(
                 self._cfg.src.group_base,
                 self._cfg.src.group_scope,
@@ -450,10 +450,10 @@ class Connector:
                 self._cfg.src.group_range_attrs,
             )
         )
-        src_count, error_count, delete_count, _ = self.sync_entries(
+        source_count, error_count, delete_count, _ = self.sync_entries(
             UDMModel.GROUP,
             f'{self._cfg.udm.group_ou},{self._udm.base_position}',
-            src_groups,
+            source_groups,
             self._cfg.udm.group_primary_key_property,
             self._cfg.udm.group_properties,
             TransformerSeq((
@@ -461,22 +461,22 @@ class Connector:
                 MemberRefsTransformer(
                     user_primary_key=self._cfg.udm.user_primary_key_property,
                     user_trans=self._cfg.src.user_trans,
-                    users=src_users,
+                    users=source_users,
                     id2dn_users=id2dn_users,
                     group_primary_key=self._cfg.udm.group_primary_key_property,
                     group_trans=self._cfg.src.group_trans,
-                    groups=src_groups,
+                    groups=source_groups,
                     id2dn_groups=id2dn_groups,
                 ),
             )),
             old_groups,
         )
-        src_count_all += src_count
+        source_count_all += source_count
         delete_count_all += delete_count
         error_count_all += error_count
 
         # finally log summary messages
-        self.log_summary(sync_start_time, src_count_all, delete_count_all, error_count_all)
+        self.log_summary(sync_start_time, source_count_all, delete_count_all, error_count_all)
 
         # return counters as result mainly for automated tests
-        return (src_count_all, delete_count_all, error_count_all)
+        return (source_count_all, delete_count_all, error_count_all)

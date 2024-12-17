@@ -59,8 +59,8 @@ class MemberRefsTransformer(Transformer):
             if member in self._groups:
                 primary_key = None
                 try:
-                    src_val = self._group_sanitizer(self._groups[member][self._group_srckey_attr][0])
-                    primary_key = src_val.decode('utf-8')
+                    source_val = self._group_sanitizer(self._groups[member][self._group_srckey_attr][0])
+                    primary_key = source_val.decode('utf-8')
                     record['nestedGroup'].append(
                       self._id2dn_groups[primary_key].encode('utf-8')
                     )
@@ -71,8 +71,8 @@ class MemberRefsTransformer(Transformer):
             if member in self._users:
                 primary_key = None
                 try:
-                    src_val = self._user_sanitizer(self._users[member][self._user_srckey_attr][0])
-                    primary_key = src_val.decode('utf-8')
+                    source_val = self._user_sanitizer(self._users[member][self._user_srckey_attr][0])
+                    primary_key = source_val.decode('utf-8')
                     record['users'].append(
                       self._id2dn_users[primary_key].encode('utf-8')
                     )

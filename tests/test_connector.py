@@ -171,12 +171,12 @@ class TestUDMDirectoryConnector(SlapdTestCase):
 
     def test001_connector_run(self):
         # this run adds new entries
-        src_results_count, delete_count, error_count = self.connector()
-        self.assertEqual(src_results_count, 15)
+        source_results_count, delete_count, error_count = self.connector()
+        self.assertEqual(source_results_count, 15)
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
         # this run essentially does nothing to existing entries
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
 
@@ -189,7 +189,7 @@ class TestUDMDirectoryConnector(SlapdTestCase):
                 (ldap.MOD_REPLACE, 'mail', [b'Foo_Bar@example.org']),
             ],
         )
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
         # rename username of source entry
@@ -200,7 +200,7 @@ class TestUDMDirectoryConnector(SlapdTestCase):
             newsuperior='ou=dept-2,o=source',
             delold=1,
         )
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
         # rename name of source group entry
@@ -210,7 +210,7 @@ class TestUDMDirectoryConnector(SlapdTestCase):
             newsuperior='ou=dept-2,o=source',
             delold=1,
         )
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
         udm_res = self.connector._udm.request(UDMMethod.GET, UDMModel.GROUP, params=dict(filter='(cn=group-odd-1-foo)'))
@@ -219,14 +219,14 @@ class TestUDMDirectoryConnector(SlapdTestCase):
         self.assertEqual(udm_json['_embedded']['udm:object'][0]['properties']['name'], 'group-odd-1-foo')
         # delete source entry
         self._ldap_conn.delete_s('uid=user-1-foo,ou=dept-2,o=source')
-        src_results_count, delete_count, error_count = self.connector()
-        self.assertEqual(src_results_count, 14)
+        source_results_count, delete_count, error_count = self.connector()
+        self.assertEqual(source_results_count, 14)
         self.assertEqual(delete_count, 1)
         self.assertEqual(error_count, 0)
 
     def test002_sync_jpeg_photo(self):
         # Get UniventionObjectIdentifier
-        src_users = dict(
+        source_users = dict(
             self.connector.source_search(
                 self.connector._cfg.src.user_base,
                 self.connector._cfg.src.user_scope,
@@ -235,7 +235,7 @@ class TestUDMDirectoryConnector(SlapdTestCase):
                 self.connector._cfg.src.user_range_attrs,
             )
         )
-        user_univention_uuid = src_users['uid=user-2,ou=dept-1,o=source']['entryUUID'][0].decode()
+        user_univention_uuid = source_users['uid=user-2,ou=dept-1,o=source']['entryUUID'][0].decode()
 
         # Create user with jpeg photo set
         user_properties = {
@@ -256,7 +256,7 @@ class TestUDMDirectoryConnector(SlapdTestCase):
         )
 
         # Synchronize LDIF with same user but with no jpegPhoto set
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
 
         self.assertEqual(error_count, 0)
 
