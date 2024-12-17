@@ -149,9 +149,9 @@ class TestUDMDirectoryConnector(SlapdTestCase):
             except:
                 pass
             else:
-                for entry_dn, _ in entries:
+                for entry in entries:
                     try:
-                        self.connector._udm.delete(model, entry_dn)
+                        self.connector._udm.delete(model, entry.dn)
                     except:
                         pass
 

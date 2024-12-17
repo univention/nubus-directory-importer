@@ -14,7 +14,7 @@ from ldap.controls.pagedresults import SimplePagedResultsControl
 from junkaptor.trans import TransformerSeq
 
 from .config import ConnectorConfig
-from .udm import UDMMethod, UDMModel, UDMClient
+from .udm import UDMEntry, UDMMethod, UDMModel, UDMClient
 from .trans import MemberRefsTransformer
 from . import gen_password
 
@@ -231,23 +231,24 @@ class Connector:
                         method.value, model.value, status, count,
                     )
 
-    def delete_old_entries(self, model, old_users, id2dn):
+    def delete_old_entries(self, model, old_users: dict[str, UDMEntry], id2dn):
         """
         delete entries which do not exists in source anymore
         """
         ctr = 0
         for old_primary_key in old_users:
-            if old_primary_key not in id2dn:
-                try:
-                    udm_res = self._udm.delete(
-                        model,
-                        old_users[old_primary_key][0],
-                    )
-                except Exception as err:
-                    logging.warning('Error removing target %s entry %s: %s', model.value, old_primary_key, err)
-                else:
-                    ctr += 1
-                    logging.info('Removed target %s entry %s', model.value, old_primary_key)
+            if old_primary_key in id2dn:
+                continue
+            try:
+                udm_response = self._udm.delete(
+                    model,
+                    old_users[old_primary_key].dn,
+                )
+            except Exception as err:
+                logging.warning('Error removing target %s entry %s: %s', model.value, old_primary_key, err)
+            else:
+                ctr += 1
+                logging.info('Removed target %s entry %s', model.value, old_primary_key)
         return ctr
 
     def _prep_updates(self, model, props_list, new_props, old_props) -> dict:
@@ -278,7 +279,7 @@ class Connector:
         return update_props
 
     # TODO: What does existing target entries mean?
-    def _target_entries(self):
+    def _get_existing_udm_objects(self) -> tuple[dict[str, UDMEntry], dict[str, UDMEntry]]:
         """
         returns 2-tuple of dict instances containing existing target entries
         """
@@ -304,7 +305,7 @@ class Connector:
             primary_key,
             properties,
             trans,
-            old_entries,
+            old_entries: dict[str, UDMEntry],
         ):
         new_id2dn = {}
         source_results_count = error_count = 0
@@ -331,12 +332,12 @@ class Connector:
                         model,
                         properties,
                         target_props,
-                        old_entries[target_primary_key][1],
+                        old_entries[target_primary_key].properties,
                     )
                     # TODO: move user properties update logic to user model
                     # if model == UDMModel.USER and 'mailPrimaryAddress' in update_props.keys():
                     #     del update_props['mailPrimaryAddress']
-                    target_dn = old_entries[target_primary_key][0]
+                    target_dn = old_entries[target_primary_key].dn
                     new_id2dn[target_primary_key] = target_dn
                     if not update_props:
                         # skip processing current entry
@@ -399,9 +400,7 @@ class Connector:
         run the sync process one time
         """
         sync_start_time = time.time()
-        old_users, old_groups = self._target_entries()
-        #logging.debug('old_users = %r', old_users)
-        #logging.debug('old_groups = %r', old_groups)
+        old_users, old_groups = self._get_existing_udm_objects()
         logging.info(
             'Found %d existing entries: %d users / %d groups',
             len(old_users)+len(old_groups), len(old_users), len(old_groups),
@@ -410,8 +409,8 @@ class Connector:
         source_count_all = delete_count_all = error_count_all = 0
 
         id2dn_users = {
-            primary_key: dat[0]
-            for primary_key, dat in old_users.items()
+            user.source_primary_key: user.dn
+            for user in old_users.values()
         }
         source_users = dict(
             self.source_search(
@@ -438,8 +437,8 @@ class Connector:
         logging.debug('id2dn_users = %r', id2dn_users)
 
         id2dn_groups = {
-            primary_key: dat[0]
-            for primary_key, dat in old_groups.items()
+            group.source_primary_key: group.dn
+            for group in old_groups.values()
         }
         logging.debug('id2dn_groups = %r', id2dn_groups)
         source_groups = dict(

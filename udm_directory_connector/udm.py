@@ -15,6 +15,7 @@ from typing import (
     Any,
     Dict,
     List,
+    NamedTuple,
     Optional,
     Union,
     Sequence,
@@ -58,6 +59,12 @@ UDM_WRITE_METHODS = {
     UDMMethod.PUT,
     UDMMethod.DELETE,
 }
+
+
+class UDMEntry(NamedTuple):
+    source_primary_key: str
+    dn: str
+    properties: dict
 
 
 class UDMClient:
@@ -411,9 +418,9 @@ class UDMClient:
             qfilter: Optional[str] = None,
             position: Optional[str] = None,
             properties: Optional[Sequence[str]] = None,
-        ) -> Dict[str, Tuple[str, Any]]:
+        ) -> dict[str, UDMEntry]:
         """
-        returns dict {properties[primary_key]: (dn, properties)} of existing target entries
+        returns dict {source_primary_key: UDMEntry} of existing target entries
         """
         params = dict()
         if qfilter is not None:
@@ -424,13 +431,18 @@ class UDMClient:
             params['properties'] = properties
         udm_res = self.request(UDMMethod.GET, model, params=params)
         udm_json = udm_res.json()
-        entries = {}
-        if udm_json['results'] > 0:
-            entries = {
-                res['properties'][primary_key]: (
-                    res['dn'], res['properties']
-                )
-                for res in udm_json['_embedded']['udm:object']
-            }
+
+        if udm_json['results'] == 0:
+            return {}
+
+        entries = {
+            result['properties'][primary_key]: UDMEntry(
+                source_primary_key=result['properties'][primary_key],
+                dn=result['dn'],
+                properties=result['properties']
+            )
+
+            for result in udm_json['_embedded']['udm:object']
+        }
         logging.debug('Received %d %s results from UDM', len(entries), model)
         return entries

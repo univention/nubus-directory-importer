@@ -77,7 +77,7 @@ class TestUDMClient(unittest.TestCase):
     #     udm_list_res = self.udm_client.list(UDMModel.USER, 'username', qfilter='(uid=Administrator)')
     #     self.assertEqual(len(udm_list_res), 1)
     #     self.assertIn('Administrator', udm_list_res)
-    #     self.assertTrue(udm_list_res['Administrator'][0].startswith('uid=Administrator,'))
+    #     self.assertTrue(udm_list_res['Administrator'].dn.startswith('uid=Administrator,'))
 
     def test002_search_domain_administrators(self):
         udm_res = self.udm_client.request(
@@ -99,7 +99,7 @@ class TestUDMClient(unittest.TestCase):
         udm_list_res = self.udm_client.list(UDMModel.GROUP, 'name', qfilter='(cn=Domain Admins)')
         self.assertEqual(len(udm_list_res), 1)
         self.assertIn('Domain Admins', udm_list_res)
-        self.assertTrue(udm_list_res['Domain Admins'][0].startswith('cn=Domain Admins,'))
+        self.assertTrue(udm_list_res['Domain Admins'].dn.startswith('cn=Domain Admins,'))
 
     def test003_user_crud(self):
         # add new user
