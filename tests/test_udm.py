@@ -15,7 +15,7 @@ from http import HTTPStatus
 import ldap.dn
 
 import udm_directory_connector
-from udm_directory_connector.cfg import ConnectorConfig
+from udm_directory_connector.config import ConnectorConfig
 from udm_directory_connector import random_str, gen_password
 from udm_directory_connector.udm import UDMMethod, UDMModel, UDMClient
 
@@ -23,15 +23,15 @@ from udm_directory_connector.udm import UDMMethod, UDMModel, UDMClient
 CONNECTOR_CFG = ConnectorConfig('tests/data/connector.yml')
 
 
-def init_udm_client(cfg):
-    udm_cfg = cfg.udm
+def init_udm_client(config):
+    udm_config = config.udm
     return UDMClient(
-        udm_cfg.uri,
-        udm_cfg.user,
-        udm_cfg.password,
-        udm_cfg.user_ou,
-        udm_cfg.group_ou,
-        ca_cert=udm_cfg.ca_cert,
+        udm_config.uri,
+        udm_config.user,
+        udm_config.password,
+        udm_config.user_ou,
+        udm_config.group_ou,
+        ca_cert=udm_config.ca_cert,
     )
 
 

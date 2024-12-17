@@ -13,7 +13,7 @@ from ldap.controls.pagedresults import SimplePagedResultsControl
 
 from junkaptor.trans import TransformerSeq
 
-from .cfg import ConnectorConfig
+from .config import ConnectorConfig
 from .udm import UDMMethod, UDMModel, UDMClient
 from .trans import MemberRefsTransformer
 from . import gen_password
@@ -25,7 +25,7 @@ class Connector:
     """
 
     __slots__ = (
-        '_cfg',
+        '_config',
         '_error_count',
         '_ldap_conn',
         '_source_results_count',
@@ -34,7 +34,7 @@ class Connector:
         'group_single_val_attrs',
     )
 
-    _cfg: ConnectorConfig
+    _config: ConnectorConfig
     _error_count: int
     _ldap_conn: ReconnectLDAPObject
     _source_results_count: int
@@ -42,19 +42,19 @@ class Connector:
 
     def __init__(
             self,
-            cfg: ConnectorConfig,
+            config: ConnectorConfig,
         ):
-        self._cfg = cfg
+        self._config = config
         self._udm = UDMClient(
-            self._cfg.udm.uri,
-            self._cfg.udm.user,
-            self._cfg.udm.password,
-            self._cfg.udm.user_ou,
-            self._cfg.udm.group_ou,
-            self._cfg.udm.ca_cert,
-            self._cfg.udm.skip_writes,
-            connect_timeout = self._cfg.udm.connect_timeout,
-            read_timeout = self._cfg.udm.read_timeout,
+            self._config.udm.uri,
+            self._config.udm.user,
+            self._config.udm.password,
+            self._config.udm.user_ou,
+            self._config.udm.group_ou,
+            self._config.udm.ca_cert,
+            self._config.udm.skip_writes,
+            connect_timeout = self._config.udm.connect_timeout,
+            read_timeout = self._config.udm.read_timeout,
         )
         # cache var for source LDAP connection opened later
         self._ldap_conn = None
@@ -66,22 +66,22 @@ class Connector:
         initially opens connection and binds if necessary
         """
         if self._ldap_conn is None:
-            new_conn_uri = self._cfg.src.ldap_uri.initializeUrl()
+            new_conn_uri = self._config.src.ldap_uri.initializeUrl()
             new_conn = ReconnectLDAPObject(
                 new_conn_uri,
-                trace_level=self._cfg.src.trace_level,
+                trace_level=self._config.src.trace_level,
             )
-            new_conn.timeout = self._cfg.src.timeout
-            new_conn.network_timeout = self._cfg.src.timeout
+            new_conn.timeout = self._config.src.timeout
+            new_conn.network_timeout = self._config.src.timeout
             new_conn.set_option(ldap.OPT_REFERRALS, 0)
-            new_conn.set_option(ldap.OPT_X_TLS_CACERTFILE, self._cfg.src.ca_cert)
+            new_conn.set_option(ldap.OPT_X_TLS_CACERTFILE, self._config.src.ca_cert)
             new_conn.set_option(ldap.OPT_X_TLS_NEWCTX, 0)
-            new_conn.simple_bind_s(self._cfg.src.bind_dn, self._cfg.src.bind_pw)
+            new_conn.simple_bind_s(self._config.src.bind_dn, self._config.src.bind_pw)
             try:
                 wai = new_conn.whoami_s()
             except ldap.PROTOCOL_ERROR:
-                if self._cfg.src.bind_dn:
-                    wai = self._cfg.src.bind_dn
+                if self._config.src.bind_dn:
+                    wai = self._config.src.bind_dn
                 else:
                     raise
             self._ldap_conn = new_conn
@@ -108,8 +108,8 @@ class Connector:
         # reconnecting after longer silent period on LDAP connection
         ldap_conn.whoami_s()
         # start searching with simple paged results control
-        page_size = self._cfg.src.search_pagesize
-        ignore_dn_regex = self._cfg.src.ignore_dn_regex
+        page_size = self._config.src.search_pagesize
+        ignore_dn_regex = self._config.src.ignore_dn_regex
         paged_search = (page_size > 0)
         search_ctrls = []
         if paged_search > 0:
@@ -208,13 +208,13 @@ class Connector:
         logging.info(
             'Finished sync of %d entries from source %s in %0.2f secs',
             source_results_count,
-            self._cfg.src.ldap_uri,
+            self._config.src.ldap_uri,
             time.time()-sync_start_time,
         )
         if error_count:
             logging.error(
                 '%d errors when processing source entries from %s',
-                error_count, self._cfg.src.ldap_uri,
+                error_count, self._config.src.ldap_uri,
             )
         if delete_count:
             logging.info('Removed %d obsolete target entries', delete_count)
@@ -284,15 +284,15 @@ class Connector:
         """
         users = self._udm.list(
             UDMModel.USER,
-            self._cfg.udm.user_primary_key_property,
-            position=f'{self._cfg.udm.user_ou},{self._udm.base_position}',
-            properties=self._cfg.udm.user_properties,
+            self._config.udm.user_primary_key_property,
+            position=f'{self._config.udm.user_ou},{self._udm.base_position}',
+            properties=self._config.udm.user_properties,
         )
         groups = self._udm.list(
             UDMModel.GROUP,
-            self._cfg.udm.group_primary_key_property,
-            position=f'{self._cfg.udm.group_ou},{self._udm.base_position}',
-            #properties=self._cfg.udm.group_properties,
+            self._config.udm.group_primary_key_property,
+            position=f'{self._config.udm.group_ou},{self._udm.base_position}',
+            #properties=self._config.udm.group_properties,
         )
         return users, groups
 
@@ -415,20 +415,20 @@ class Connector:
         }
         source_users = dict(
             self.source_search(
-                self._cfg.src.user_base,
-                self._cfg.src.user_scope,
-                self._cfg.src.user_filter,
-                self._cfg.src.user_attrs,
-                self._cfg.src.user_range_attrs,
+                self._config.src.user_base,
+                self._config.src.user_scope,
+                self._config.src.user_filter,
+                self._config.src.user_attrs,
+                self._config.src.user_range_attrs,
             )
         )
         source_count, error_count, delete_count, id2dn = self.sync_entries(
             UDMModel.USER,
-            f'{self._cfg.udm.user_ou},{self._udm.base_position}',
+            f'{self._config.udm.user_ou},{self._udm.base_position}',
             source_users,
-            self._cfg.udm.user_primary_key_property,
-            self._cfg.udm.user_properties,
-            self._cfg.src.user_trans,
+            self._config.udm.user_primary_key_property,
+            self._config.udm.user_properties,
+            self._config.src.user_trans,
             old_users,
         )
         source_count_all += source_count
@@ -444,28 +444,28 @@ class Connector:
         logging.debug('id2dn_groups = %r', id2dn_groups)
         source_groups = dict(
             self.source_search(
-                self._cfg.src.group_base,
-                self._cfg.src.group_scope,
-                self._cfg.src.group_filter,
-                self._cfg.src.group_attrs,
-                self._cfg.src.group_range_attrs,
+                self._config.src.group_base,
+                self._config.src.group_scope,
+                self._config.src.group_filter,
+                self._config.src.group_attrs,
+                self._config.src.group_range_attrs,
             )
         )
         source_count, error_count, delete_count, _ = self.sync_entries(
             UDMModel.GROUP,
-            f'{self._cfg.udm.group_ou},{self._udm.base_position}',
+            f'{self._config.udm.group_ou},{self._udm.base_position}',
             source_groups,
-            self._cfg.udm.group_primary_key_property,
-            self._cfg.udm.group_properties,
+            self._config.udm.group_primary_key_property,
+            self._config.udm.group_properties,
             TransformerSeq((
-                self._cfg.src.group_trans,
+                self._config.src.group_trans,
                 MemberRefsTransformer(
-                    user_primary_key=self._cfg.udm.user_primary_key_property,
-                    user_trans=self._cfg.src.user_trans,
+                    user_primary_key=self._config.udm.user_primary_key_property,
+                    user_trans=self._config.src.user_trans,
                     users=source_users,
                     id2dn_users=id2dn_users,
-                    group_primary_key=self._cfg.udm.group_primary_key_property,
-                    group_trans=self._cfg.src.group_trans,
+                    group_primary_key=self._config.udm.group_primary_key_property,
+                    group_trans=self._config.src.group_trans,
                     groups=source_groups,
                     id2dn_groups=id2dn_groups,
                 ),

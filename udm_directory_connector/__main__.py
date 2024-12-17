@@ -10,7 +10,7 @@ import logging.config
 
 from .__about__ import __version__
 
-from .cfg import ConnectorConfig
+from .config import ConnectorConfig
 from .connector import Connector
 
 # log format to use when logging to console
@@ -42,19 +42,19 @@ def cli():
 
     # determine path name of configuration file
     try:
-        cfg_filename = sys.argv[1]
+        config_filename = sys.argv[1]
     except IndexError:
         try:
-            cfg_filename = os.environ['AD2UCS_CFG']
+            config_filename = os.environ['AD2UCS_CFG']
         except KeyError:
             logging.error('Starting %s %s failed, no config given', proc_name, __version__)
             sys.exit(1)
 
-    logging.info('Starting %s %s, using config %s', proc_name, __version__, cfg_filename)
+    logging.info('Starting %s %s, using config %s', proc_name, __version__, config_filename)
 
     # read and parse source and target configuration
-    cfg = ConnectorConfig(cfg_filename)
-    connector = Connector(cfg)
+    config = ConnectorConfig(config_filename)
+    connector = Connector(config)
     connector()
 
     # end of cli()

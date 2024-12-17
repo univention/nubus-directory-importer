@@ -15,7 +15,7 @@ from ldap.ldapobject import ReconnectLDAPObject
 from slapdtest import SlapdObject, SlapdTestCase
 
 from udm_directory_connector import gen_password
-from udm_directory_connector.cfg import ConnectorConfig
+from udm_directory_connector.config import ConnectorConfig
 from udm_directory_connector.connector import Connector
 from udm_directory_connector.udm import UDMMethod, UDMModel
 
@@ -119,9 +119,9 @@ class TestUDMDirectoryConnector(SlapdTestCase):
             if line.startswith('dn:')
         ])
         cls.server.ldapadd(ldif_data)
-        cls.cfg = ConnectorConfig('tests/data/connector.yml')
-        cls.connector = Connector(cls.cfg)
-        cls.cfg.src.ldap_uri = LDAPUrl(cls.server.default_ldap_uri)
+        cls.config = ConnectorConfig('tests/data/connector.yml')
+        cls.connector = Connector(cls.config)
+        cls.config.src.ldap_uri = LDAPUrl(cls.server.default_ldap_uri)
 
     def setUp(self):
         try:
@@ -135,13 +135,13 @@ class TestUDMDirectoryConnector(SlapdTestCase):
         for model, primary_key, position in (
                 (
                     UDMModel.USER,
-                    self.connector._cfg.udm.user_primary_key_property,
-                    f'{self.connector._cfg.udm.user_ou},{self.connector._udm.base_position}'
+                    self.connector._config.udm.user_primary_key_property,
+                    f'{self.connector._config.udm.user_ou},{self.connector._udm.base_position}'
                 ),
                 (
                     UDMModel.GROUP,
-                    self.connector._cfg.udm.group_primary_key_property,
-                    f'{self.connector._cfg.udm.group_ou},{self.connector._udm.base_position}'
+                    self.connector._config.udm.group_primary_key_property,
+                    f'{self.connector._config.udm.group_ou},{self.connector._udm.base_position}'
                 ),
             ):
             try:
@@ -159,8 +159,8 @@ class TestUDMDirectoryConnector(SlapdTestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         udm_client = cls.connector._udm
-        udm_client.delete(UDMModel.OU, f'{cls.cfg.udm.user_ou},{udm_client.base_position}')
-        udm_client.delete(UDMModel.OU, f'{cls.cfg.udm.group_ou},{udm_client.base_position}')
+        udm_client.delete(UDMModel.OU, f'{cls.config.udm.user_ou},{udm_client.base_position}')
+        udm_client.delete(UDMModel.OU, f'{cls.config.udm.group_ou},{udm_client.base_position}')
 
     def test000_local_conn(self):
         self.assertEqual(self._ldap_conn.whoami_s(), 'dn:cn=Manager,o=source')
@@ -228,11 +228,11 @@ class TestUDMDirectoryConnector(SlapdTestCase):
         # Get UniventionObjectIdentifier
         source_users = dict(
             self.connector.source_search(
-                self.connector._cfg.src.user_base,
-                self.connector._cfg.src.user_scope,
-                self.connector._cfg.src.user_filter,
-                self.connector._cfg.src.user_attrs,
-                self.connector._cfg.src.user_range_attrs,
+                self.connector._config.src.user_base,
+                self.connector._config.src.user_scope,
+                self.connector._config.src.user_filter,
+                self.connector._config.src.user_attrs,
+                self.connector._config.src.user_range_attrs,
             )
         )
         user_univention_uuid = source_users['uid=user-2,ou=dept-1,o=source']['entryUUID'][0].decode()
@@ -252,7 +252,7 @@ class TestUDMDirectoryConnector(SlapdTestCase):
         self.connector._udm.add(
             UDMModel.USER,
             user_properties,
-            f'{self.connector._cfg.udm.user_ou},{self.connector._udm.base_position}',
+            f'{self.connector._config.udm.user_ou},{self.connector._udm.base_position}',
         )
 
         # Synchronize LDIF with same user but with no jpegPhoto set

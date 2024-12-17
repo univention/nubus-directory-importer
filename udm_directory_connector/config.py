@@ -1,6 +1,6 @@
 # -*- coding: ascii -*-
 """
-udm_directory_connector.cfg - parsing configuration
+udm_directory_connector.config - parsing configuration
 """
 
 import re
@@ -319,8 +319,8 @@ class ConnectorConfig:
     src: SourceConfig
     udm: UDMConfig
 
-    def __init__(self, cfg_filename):
-        with open(cfg_filename, 'r', encoding=CFG_ENCODING) as cfg_file:
-            yml = strictyaml.load(cfg_file.read(), CFG_SCHEMA)
+    def __init__(self, config_filename):
+        with open(config_filename, 'r', encoding=CFG_ENCODING) as config_file:
+            yml = strictyaml.load(config_file.read(), CFG_SCHEMA)
         self.src = SourceConfig(yml['source'])
         self.udm = UDMConfig(yml['udm'])
