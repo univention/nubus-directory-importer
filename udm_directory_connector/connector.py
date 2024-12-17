@@ -277,6 +277,7 @@ class Connector:
                 update_props[key] = new_prop
         return update_props
 
+    # TODO: What does existing target entries mean?
     def _target_entries(self):
         """
         returns 2-tuple of dict instances containing existing target entries
