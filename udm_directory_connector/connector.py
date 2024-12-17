@@ -236,18 +236,18 @@ class Connector:
         delete entries which do not exists in source anymore
         """
         ctr = 0
-        for old_pkey in old_users:
-            if old_pkey not in id2dn:
+        for old_primary_key in old_users:
+            if old_primary_key not in id2dn:
                 try:
                     udm_res = self._udm.delete(
                         model,
-                        old_users[old_pkey][0],
+                        old_users[old_primary_key][0],
                     )
                 except Exception as err:
-                    logging.warning('Error removing target %s entry %s: %s', model.value, old_pkey, err)
+                    logging.warning('Error removing target %s entry %s: %s', model.value, old_primary_key, err)
                 else:
                     ctr += 1
-                    logging.info('Removed target %s entry %s', model.value, old_pkey)
+                    logging.info('Removed target %s entry %s', model.value, old_primary_key)
         return ctr
 
     def _prep_updates(self, model, props_list, new_props, old_props) -> dict:
@@ -283,13 +283,13 @@ class Connector:
         """
         users = self._udm.list(
             UDMModel.USER,
-            self._cfg.udm.user_pkey_property,
+            self._cfg.udm.user_primary_key_property,
             position=f'{self._cfg.udm.user_ou},{self._udm.base_position}',
             properties=self._cfg.udm.user_properties,
         )
         groups = self._udm.list(
             UDMModel.GROUP,
-            self._cfg.udm.group_pkey_property,
+            self._cfg.udm.group_primary_key_property,
             position=f'{self._cfg.udm.group_ou},{self._udm.base_position}',
             #properties=self._cfg.udm.group_properties,
         )
@@ -300,7 +300,7 @@ class Connector:
             model,
             position,
             source,
-            pkey,
+            primary_key,
             properties,
             trans,
             old_entries,
@@ -323,20 +323,20 @@ class Connector:
                 error_count += 1
                 continue
             logging.debug('target_props = %r', target_props)
-            target_pkey = target_props[pkey]
+            target_primary_key = target_props[primary_key]
             try:
-                if target_pkey in old_entries:
+                if target_primary_key in old_entries:
                     update_props = self._prep_updates(
                         model,
                         properties,
                         target_props,
-                        old_entries[target_pkey][1],
+                        old_entries[target_primary_key][1],
                     )
                     # TODO: move user properties update logic to user model
                     # if model == UDMModel.USER and 'mailPrimaryAddress' in update_props.keys():
                     #     del update_props['mailPrimaryAddress']
-                    target_dn = old_entries[target_pkey][0]
-                    new_id2dn[target_pkey] = target_dn
+                    target_dn = old_entries[target_primary_key][0]
+                    new_id2dn[target_primary_key] = target_dn
                     if not update_props:
                         # skip processing current entry
                         continue
@@ -350,7 +350,7 @@ class Connector:
                           'Modified %s entry %s with primary key %r: %s',
                         model.value,
                         target_dn,
-                        target_pkey,
+                        target_primary_key,
                         ', '.join(update_props.keys()),
                     )
                 else:
@@ -371,12 +371,12 @@ class Connector:
                         target_dn = f'uid={target_props["username"]},{position}'
                     elif model == UDMModel.GROUP:
                         target_dn = f'cn={target_props["name"]},{position}'
-                    new_id2dn[target_pkey] = target_dn
+                    new_id2dn[target_primary_key] = target_dn
                     logging.info(
                         'Added %s entry %s with primary key %r',
                         model.value,
                         target_dn,
-                        target_pkey,
+                        target_primary_key,
                     )
             except Exception as err:
                 logging.error(
@@ -409,8 +409,8 @@ class Connector:
         src_count_all = delete_count_all = error_count_all = 0
 
         id2dn_users = {
-            pkey: dat[0]
-            for pkey, dat in old_users.items()
+            primary_key: dat[0]
+            for primary_key, dat in old_users.items()
         }
         src_users = dict(
             self.source_search(
@@ -425,7 +425,7 @@ class Connector:
             UDMModel.USER,
             f'{self._cfg.udm.user_ou},{self._udm.base_position}',
             src_users,
-            self._cfg.udm.user_pkey_property,
+            self._cfg.udm.user_primary_key_property,
             self._cfg.udm.user_properties,
             self._cfg.src.user_trans,
             old_users,
@@ -437,8 +437,8 @@ class Connector:
         logging.debug('id2dn_users = %r', id2dn_users)
 
         id2dn_groups = {
-            pkey: dat[0]
-            for pkey, dat in old_groups.items()
+            primary_key: dat[0]
+            for primary_key, dat in old_groups.items()
         }
         logging.debug('id2dn_groups = %r', id2dn_groups)
         src_groups = dict(
@@ -454,16 +454,16 @@ class Connector:
             UDMModel.GROUP,
             f'{self._cfg.udm.group_ou},{self._udm.base_position}',
             src_groups,
-            self._cfg.udm.group_pkey_property,
+            self._cfg.udm.group_primary_key_property,
             self._cfg.udm.group_properties,
             TransformerSeq((
                 self._cfg.src.group_trans,
                 MemberRefsTransformer(
-                    user_pkey=self._cfg.udm.user_pkey_property,
+                    user_primary_key=self._cfg.udm.user_primary_key_property,
                     user_trans=self._cfg.src.user_trans,
                     users=src_users,
                     id2dn_users=id2dn_users,
-                    group_pkey=self._cfg.udm.group_pkey_property,
+                    group_primary_key=self._cfg.udm.group_primary_key_property,
                     group_trans=self._cfg.src.group_trans,
                     groups=src_groups,
                     id2dn_groups=id2dn_groups,

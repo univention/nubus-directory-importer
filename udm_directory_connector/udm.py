@@ -407,13 +407,13 @@ class UDMClient:
     def list(
             self,
             model: UDMModel,
-            pkey: str,
+            primary_key: str,
             qfilter: Optional[str] = None,
             position: Optional[str] = None,
             properties: Optional[Sequence[str]] = None,
         ) -> Dict[str, Tuple[str, Any]]:
         """
-        returns dict {properties[pkey]: (dn, properties)} of existing target entries
+        returns dict {properties[primary_key]: (dn, properties)} of existing target entries
         """
         params = dict()
         if qfilter is not None:
@@ -427,7 +427,7 @@ class UDMClient:
         entries = {}
         if udm_json['results'] > 0:
             entries = {
-                res['properties'][pkey]: (
+                res['properties'][primary_key]: (
                     res['dn'], res['properties']
                 )
                 for res in udm_json['_embedded']['udm:object']

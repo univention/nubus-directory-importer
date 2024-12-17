@@ -10,9 +10,9 @@ udm:
     skip_writes: false
     # FIX ME! Use more suitable attributes for storing primary keys
     user_ou: "ou=ad-domain-example"
-    user_pkey_property: "univentionObjectIdentifier"
+    user_primary_key_property: "univentionObjectIdentifier"
     group_ou: "ou=ad-domain-example"
-    group_pkey_property: "univentionObjectIdentifier"
+    group_primary_key_property: "univentionObjectIdentifier"
 
 source:
     ldap_uri: "ldap://10.207.74.35"

@@ -132,20 +132,20 @@ class TestUDMDirectoryConnector(SlapdTestCase):
 
     def tearDown(self):
         del self._ldap_conn
-        for model, pkey, position in (
+        for model, primary_key, position in (
                 (
                     UDMModel.USER,
-                    self.connector._cfg.udm.user_pkey_property,
+                    self.connector._cfg.udm.user_primary_key_property,
                     f'{self.connector._cfg.udm.user_ou},{self.connector._udm.base_position}'
                 ),
                 (
                     UDMModel.GROUP,
-                    self.connector._cfg.udm.group_pkey_property,
+                    self.connector._cfg.udm.group_primary_key_property,
                     f'{self.connector._cfg.udm.group_ou},{self.connector._udm.base_position}'
                 ),
             ):
             try:
-                entries = self.connector._udm.list(model, pkey, position=position).values()
+                entries = self.connector._udm.list(model, primary_key, position=position).values()
             except:
                 pass
             else:

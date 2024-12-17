@@ -5,9 +5,9 @@ udm:
     user: "cn=admin"
     password: "univention"
     user_ou: "ou=unit-tests-connector-users"
-    user_pkey_property: "univentionObjectIdentifier"
+    user_primary_key_property: "univentionObjectIdentifier"
     group_ou: "ou=unit-tests-connector-groups"
-    group_pkey_property: "univentionObjectIdentifier"
+    group_primary_key_property: "univentionObjectIdentifier"
 
 source:
     ldap_uri: "ldapi://__dummy__"

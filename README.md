@@ -169,13 +169,13 @@ At the top hierarchy level there are these config dictionaries:
     Timeout in seconds to wait for UDM results (default 1800 secs).
   * user_ou: (mandatory) 
     Name of the OU used as target container for user entries.
-  * user_pkey_property: (optional) 
+  * user_primary_key_property: (optional) 
     UDM property to use for storing the remote primary key for users.
   * user_properties: (optional)
     List of user property names the connector writes to.
   * group_ou: (mandatory) 
     Name of the OU used as target container for group entries.
-  * group_pkey_property: (optional) 
+  * group_primary_key_property: (optional) 
     UDM property to use for storing the remote primary key for groups.
   * group_properties: (optional)
     List of group property names the connector writes to.
