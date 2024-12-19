@@ -272,7 +272,27 @@ _mtail_, _promtail_ or similar.
 
 ## Running tests
 
-### Running the tests in docker compose
+### Manual testing
+
+Deploy the dependencies:
+1. Deploy an Active Directory server
+  https://jenkins2022.knut.univention.de/job/UCS-5.2/job/UCS-5.2-0/view/Personal%20environments/job/UcsW2k19ADEnvironment/
+	The Joined UCS machine is redundant, but it's good enough until we figure out a better solution as part of the e2e test automation.
+	This server is started inside the Univention VPN and thus the directory connector needs to also be started inside the VPN.
+	Both Docker compose locall aswell as the gitlab pipelines fulfill this requirement.
+2. Deploy Nubus for Kubernetes. Many possibilities, ums_stack pipeline, helmfile, helm... It needs to be reachable by the directory connector
+	N4K does not need to be inside the VPN. The directory connector can also be configured to talk to a public or local IP.
+3. Configure the Active Directory and UDM REST API connection and authorization parameters in the config.yaml file.
+
+Executing the directory-connector inside a docker container using docker compose:
+`docker compose up --build`
+
+Alternatively run it locally:
+Install shared objects for ldap python library to your system
+- `uv sync -p /usr/bin/python3.10` (use system python to get shared objects)
+- `uv run udm-directory-connector config/ad-domain-config.yaml.example`
+
+### Running the integration tests in docker compose
 
 The integration tests require a UDM REST API and an openldap server
 to act as the Nubus destination
@@ -293,7 +313,7 @@ docker compose down -v && docker compose up --pull always udm-rest-api ldap-serv
 docker compose run --build test .venv/bin/python3 -m pytest
 ```
 
-### Running the tests locally (not recommended)
+### Running the integration tests locally (not recommended)
 
 For running the tests you need:
 
