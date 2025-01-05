@@ -3,21 +3,20 @@
 # the name 'ad-domain-example' is used for various parameters
 
 udm:
-    uri: "https://jlohmer-nubus-main.portal.review.univention.dev/univention/udm/"
+    uri: "https://nubus-kubernetes-deployment.test/univention/udm/"
     user: "Administrator"
-    password: ""
+    password: "supersecret"
     # ca_cert: "/etc/ssl/certs/ca-certificates.crt"
     skip_writes: false
-    # FIX ME! Use more suitable attributes for storing primary keys
     user_ou: "ou=ad-domain-example"
     user_primary_key_property: "univentionObjectIdentifier"
     group_ou: "ou=ad-domain-example"
     group_primary_key_property: "univentionObjectIdentifier"
 
 source:
-    ldap_uri: "ldap://10.207.74.35"
-    bind_dn: "CN=Administrator,CN=Users,DC=ad,DC=test"
-    bind_pw: ""
+    ldap_uri: "ldap://my_active_directory_server.test:1234" # "ldaps://"
+    bind_dn: "CN=readonly-ad-machine-user,CN=Users,DC=ad,DC=test"
+    bind_pw: "supersecret"
     # ca_cert: "/etc/ssl/certs/ca-certificates.crt"
     timeout: 5
     search_pagesize: 500

@@ -14,3 +14,5 @@ deb_dist/*
 .idea
 examples/*.private.env.json
 python-ldap-test-*
+
+/config/ad-domain-config.yaml

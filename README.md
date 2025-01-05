@@ -52,6 +52,13 @@ support encrypted connections via transport layer security (TLS).
 
 See also: [BSI TR-02102 Kryptographische Verfahren: Empfehlungen und Schlüssellängen](https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html)
 
+## Run it in docker compose
+
+Copy the example configuration and customize it to fit your environment.
+`cp ./config/ad-domain-config.yaml.example ./config/ad-domain-config.yaml`
+Then start the Directory importer using docker compose:
+`docker compose up --build`
+
 ## Installation
 
 ### Dependencies
