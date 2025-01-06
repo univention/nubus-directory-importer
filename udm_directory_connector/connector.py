@@ -5,7 +5,6 @@ udm_directory_connector.connector - the connector
 
 import logging
 import time
-import copy
 
 import ldap
 from ldap.ldapobject import ReconnectLDAPObject
@@ -297,16 +296,23 @@ class Connector:
         )
         return users, groups
 
+            # model=UDMModel.USER,
+            # position=f'{self._config.udm.user_ou},{self._udm.base_position}',
+            # source=source_users,
+            # primary_key=self._config.udm.user_primary_key_property,
+            # properties=self._config.udm.user_properties,
+            # trans=self._config.src.user_trans,
+            # old_entries=old_users,
     def sync_entries(
-            self,
-            model,
-            position,
-            source,
-            primary_key,
-            properties,
-            trans,
-            old_entries: dict[str, UDMEntry],
-        ):
+        self,
+        model: UDMModel,
+        position: str,
+        source,
+        primary_key,
+        properties,
+        trans,
+        old_entries: dict[str, UDMEntry],
+    ):
         new_id2dn = {}
         source_results_count = error_count = 0
         for source_dn, source_entry in source.items():
@@ -422,13 +428,13 @@ class Connector:
             )
         )
         source_count, error_count, delete_count, id2dn = self.sync_entries(
-            UDMModel.USER,
-            f'{self._config.udm.user_ou},{self._udm.base_position}',
-            source_users,
-            self._config.udm.user_primary_key_property,
-            self._config.udm.user_properties,
-            self._config.src.user_trans,
-            old_users,
+            model=UDMModel.USER,
+            position=f'{self._config.udm.user_ou},{self._udm.base_position}',
+            source=source_users,
+            primary_key=self._config.udm.user_primary_key_property,
+            properties=self._config.udm.user_properties,
+            trans=self._config.src.user_trans,
+            old_entries=old_users,
         )
         source_count_all += source_count
         delete_count_all += delete_count

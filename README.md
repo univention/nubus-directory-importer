@@ -314,6 +314,7 @@ To run them, just execute the following commands:
 # Start the test dependencies
 docker compose down -v && docker compose up --pull always udm-rest-api ldap-server
 
+# Create the example.org maildomain
 ./maildomain.sh
 
 # Run the integration tests
