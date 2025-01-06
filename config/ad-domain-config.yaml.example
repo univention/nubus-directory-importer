@@ -3,30 +3,29 @@
 # the name 'ad-domain-example' is used for various parameters
 
 udm:
-    uri: "https://ucs-master.example.com/univention/udm/"
+    uri: "https://nubus-kubernetes-deployment.test/univention/udm/"
     user: "Administrator"
     password: "supersecret"
-    ca_cert: "/etc/ssl/certs/ca-certificates.crt"
+    # ca_cert: "/etc/ssl/certs/ca-certificates.crt"
     skip_writes: false
-    # FIX ME! Use more suitable attributes for storing primary keys
     user_ou: "ou=ad-domain-example"
-    user_pkey_property: "univentionObjectIdentifier"
+    user_primary_key_property: "univentionObjectIdentifier"
     group_ou: "ou=ad-domain-example"
-    group_pkey_property: "univentionObjectIdentifier"
+    group_primary_key_property: "univentionObjectIdentifier"
 
 source:
-    ldap_uri: "ldaps://dc1.ad-domain.example.com"
-    bind_dn: "CN=Administrator,CN=Users,DC=ad-domain,DC=example,DC=com"
+    ldap_uri: "ldap://my_active_directory_server.test:1234" # "ldaps://"
+    bind_dn: "CN=readonly-ad-machine-user,CN=Users,DC=ad,DC=test"
     bind_pw: "supersecret"
-    ca_cert: "/etc/ssl/certs/ca-certificates.crt"
+    # ca_cert: "/etc/ssl/certs/ca-certificates.crt"
     timeout: 5
     search_pagesize: 500
     # search paramaters for groups
-    group_base: "OU=UCS-Users,DC=ad-domain,DC=example,DC=com"
+    group_base: "CN=Groups,DC=ad,DC=test"
     group_scope: "sub"
     #group_filter: "(&(objectClass=group)(!(|(isCriticalSystemObject=TRUE)(cn=Domain *)(cn=* Controllers))))"
     # search paramaters for users
-    user_base: "OU=UCS-Users,DC=ad-domain,DC=example,DC=com"
+    user_base: "CN=Users,DC=ad,DC=test"
     user_scope: "sub"
     user_filter: "(&(objectClass=user)(sAMAccountType=805306368)(givenName=*)(sn=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))"
     user_attrs:
@@ -81,7 +80,7 @@ source:
         # attributes to be renamed (dict-key is UDM property name)
         rename_attrs:
             # the primary key property <- attribute mapping
-            univentionSourceIdentifier: "objectGUID"
+            univentionObjectIdentifier: "objectGUID"
             # the e-mail address for contact addressbooks (mailbox not managed by UCS)
             "e-mail": "mail"
             username: "sAMAccountName"
@@ -135,7 +134,7 @@ source:
         # attributes to be renamed
         rename_attrs:
             # the primary key property <- attribute mapping
-            univentionSourceIdentifier: "objectGUID"
+            univentionObjectIdentifier: "objectGUID"
             name: "cn"
             users: "member"
         # List of attributes to be removed after compose pass

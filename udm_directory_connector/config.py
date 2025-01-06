@@ -1,6 +1,6 @@
 # -*- coding: ascii -*-
 """
-udm_directory_connector.cfg - parsing configuration
+udm_directory_connector.config - parsing configuration
 """
 
 import re
@@ -103,10 +103,10 @@ CFG_SCHEMA_UDM = Map({
     Optional('connect_timeout', default=6.0): Float(),
     Optional('read_timeout', default=1800.0): Float(),
     'user_ou': Str(),
-    Optional('user_pkey_property', default='uniqueIdentifier'): Str(),
+    Optional('user_primary_key_property', default='uniqueIdentifier'): Str(),
     Optional('user_properties', default=CFG_USER_PROPS_DEFAULT): Seq(Str()),
     'group_ou': Str(),
-    Optional('group_pkey_property', default='uniqueIdentifier'): Str(),
+    Optional('group_primary_key_property', default='uniqueIdentifier'): Str(),
     Optional('group_properties', default=CFG_GROUP_PROPS_DEFAULT): Seq(Str()),
 })
 
@@ -176,13 +176,17 @@ class SourceConfig:
 
     __slots__ = (
         '_yml',
+        # Connection config
         'ldap_uri',
         'bind_dn',
         'bind_pw',
         'ca_cert',
+        # Logging config
         'trace_level',
+        # Performance config
         'timeout',
         'search_pagesize',
+        # Functional config
         'user_base',
         'user_scope',
         'user_filter',
@@ -254,18 +258,22 @@ class UDMConfig:
 
     __slots__ = (
         '_yml',
+        # Connection config
         'uri',
         'user',
         'password',
         'ca_cert',
+        # debug config
         'skip_writes',
+        # Performance config
         'connect_timeout',
         'read_timeout',
+        # Functional config
         'user_ou',
-        'user_pkey_property',
+        'user_primary_key_property',
         'user_properties',
         'group_ou',
-        'group_pkey_property',
+        'group_primary_key_property',
         'group_properties',
     )
 
@@ -277,8 +285,8 @@ class UDMConfig:
     timeout: float
     user_ou: str
     group_ou: str
-    user_pkey_property: str
-    group_pkey_property: str
+    user_primary_key_property: str
+    group_primary_key_property: str
 
     def __init__(self, yml):
         self._yml = yml
@@ -290,10 +298,10 @@ class UDMConfig:
         self.connect_timeout = yml['connect_timeout'].data
         self.read_timeout = yml['read_timeout'].data
         self.user_ou = yml['user_ou'].text
-        self.user_pkey_property = yml['user_pkey_property'].text
+        self.user_primary_key_property = yml['user_primary_key_property'].text
         self.user_properties = set(yml['user_properties'].data)
         self.group_ou = yml['group_ou'].text
-        self.group_pkey_property = yml['group_pkey_property'].text
+        self.group_primary_key_property = yml['group_primary_key_property'].text
         self.group_properties = set(yml['group_properties'].data)
 
 
@@ -311,8 +319,8 @@ class ConnectorConfig:
     src: SourceConfig
     udm: UDMConfig
 
-    def __init__(self, cfg_filename):
-        with open(cfg_filename, 'r', encoding=CFG_ENCODING) as cfg_file:
-            yml = strictyaml.load(cfg_file.read(), CFG_SCHEMA)
+    def __init__(self, config_filename):
+        with open(config_filename, 'r', encoding=CFG_ENCODING) as config_file:
+            yml = strictyaml.load(config_file.read(), CFG_SCHEMA)
         self.src = SourceConfig(yml['source'])
         self.udm = UDMConfig(yml['udm'])

@@ -8,19 +8,16 @@ Tests require OpenLDAP to be installed
 import os
 import logging
 import unittest
-import uuid
-from os import environ
 
 import ldap
 from ldapurl import LDAPUrl
-from ldap.dn import str2dn, dn2str
 from ldap.ldapobject import ReconnectLDAPObject
 from slapdtest import SlapdObject, SlapdTestCase
 
 from udm_directory_connector import gen_password
-from udm_directory_connector.cfg import ConnectorConfig
+from udm_directory_connector.config import ConnectorConfig
 from udm_directory_connector.connector import Connector
-from udm_directory_connector.udm import UDMMethod, UDMModel, UDMClient
+from udm_directory_connector.udm import UDMMethod, UDMModel
 
 
 # a template string for generating simple slapd.d file
@@ -88,7 +85,7 @@ class ConnectorSlapd(SlapdObject):
         'cosine.ldif',
         'inetorgperson.ldif',
         'nis.ldif',
-        f'tests/data/customADUser.ldif',
+        'tests/data/customADUser.ldif',
     )
     slapd_conf_template = SLAPD_CONF_TEMPLATE
 
@@ -122,9 +119,9 @@ class TestUDMDirectoryConnector(SlapdTestCase):
             if line.startswith('dn:')
         ])
         cls.server.ldapadd(ldif_data)
-        cls.cfg = ConnectorConfig('tests/data/connector.yml')
-        cls.connector = Connector(cls.cfg)
-        cls.cfg.src.ldap_uri = LDAPUrl(cls.server.default_ldap_uri)
+        cls.config = ConnectorConfig('tests/data/connector.yml')
+        cls.connector = Connector(cls.config)
+        cls.config.src.ldap_uri = LDAPUrl(cls.server.default_ldap_uri)
 
     def setUp(self):
         try:
@@ -135,26 +132,26 @@ class TestUDMDirectoryConnector(SlapdTestCase):
 
     def tearDown(self):
         del self._ldap_conn
-        for model, pkey, position in (
+        for model, primary_key, position in (
                 (
                     UDMModel.USER,
-                    self.connector._cfg.udm.user_pkey_property,
-                    f'{self.connector._cfg.udm.user_ou},{self.connector._udm.base_position}'
+                    self.connector._config.udm.user_primary_key_property,
+                    f'{self.connector._config.udm.user_ou},{self.connector._udm.base_position}'
                 ),
                 (
                     UDMModel.GROUP,
-                    self.connector._cfg.udm.group_pkey_property,
-                    f'{self.connector._cfg.udm.group_ou},{self.connector._udm.base_position}'
+                    self.connector._config.udm.group_primary_key_property,
+                    f'{self.connector._config.udm.group_ou},{self.connector._udm.base_position}'
                 ),
             ):
             try:
-                entries = self.connector._udm.list(model, pkey, position=position).values()
+                entries = self.connector._udm.list(model, primary_key, position=position).values()
             except:
                 pass
             else:
-                for entry_dn, _ in entries:
+                for entry in entries:
                     try:
-                        self.connector._udm.delete(model, entry_dn)
+                        self.connector._udm.delete(model, entry.dn)
                     except:
                         pass
 
@@ -162,8 +159,8 @@ class TestUDMDirectoryConnector(SlapdTestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         udm_client = cls.connector._udm
-        udm_client.delete(UDMModel.OU, f'{cls.cfg.udm.user_ou},{udm_client.base_position}')
-        udm_client.delete(UDMModel.OU, f'{cls.cfg.udm.group_ou},{udm_client.base_position}')
+        udm_client.delete(UDMModel.OU, f'{cls.config.udm.user_ou},{udm_client.base_position}')
+        udm_client.delete(UDMModel.OU, f'{cls.config.udm.group_ou},{udm_client.base_position}')
 
     def test000_local_conn(self):
         self.assertEqual(self._ldap_conn.whoami_s(), 'dn:cn=Manager,o=source')
@@ -174,12 +171,12 @@ class TestUDMDirectoryConnector(SlapdTestCase):
 
     def test001_connector_run(self):
         # this run adds new entries
-        src_results_count, delete_count, error_count = self.connector()
-        self.assertEqual(src_results_count, 15)
+        source_results_count, delete_count, error_count = self.connector()
+        self.assertEqual(source_results_count, 15)
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
         # this run essentially does nothing to existing entries
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
 
@@ -192,7 +189,7 @@ class TestUDMDirectoryConnector(SlapdTestCase):
                 (ldap.MOD_REPLACE, 'mail', [b'Foo_Bar@example.org']),
             ],
         )
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
         # rename username of source entry
@@ -203,7 +200,7 @@ class TestUDMDirectoryConnector(SlapdTestCase):
             newsuperior='ou=dept-2,o=source',
             delold=1,
         )
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
         # rename name of source group entry
@@ -213,7 +210,7 @@ class TestUDMDirectoryConnector(SlapdTestCase):
             newsuperior='ou=dept-2,o=source',
             delold=1,
         )
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
         self.assertEqual(delete_count, 0)
         self.assertEqual(error_count, 0)
         udm_res = self.connector._udm.request(UDMMethod.GET, UDMModel.GROUP, params=dict(filter='(cn=group-odd-1-foo)'))
@@ -222,23 +219,23 @@ class TestUDMDirectoryConnector(SlapdTestCase):
         self.assertEqual(udm_json['_embedded']['udm:object'][0]['properties']['name'], 'group-odd-1-foo')
         # delete source entry
         self._ldap_conn.delete_s('uid=user-1-foo,ou=dept-2,o=source')
-        src_results_count, delete_count, error_count = self.connector()
-        self.assertEqual(src_results_count, 14)
+        source_results_count, delete_count, error_count = self.connector()
+        self.assertEqual(source_results_count, 14)
         self.assertEqual(delete_count, 1)
         self.assertEqual(error_count, 0)
 
     def test002_sync_jpeg_photo(self):
         # Get UniventionObjectIdentifier
-        src_users = dict(
+        source_users = dict(
             self.connector.source_search(
-                self.connector._cfg.src.user_base,
-                self.connector._cfg.src.user_scope,
-                self.connector._cfg.src.user_filter,
-                self.connector._cfg.src.user_attrs,
-                self.connector._cfg.src.user_range_attrs,
+                self.connector._config.src.user_base,
+                self.connector._config.src.user_scope,
+                self.connector._config.src.user_filter,
+                self.connector._config.src.user_attrs,
+                self.connector._config.src.user_range_attrs,
             )
         )
-        user_univention_uuid = src_users['uid=user-2,ou=dept-1,o=source']['entryUUID'][0].decode()
+        user_univention_uuid = source_users['uid=user-2,ou=dept-1,o=source']['entryUUID'][0].decode()
 
         # Create user with jpeg photo set
         user_properties = {
@@ -255,11 +252,11 @@ class TestUDMDirectoryConnector(SlapdTestCase):
         self.connector._udm.add(
             UDMModel.USER,
             user_properties,
-            f'{self.connector._cfg.udm.user_ou},{self.connector._udm.base_position}',
+            f'{self.connector._config.udm.user_ou},{self.connector._udm.base_position}',
         )
 
         # Synchronize LDIF with same user but with no jpegPhoto set
-        src_results_count, delete_count, error_count = self.connector()
+        source_results_count, delete_count, error_count = self.connector()
 
         self.assertEqual(error_count, 0)
 

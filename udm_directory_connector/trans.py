@@ -16,8 +16,8 @@ class MemberRefsTransformer(Transformer):
     """
 
     __slots__ = (
-        '_user_pkey',
-        '_group_pkey',
+        '_user_primary_key',
+        '_group_primary_key',
         '_users',
         '_groups',
         '_id2dn_users',
@@ -32,22 +32,22 @@ class MemberRefsTransformer(Transformer):
 
     def __init__(
             self,
-            user_pkey, user_trans, users, id2dn_users,
-            group_pkey, group_trans, groups, id2dn_groups,
+            user_primary_key, user_trans, users, id2dn_users,
+            group_primary_key, group_trans, groups, id2dn_groups,
         ):
-        self._user_pkey = user_pkey
+        self._user_primary_key = user_primary_key
         self._user_trans = user_trans
         self._users = users
         self._id2dn_users = id2dn_users
-        self._user_srckey_attr = user_trans._rename_attrs[user_pkey]
+        self._user_srckey_attr = user_trans._rename_attrs[user_primary_key]
         logging.debug('_user_srckey_attr = %r', self._user_srckey_attr)
         self._user_sanitizer = user_trans._sanitizer.get(self._user_srckey_attr, [lambda x: x])[0]
         logging.debug('_user_sanitizer = %r', self._user_sanitizer)
-        self._group_pkey = group_pkey
+        self._group_primary_key = group_primary_key
         self._group_trans = group_trans
         self._groups = groups
         self._id2dn_groups = id2dn_groups
-        self._group_srckey_attr = group_trans._rename_attrs[group_pkey]
+        self._group_srckey_attr = group_trans._rename_attrs[group_primary_key]
         logging.debug('_group_srckey_attr = %r', self._group_srckey_attr)
         self._group_sanitizer = group_trans._sanitizer.get(self._group_srckey_attr, [lambda x: x])[0]
         logging.debug('_group_sanitizer = %r', self._group_sanitizer)
@@ -57,25 +57,25 @@ class MemberRefsTransformer(Transformer):
         record['nestedGroup'] = []
         for member in members:
             if member in self._groups:
-                pkey = None
+                primary_key = None
                 try:
-                    src_val = self._group_sanitizer(self._groups[member][self._group_srckey_attr][0])
-                    pkey = src_val.decode('utf-8')
+                    source_val = self._group_sanitizer(self._groups[member][self._group_srckey_attr][0])
+                    primary_key = source_val.decode('utf-8')
                     record['nestedGroup'].append(
-                      self._id2dn_groups[pkey].encode('utf-8')
+                      self._id2dn_groups[primary_key].encode('utf-8')
                     )
                 except KeyError as err:
-                    logging.warning('Error mapping %s - %s: %r', member, pkey, err)
+                    logging.warning('Error mapping %s - %s: %r', member, primary_key, err)
         record['users'] = []
         for member in members:
             if member in self._users:
-                pkey = None
+                primary_key = None
                 try:
-                    src_val = self._user_sanitizer(self._users[member][self._user_srckey_attr][0])
-                    pkey = src_val.decode('utf-8')
+                    source_val = self._user_sanitizer(self._users[member][self._user_srckey_attr][0])
+                    primary_key = source_val.decode('utf-8')
                     record['users'].append(
-                      self._id2dn_users[pkey].encode('utf-8')
+                      self._id2dn_users[primary_key].encode('utf-8')
                     )
                 except KeyError as err:
-                    logging.warning('Error mapping %s - %s: %r', member, pkey, err)
+                    logging.warning('Error mapping %s - %s: %r', member, primary_key, err)
         return record

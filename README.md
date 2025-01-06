@@ -52,6 +52,13 @@ support encrypted connections via transport layer security (TLS).
 
 See also: [BSI TR-02102 Kryptographische Verfahren: Empfehlungen und Schlüssellängen](https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html)
 
+## Run it in docker compose
+
+Copy the example configuration and customize it to fit your environment.
+`cp ./config/ad-domain-config.yaml.example ./config/ad-domain-config.yaml`
+Then start the Directory importer using docker compose:
+`docker compose up --build`
+
 ## Installation
 
 ### Dependencies
@@ -169,13 +176,13 @@ At the top hierarchy level there are these config dictionaries:
     Timeout in seconds to wait for UDM results (default 1800 secs).
   * user_ou: (mandatory) 
     Name of the OU used as target container for user entries.
-  * user_pkey_property: (optional) 
+  * user_primary_key_property: (optional) 
     UDM property to use for storing the remote primary key for users.
   * user_properties: (optional)
     List of user property names the connector writes to.
   * group_ou: (mandatory) 
     Name of the OU used as target container for group entries.
-  * group_pkey_property: (optional) 
+  * group_primary_key_property: (optional) 
     UDM property to use for storing the remote primary key for groups.
   * group_properties: (optional)
     List of group property names the connector writes to.
@@ -271,6 +278,50 @@ Some metrics could be extracted from log messages with tools like
 _mtail_, _promtail_ or similar.
 
 ## Running tests
+
+### Manual testing
+
+Deploy the dependencies:
+1. Deploy an Active Directory server
+  https://jenkins2022.knut.univention.de/job/UCS-5.2/job/UCS-5.2-0/view/Personal%20environments/job/UcsW2k19ADEnvironment/
+	The Joined UCS machine is redundant, but it's good enough until we figure out a better solution as part of the e2e test automation.
+	This server is started inside the Univention VPN and thus the directory connector needs to also be started inside the VPN.
+	Both Docker compose locall aswell as the gitlab pipelines fulfill this requirement.
+2. Deploy Nubus for Kubernetes. Many possibilities, ums_stack pipeline, helmfile, helm... It needs to be reachable by the directory connector
+	N4K does not need to be inside the VPN. The directory connector can also be configured to talk to a public or local IP.
+3. Configure the Active Directory and UDM REST API connection and authorization parameters in the config.yaml file.
+
+Executing the directory-connector inside a docker container using docker compose:
+`docker compose up --build`
+
+Alternatively run it locally:
+Install shared objects for ldap python library to your system
+- `uv sync -p /usr/bin/python3.10` (use system python to get shared objects)
+- `uv run udm-directory-connector config/ad-domain-config.yaml.example`
+
+### Running the integration tests in docker compose
+
+The integration tests require a UDM REST API and an openldap server
+to act as the Nubus destination
+and a local slapd and related slaptest infrastructure
+to act as the source directory.
+This environment can be automatically set up
+with the `docker-compose-test.yaml` file.
+
+To run them, just execute the following commands:
+
+```bash
+# Start the test dependencies
+docker compose down -v && docker compose up --pull always udm-rest-api ldap-server
+
+# Create the example.org maildomain
+./maildomain.sh
+
+# Run the integration tests
+docker compose run --build test .venv/bin/python3 -m pytest
+```
+
+### Running the integration tests locally (not recommended)
 
 For running the tests you need:
 

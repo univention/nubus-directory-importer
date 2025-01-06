@@ -51,8 +51,8 @@ DevicePolicy=closed
 PrivateIPC=yes
 RemoveIPC=yes
 MemoryDenyWriteExecute=yes
-SystemCallLog=@clock @cpu-emulation @debug @keyring @module @mount @raw-io @reboot @swap @obsolete @resources @pkey @timer fork splice
-SystemCallFilter=~ @clock @cpu-emulation @debug @keyring @module @mount @raw-io @reboot @swap @obsolete @resources @pkey @timer fork splice
+SystemCallLog=@clock @cpu-emulation @debug @keyring @module @mount @raw-io @reboot @swap @obsolete @resources @primary_key @timer fork splice
+SystemCallFilter=~ @clock @cpu-emulation @debug @keyring @module @mount @raw-io @reboot @swap @obsolete @resources @primary_key @timer fork splice
 
 [Install]
 WantedBy=multi-user.target

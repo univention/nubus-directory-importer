@@ -5,7 +5,6 @@ udm_directory_connector.connector - the connector
 
 import logging
 import time
-import copy
 
 import ldap
 from ldap.ldapobject import ReconnectLDAPObject
@@ -13,8 +12,8 @@ from ldap.controls.pagedresults import SimplePagedResultsControl
 
 from junkaptor.trans import TransformerSeq
 
-from .cfg import ConnectorConfig
-from .udm import UDMMethod, UDMModel, UDMClient
+from .config import ConnectorConfig
+from .udm import UDMEntry, UDMMethod, UDMModel, UDMClient
 from .trans import MemberRefsTransformer
 from . import gen_password
 
@@ -25,36 +24,36 @@ class Connector:
     """
 
     __slots__ = (
-        '_cfg',
+        '_config',
         '_error_count',
         '_ldap_conn',
-        '_src_results_count',
+        '_source_results_count',
         '_udm',
         'user_single_val_attrs',
         'group_single_val_attrs',
     )
 
-    _cfg: ConnectorConfig
+    _config: ConnectorConfig
     _error_count: int
     _ldap_conn: ReconnectLDAPObject
-    _src_results_count: int
+    _source_results_count: int
     _udm: UDMClient
 
     def __init__(
             self,
-            cfg: ConnectorConfig,
+            config: ConnectorConfig,
         ):
-        self._cfg = cfg
+        self._config = config
         self._udm = UDMClient(
-            self._cfg.udm.uri,
-            self._cfg.udm.user,
-            self._cfg.udm.password,
-            self._cfg.udm.user_ou,
-            self._cfg.udm.group_ou,
-            self._cfg.udm.ca_cert,
-            self._cfg.udm.skip_writes,
-            connect_timeout = self._cfg.udm.connect_timeout,
-            read_timeout = self._cfg.udm.read_timeout,
+            self._config.udm.uri,
+            self._config.udm.user,
+            self._config.udm.password,
+            self._config.udm.user_ou,
+            self._config.udm.group_ou,
+            self._config.udm.ca_cert,
+            self._config.udm.skip_writes,
+            connect_timeout = self._config.udm.connect_timeout,
+            read_timeout = self._config.udm.read_timeout,
         )
         # cache var for source LDAP connection opened later
         self._ldap_conn = None
@@ -66,22 +65,22 @@ class Connector:
         initially opens connection and binds if necessary
         """
         if self._ldap_conn is None:
-            new_conn_uri = self._cfg.src.ldap_uri.initializeUrl()
+            new_conn_uri = self._config.src.ldap_uri.initializeUrl()
             new_conn = ReconnectLDAPObject(
                 new_conn_uri,
-                trace_level=self._cfg.src.trace_level,
+                trace_level=self._config.src.trace_level,
             )
-            new_conn.timeout = self._cfg.src.timeout
-            new_conn.network_timeout = self._cfg.src.timeout
+            new_conn.timeout = self._config.src.timeout
+            new_conn.network_timeout = self._config.src.timeout
             new_conn.set_option(ldap.OPT_REFERRALS, 0)
-            new_conn.set_option(ldap.OPT_X_TLS_CACERTFILE, self._cfg.src.ca_cert)
+            new_conn.set_option(ldap.OPT_X_TLS_CACERTFILE, self._config.src.ca_cert)
             new_conn.set_option(ldap.OPT_X_TLS_NEWCTX, 0)
-            new_conn.simple_bind_s(self._cfg.src.bind_dn, self._cfg.src.bind_pw)
+            new_conn.simple_bind_s(self._config.src.bind_dn, self._config.src.bind_pw)
             try:
                 wai = new_conn.whoami_s()
             except ldap.PROTOCOL_ERROR:
-                if self._cfg.src.bind_dn:
-                    wai = self._cfg.src.bind_dn
+                if self._config.src.bind_dn:
+                    wai = self._config.src.bind_dn
                 else:
                     raise
             self._ldap_conn = new_conn
@@ -108,8 +107,8 @@ class Connector:
         # reconnecting after longer silent period on LDAP connection
         ldap_conn.whoami_s()
         # start searching with simple paged results control
-        page_size = self._cfg.src.search_pagesize
-        ignore_dn_regex = self._cfg.src.ignore_dn_regex
+        page_size = self._config.src.search_pagesize
+        ignore_dn_regex = self._config.src.ignore_dn_regex
         paged_search = (page_size > 0)
         search_ctrls = []
         if paged_search > 0:
@@ -201,20 +200,20 @@ class Connector:
     def log_summary(
             self,
             sync_start_time: float,
-            src_results_count: int,
+            source_results_count: int,
             delete_count: int,
             error_count: int,
         ):
         logging.info(
             'Finished sync of %d entries from source %s in %0.2f secs',
-            src_results_count,
-            self._cfg.src.ldap_uri,
+            source_results_count,
+            self._config.src.ldap_uri,
             time.time()-sync_start_time,
         )
         if error_count:
             logging.error(
                 '%d errors when processing source entries from %s',
-                error_count, self._cfg.src.ldap_uri,
+                error_count, self._config.src.ldap_uri,
             )
         if delete_count:
             logging.info('Removed %d obsolete target entries', delete_count)
@@ -231,23 +230,24 @@ class Connector:
                         method.value, model.value, status, count,
                     )
 
-    def delete_old_entries(self, model, old_users, id2dn):
+    def delete_old_entries(self, model, old_users: dict[str, UDMEntry], id2dn):
         """
         delete entries which do not exists in source anymore
         """
         ctr = 0
-        for old_pkey in old_users:
-            if old_pkey not in id2dn:
-                try:
-                    udm_res = self._udm.delete(
-                        model,
-                        old_users[old_pkey][0],
-                    )
-                except Exception as err:
-                    logging.warning('Error removing target %s entry %s: %s', model.value, old_pkey, err)
-                else:
-                    ctr += 1
-                    logging.info('Removed target %s entry %s', model.value, old_pkey)
+        for old_primary_key in old_users:
+            if old_primary_key in id2dn:
+                continue
+            try:
+                udm_response = self._udm.delete(
+                    model,
+                    old_users[old_primary_key].dn,
+                )
+            except Exception as err:
+                logging.warning('Error removing target %s entry %s: %s', model.value, old_primary_key, err)
+            else:
+                ctr += 1
+                logging.info('Removed target %s entry %s', model.value, old_primary_key)
         return ctr
 
     def _prep_updates(self, model, props_list, new_props, old_props) -> dict:
@@ -277,66 +277,74 @@ class Connector:
                 update_props[key] = new_prop
         return update_props
 
-    def _target_entries(self):
+    # TODO: What does existing target entries mean?
+    def _get_existing_udm_objects(self) -> tuple[dict[str, UDMEntry], dict[str, UDMEntry]]:
         """
         returns 2-tuple of dict instances containing existing target entries
         """
         users = self._udm.list(
             UDMModel.USER,
-            self._cfg.udm.user_pkey_property,
-            position=f'{self._cfg.udm.user_ou},{self._udm.base_position}',
-            properties=self._cfg.udm.user_properties,
+            self._config.udm.user_primary_key_property,
+            position=f'{self._config.udm.user_ou},{self._udm.base_position}',
+            properties=self._config.udm.user_properties,
         )
         groups = self._udm.list(
             UDMModel.GROUP,
-            self._cfg.udm.group_pkey_property,
-            position=f'{self._cfg.udm.group_ou},{self._udm.base_position}',
-            #properties=self._cfg.udm.group_properties,
+            self._config.udm.group_primary_key_property,
+            position=f'{self._config.udm.group_ou},{self._udm.base_position}',
+            #properties=self._config.udm.group_properties,
         )
         return users, groups
 
+            # model=UDMModel.USER,
+            # position=f'{self._config.udm.user_ou},{self._udm.base_position}',
+            # source=source_users,
+            # primary_key=self._config.udm.user_primary_key_property,
+            # properties=self._config.udm.user_properties,
+            # trans=self._config.src.user_trans,
+            # old_entries=old_users,
     def sync_entries(
-            self,
-            model,
-            position,
-            source,
-            pkey,
-            properties,
-            trans,
-            old_entries,
-        ):
+        self,
+        model: UDMModel,
+        position: str,
+        source,
+        primary_key,
+        properties,
+        trans,
+        old_entries: dict[str, UDMEntry],
+    ):
         new_id2dn = {}
-        src_results_count = error_count = 0
-        for src_dn, src_entry in source.items():
-            src_results_count += 1
-            logging.debug('src_dn = %r', src_dn)
-            logging.debug('src_entry = %r', src_entry)
+        source_results_count = error_count = 0
+        for source_dn, source_entry in source.items():
+            source_results_count += 1
+            logging.debug('source_dn = %r', source_dn)
+            logging.debug('source_entry = %r', source_entry)
             try:
-                target_props = self._udm.prep_properties(model, trans(src_entry))
+                target_props = self._udm.prep_properties(model, trans(source_entry))
             except Exception as err:
                 logging.error(
-                    'Error transforming to target properties, src_entry = %r : %s',
-                    src_entry,
+                    'Error transforming to target properties, source_entry = %r : %s',
+                    source_entry,
                     err,
                     exc_info=__debug__,
                 )
                 error_count += 1
                 continue
             logging.debug('target_props = %r', target_props)
-            target_pkey = target_props[pkey]
+            target_primary_key = target_props[primary_key]
             try:
-                if target_pkey in old_entries:
+                if target_primary_key in old_entries:
                     update_props = self._prep_updates(
                         model,
                         properties,
                         target_props,
-                        old_entries[target_pkey][1],
+                        old_entries[target_primary_key].properties,
                     )
                     # TODO: move user properties update logic to user model
                     # if model == UDMModel.USER and 'mailPrimaryAddress' in update_props.keys():
                     #     del update_props['mailPrimaryAddress']
-                    target_dn = old_entries[target_pkey][0]
-                    new_id2dn[target_pkey] = target_dn
+                    target_dn = old_entries[target_primary_key].dn
+                    new_id2dn[target_primary_key] = target_dn
                     if not update_props:
                         # skip processing current entry
                         continue
@@ -350,7 +358,7 @@ class Connector:
                           'Modified %s entry %s with primary key %r: %s',
                         model.value,
                         target_dn,
-                        target_pkey,
+                        target_primary_key,
                         ', '.join(update_props.keys()),
                     )
                 else:
@@ -371,18 +379,18 @@ class Connector:
                         target_dn = f'uid={target_props["username"]},{position}'
                     elif model == UDMModel.GROUP:
                         target_dn = f'cn={target_props["name"]},{position}'
-                    new_id2dn[target_pkey] = target_dn
+                    new_id2dn[target_primary_key] = target_dn
                     logging.info(
                         'Added %s entry %s with primary key %r',
                         model.value,
                         target_dn,
-                        target_pkey,
+                        target_primary_key,
                     )
             except Exception as err:
                 logging.error(
                     'UDMError adding/modifying %s from %s: %s',
                     target_props,
-                    src_dn,
+                    source_dn,
                     err,
                     exc_info = __debug__,
                 )
@@ -390,7 +398,7 @@ class Connector:
         #logging.debug('new_id2dn = %r', new_id2dn)
         # remove obsolete entries not found in source
         delete_count = self.delete_old_entries(model, old_entries, new_id2dn)
-        return src_results_count, error_count, delete_count, new_id2dn
+        return source_results_count, error_count, delete_count, new_id2dn
         # end of .sync_entries()
 
     def __call__(self):
@@ -398,85 +406,83 @@ class Connector:
         run the sync process one time
         """
         sync_start_time = time.time()
-        old_users, old_groups = self._target_entries()
-        #logging.debug('old_users = %r', old_users)
-        #logging.debug('old_groups = %r', old_groups)
+        old_users, old_groups = self._get_existing_udm_objects()
         logging.info(
             'Found %d existing entries: %d users / %d groups',
             len(old_users)+len(old_groups), len(old_users), len(old_groups),
         )
 
-        src_count_all = delete_count_all = error_count_all = 0
+        source_count_all = delete_count_all = error_count_all = 0
 
         id2dn_users = {
-            pkey: dat[0]
-            for pkey, dat in old_users.items()
+            user.source_primary_key: user.dn
+            for user in old_users.values()
         }
-        src_users = dict(
+        source_users = dict(
             self.source_search(
-                self._cfg.src.user_base,
-                self._cfg.src.user_scope,
-                self._cfg.src.user_filter,
-                self._cfg.src.user_attrs,
-                self._cfg.src.user_range_attrs,
+                self._config.src.user_base,
+                self._config.src.user_scope,
+                self._config.src.user_filter,
+                self._config.src.user_attrs,
+                self._config.src.user_range_attrs,
             )
         )
-        src_count, error_count, delete_count, id2dn = self.sync_entries(
-            UDMModel.USER,
-            f'{self._cfg.udm.user_ou},{self._udm.base_position}',
-            src_users,
-            self._cfg.udm.user_pkey_property,
-            self._cfg.udm.user_properties,
-            self._cfg.src.user_trans,
-            old_users,
+        source_count, error_count, delete_count, id2dn = self.sync_entries(
+            model=UDMModel.USER,
+            position=f'{self._config.udm.user_ou},{self._udm.base_position}',
+            source=source_users,
+            primary_key=self._config.udm.user_primary_key_property,
+            properties=self._config.udm.user_properties,
+            trans=self._config.src.user_trans,
+            old_entries=old_users,
         )
-        src_count_all += src_count
+        source_count_all += source_count
         delete_count_all += delete_count
         error_count_all += error_count
         id2dn_users.update(id2dn)
         logging.debug('id2dn_users = %r', id2dn_users)
 
         id2dn_groups = {
-            pkey: dat[0]
-            for pkey, dat in old_groups.items()
+            group.source_primary_key: group.dn
+            for group in old_groups.values()
         }
         logging.debug('id2dn_groups = %r', id2dn_groups)
-        src_groups = dict(
+        source_groups = dict(
             self.source_search(
-                self._cfg.src.group_base,
-                self._cfg.src.group_scope,
-                self._cfg.src.group_filter,
-                self._cfg.src.group_attrs,
-                self._cfg.src.group_range_attrs,
+                self._config.src.group_base,
+                self._config.src.group_scope,
+                self._config.src.group_filter,
+                self._config.src.group_attrs,
+                self._config.src.group_range_attrs,
             )
         )
-        src_count, error_count, delete_count, _ = self.sync_entries(
+        source_count, error_count, delete_count, _ = self.sync_entries(
             UDMModel.GROUP,
-            f'{self._cfg.udm.group_ou},{self._udm.base_position}',
-            src_groups,
-            self._cfg.udm.group_pkey_property,
-            self._cfg.udm.group_properties,
+            f'{self._config.udm.group_ou},{self._udm.base_position}',
+            source_groups,
+            self._config.udm.group_primary_key_property,
+            self._config.udm.group_properties,
             TransformerSeq((
-                self._cfg.src.group_trans,
+                self._config.src.group_trans,
                 MemberRefsTransformer(
-                    self._cfg.udm.user_pkey_property,
-                    self._cfg.src.user_trans,
-                    src_users,
-                    id2dn_users,
-                    self._cfg.udm.group_pkey_property,
-                    self._cfg.src.group_trans,
-                    src_groups,
-                    id2dn_groups,
+                    user_primary_key=self._config.udm.user_primary_key_property,
+                    user_trans=self._config.src.user_trans,
+                    users=source_users,
+                    id2dn_users=id2dn_users,
+                    group_primary_key=self._config.udm.group_primary_key_property,
+                    group_trans=self._config.src.group_trans,
+                    groups=source_groups,
+                    id2dn_groups=id2dn_groups,
                 ),
             )),
             old_groups,
         )
-        src_count_all += src_count
+        source_count_all += source_count
         delete_count_all += delete_count
         error_count_all += error_count
 
         # finally log summary messages
-        self.log_summary(sync_start_time, src_count_all, delete_count_all, error_count_all)
+        self.log_summary(sync_start_time, source_count_all, delete_count_all, error_count_all)
 
         # return counters as result mainly for automated tests
-        return (src_count_all, delete_count_all, error_count_all)
+        return (source_count_all, delete_count_all, error_count_all)
