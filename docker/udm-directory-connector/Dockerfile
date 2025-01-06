@@ -5,7 +5,7 @@ ARG UCS_BASE_IMAGE_TAG=0.14.0-build-2024-12-12
 ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/components/ucs-base-image/ucs-base-520
 
 FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS build
-SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
 
 COPY --from=ghcr.io/astral-sh/uv:0.5.8@sha256:0bc959d4cc56e42cbd9aa9b63374d84481ee96c32803eea30bd7f16fd99d8d56 /uv /usr/local/bin/uv
 
@@ -41,7 +41,7 @@ RUN --mount=type=cache,target=/root/.cache \
 
 ##########################################################################
 FROM build AS test
-SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
 WORKDIR /app
 
 RUN --mount=type=cache,target=/root/.cache \
@@ -49,15 +49,9 @@ RUN --mount=type=cache,target=/root/.cache \
 
 COPY tests tests
 
-# RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
-#     && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
-#
-#
-
-
 ##########################################################################
 FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS final
-SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
 
 RUN \
 groupadd -r app && \
