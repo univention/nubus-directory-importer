@@ -62,14 +62,10 @@ useradd -r -d /app -g app -N app
 
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
       python3 \
+      libldap-2.5-0 \
     && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 COPY --from=build --chown=app:app /app /app
-COPY --from=build --chown=app:app \
-  /usr/lib/x86_64-linux-gnu/libldap-2.5.so.0 \
-  /usr/lib/x86_64-linux-gnu/liblber-2.5.so.0 \
-  /usr/lib/x86_64-linux-gnu/libsasl2.so.2 \
-  /usr/lib/x86_64-linux-gnu/
 
 USER app
 WORKDIR /app
