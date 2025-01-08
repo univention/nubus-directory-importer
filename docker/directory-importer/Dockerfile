@@ -1,4 +1,7 @@
 # syntax=docker/dockerfile:1.9
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+
 # Inspired by: https://hynek.me/articles/docker-uv/
 
 ARG UCS_BASE_IMAGE_TAG=0.14.0-build-2024-12-12

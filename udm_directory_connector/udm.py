@@ -1,4 +1,6 @@
-# -*- coding: ascii -*-
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+
 """
 udm_directory_connector.udm - simple UDM API wrapper
 
@@ -8,50 +10,48 @@ Limited functionality - not meant for general use!!!
 import copy
 import enum
 import logging
-import socket
 import urllib.parse
 from collections import defaultdict
 from typing import (
-    Any,
     Dict,
     List,
     NamedTuple,
     Optional,
-    Union,
     Sequence,
-    Tuple,
+    Union,
 )
 
 import ldap
 import requests
-
 from junkaptor import decode_list
 
 from .__about__ import __version__
 
-JSON_MIME_TYPE = 'application/json'
+JSON_MIME_TYPE = "application/json"
 
-HTTP_USER_AGENT = f'{__name__}/{__version__}'
+HTTP_USER_AGENT = f"{__name__}/{__version__}"
 
 
 class UDMModel(enum.Enum):
     """
     UDM model strings used
     """
-    USER: str = 'users/user'
-    GROUP: str = 'groups/group'
-    OU: str = 'container/ou'
+
+    USER: str = "users/user"
+    GROUP: str = "groups/group"
+    OU: str = "container/ou"
 
 
 class UDMMethod(enum.Enum):
     """
     UDM model strings used
     """
-    GET = 'GET'
-    POST = 'POST'
-    PUT = 'PUT'
-    DELETE = 'DELETE'
-    OPTIONS = 'OPTIONS'
+
+    GET = "GET"
+    POST = "POST"
+    PUT = "PUT"
+    DELETE = "DELETE"
+    OPTIONS = "OPTIONS"
 
 
 UDM_WRITE_METHODS = {
@@ -71,21 +71,22 @@ class UDMClient:
     """
     Class for connecting to UDM REST API with proper authentication
     """
-    encoding = 'utf-8'
+
+    encoding = "utf-8"
     __slots__ = (
-        '_base_position',
-        '_ca_cert',
-        '_model',
-        '_password',
-        '_url',
-        '_username',
-        '_tmpl',
-        '_req_count',
-        '_skip_writes',
-        '_status_count',
-        '_connect_timeout',
-        '_read_timeout',
-        '_req_method',
+        "_base_position",
+        "_ca_cert",
+        "_model",
+        "_password",
+        "_url",
+        "_username",
+        "_tmpl",
+        "_req_count",
+        "_skip_writes",
+        "_status_count",
+        "_connect_timeout",
+        "_read_timeout",
+        "_req_method",
     )
     # instance attrs types
     _ca_cert: Optional[str]
@@ -108,7 +109,7 @@ class UDMClient:
         connect_timeout: Optional[int] = 10,
         read_timeout: Optional[int] = 1800,
     ):
-        if url[-1] == '/':
+        if url[-1] == "/":
             url = url[:-1]
         self._url = url
         self._username = username
@@ -131,11 +132,11 @@ class UDMClient:
         ou_dn = ldap.dn.str2dn(ou)
         for i in reversed(range(len(ou_dn))):
             current_ou = ou_dn[i]
-            current_position = ou_dn[i+1:]
+            current_position = ou_dn[i + 1 :]
             self.create_ou(
                 name=current_ou[0][1],
-                description='Created by udm connector',
-                position=ldap.dn.dn2str(current_position + base_position)
+                description="Created by udm connector",
+                position=ldap.dn.dn2str(current_position + base_position),
             )
 
     @staticmethod
@@ -152,18 +153,20 @@ class UDMClient:
         return ctr
 
     def _url_path(self, model: UDMModel, entry_dn: str):
-        return '/'.join((
-            self._url,
-            model.value,
-            urllib.parse.quote(entry_dn.encode(self.encoding)).replace('/', '%2F'),
-        ))
+        return "/".join(
+            (
+                self._url,
+                model.value,
+                urllib.parse.quote(entry_dn.encode(self.encoding)).replace("/", "%2F"),
+            ),
+        )
 
     def prep_properties(
-            self,
-            model: UDMModel,
-            attrs: Dict[str, List[bytes]],
-            encoding: str ='utf-8',
-        ):
+        self,
+        model: UDMModel,
+        attrs: Dict[str, List[bytes]],
+        encoding: str = "utf-8",
+    ):
         """
         Convert a dict typically retrieved from LDAP with bytes value lists
         to a property dict for UDM
@@ -174,89 +177,97 @@ class UDMClient:
             new_vals = decode_list(vals, encoding=encoding)
             if key in single_val_attrs:
                 if len(new_vals) > 1:
-                    raise ValueError(f'Expected only one value, got {len(new_vals):d}')
+                    raise ValueError(f"Expected only one value, got {len(new_vals):d}")
                 res[key] = new_vals[0]
             else:
                 res[key] = new_vals
         return res
 
     def request(
-            self,
-            method: UDMMethod,
-            model: UDMModel,
-            entry_dn: str = '',
-            headers : Dict = None,
-            params : Dict = None,
-            data : Dict = None,
-            read_timeout: Optional[int] = None,
-        ):
+        self,
+        method: UDMMethod,
+        model: UDMModel,
+        entry_dn: str = "",
+        headers: Dict = None,
+        params: Dict = None,
+        data: Dict = None,
+        read_timeout: Optional[int] = None,
+    ):
         """
         Send a API request
         """
         req_url = self._url_path(model, entry_dn)
         self._req_count[method.value][model.value] += 1
         req_headers = {
-            'Accept': JSON_MIME_TYPE,
-            'Content-Type': JSON_MIME_TYPE,
-            'User-Agent': HTTP_USER_AGENT,
+            "Accept": JSON_MIME_TYPE,
+            "Content-Type": JSON_MIME_TYPE,
+            "User-Agent": HTTP_USER_AGENT,
         }
         req_headers.update(headers or {})
         if self._skip_writes and method in UDM_WRITE_METHODS:
             logging.debug(
-                'Skipping %s request to UDM at %r, headers %r',
-                method.value, req_url, req_headers
+                "Skipping %s request to UDM at %r, headers %r",
+                method.value,
+                req_url,
+                req_headers,
             )
             return
         logging.debug(
-            'Sending %s request to UDM at %r, headers %r',
-            method.value, req_url, req_headers
-        )
-
-        resp = requests.request(
+            "Sending %s request to UDM at %r, headers %r",
             method.value,
             req_url,
-            auth = (self._username, self._password),
-            headers = req_headers,
-            params = params,
-            json = data,
-            verify = self._ca_cert,
-            allow_redirects = False,
-            timeout = (
+            req_headers,
+        )
+
+        response = requests.request(
+            method.value,
+            req_url,
+            auth=(self._username, self._password),
+            headers=req_headers,
+            params=params,
+            json=data,
+            verify=self._ca_cert,
+            allow_redirects=False,
+            timeout=(
                 self._connect_timeout,
-                read_timeout
-                if read_timeout is not None
-                else self._read_timeout
+                read_timeout if read_timeout is not None else self._read_timeout,
             ),
         )
-        self._status_count[method.value][model.value][resp.status_code] += 1
+        self._status_count[method.value][model.value][response.status_code] += 1
         logging.debug(
-            'Received %s response status %d from UDM at %r: %r Etag = %r',
-            method.value, resp.status_code, req_url, resp.reason, resp.headers.get('Etag')
+            "Received %s response status %d from UDM at %r: %r Etag = %r",
+            method.value,
+            response.status_code,
+            req_url,
+            response.reason,
+            response.headers.get("Etag"),
         )
-        #if resp.content:
+        # if resp.content:
         #    logging.debug('%s response JSON data: %s', method.value, resp.json())
-        if 300 <= resp.status_code < 400:
+        if 300 <= response.status_code < 400:
             raise requests.HTTPError(
-                f'{resp.status_code:d} Redirect: {resp.reason} for url: {resp.url} => {resp.content}',
-                response=resp,
+                f"{response.status_code:d} Redirect: {response.reason} for url: {response.url} => {response.content}",
+                response=response,
             )
-        if resp.status_code in {400, 422}:
-            if resp.content:
+        if response.status_code in {400, 422}:
+            response_error_message = ""
+            if response.content:
                 try:
-                    resp_json = resp.json()
-                    resp_err_msg = resp_json['error']['message']
-                except:
-                    resp_err_msg = repr(resp.content)
+                    response_json = response.json()
+                    response_error_message = response_json["error"]["message"]
+                except Exception:
+                    response_error_message = repr(response.content)
             raise requests.HTTPError(
-                f"{resp.status_code:d} Client error: {resp.reason} for {method.value} request to URL {resp.url} with data {data!r} => {resp_err_msg}",
-                response=resp,
+                f"{response.status_code:d} Client error: {response.reason} "
+                f"for {method.value} request to URL {response.url} with data {data!r} => {response_error_message}",
+                response=response,
             )
-        resp.raise_for_status()
-        return resp
+        response.raise_for_status()
+        return response
 
     def get_template(self, model: UDMModel):
         if self._tmpl[model] is None:
-            self._tmpl[model] = self.request(UDMMethod.GET, model, 'add').json()
+            self._tmpl[model] = self.request(UDMMethod.GET, model, "add").json()
         return self._tmpl[model]
 
     @property
@@ -266,32 +277,32 @@ class UDMClient:
         """
         if self._base_position is None:
             # FIX ME! There is probably a better way to find the configured suffix.
-            self._base_position = self.get_template(UDMModel.OU)['position']
+            self._base_position = self.get_template(UDMModel.OU)["position"]
         return self._base_position
 
     def single_valued_props(self, model: UDMModel) -> List[str]:
         tmpl = self.get_template(model)
         return [
             name
-            for name in tmpl['properties']
-            if not isinstance(tmpl['properties'][name], list)
+            for name in tmpl["properties"]
+            if not isinstance(tmpl["properties"][name], list)
         ]
 
     def add(
-            self,
-            model: UDMModel,
-            properties,
-            position: Optional[str] = None,
-        ):
+        self,
+        model: UDMModel,
+        properties,
+        position: Optional[str] = None,
+    ):
         """
         add entry with certain model and given id attribute in sub-tree
         specified by position
         """
         # prepare data for new entry
         new = copy.deepcopy(self.get_template(model))
-        new['properties'].update(properties)
+        new["properties"].update(properties)
         if position is not None:
-            new['position'] = position
+            new["position"] = position
         # add the new entry
         return self.request(
             UDMMethod.POST,
@@ -300,74 +311,74 @@ class UDMClient:
         )
 
     def create_ou(
-            self,
-            name: str,
-            description: str,
-            position: Optional[str] = None,
-        ):
+        self,
+        name: str,
+        description: str,
+        position: Optional[str] = None,
+    ):
         """
         Create an OU entry (sync target container) if needed
         """
         if not self.is_object_in_udm(UDMModel.OU, name, position):
-            logging.debug('Error searching existing OU by name %s', name)
+            logging.debug("Error searching existing OU by name %s", name)
             self.add(
                 UDMModel.OU,
                 dict(
-                    name = name,
-                    description = description,
+                    name=name,
+                    description=description,
                 ),
-                position = position,
+                position=position,
             )
 
     def modify(
-            self,
-            model: UDMModel,
-            entry_dn: str,
-            properties,
-            position: Optional[str] = None,
-        ):
+        self,
+        model: UDMModel,
+        entry_dn: str,
+        properties,
+        position: Optional[str] = None,
+    ):
         """
         add entry with certain model and given id attribute in sub-tree
         specified by position
         """
         udm_res = self.request(UDMMethod.GET, model, entry_dn)
-        etag = udm_res.headers['Etag']
+        etag = udm_res.headers["Etag"]
         mod = udm_res.json()
         # prepare data for new entry
-        mod['properties'].update(properties)
+        mod["properties"].update(properties)
         if position is not None:
-            mod['position'] = position
+            mod["position"] = position
         # add the mod entry
         return self.request(
             UDMMethod.PUT,
             model,
             entry_dn,
             headers={
-                'If-Match': etag,
+                "If-Match": etag,
             },
             data=mod,
         )
 
     def delete(
-            self,
-            model: UDMModel,
-            entry_dn: str,
-        ):
+        self,
+        model: UDMModel,
+        entry_dn: str,
+    ):
         """
         delete entry referenced by model and its LDAP-DN
         """
         return self.request(UDMMethod.DELETE, model, entry_dn)
 
     def query(
-            self,
-            model: UDMModel,
-            prop_attr: str,
-            prop_val: str,
-            properties: Optional[Sequence[str]] = None,
-        ):
-        params = {f'query[{prop_attr}]': prop_val}
+        self,
+        model: UDMModel,
+        prop_attr: str,
+        prop_val: str,
+        properties: Optional[Sequence[str]] = None,
+    ):
+        params = {f"query[{prop_attr}]": prop_val}
         if properties is not None:
-            params['properties'] = properties
+            params["properties"] = properties
         return self.request(UDMMethod.GET, model, params=params)
 
     def is_object_in_udm(self, model: UDMModel, name: str, position: str) -> bool:
@@ -375,11 +386,11 @@ class UDMClient:
         Check if object with provided name and position already exists
         TODO: this should be done with search on level scope, not subtree
         """
-        udm_response = self.query(model, 'name', name).json()
+        udm_response = self.query(model, "name", name).json()
 
-        if udm_response['results'] != 0:
-            udm_objects = udm_response['_embedded']['udm:object']
-            if position in [udm_object['position'] for udm_object in udm_objects]:
+        if udm_response["results"] != 0:
+            udm_objects = udm_response["_embedded"]["udm:object"]
+            if position in [udm_object["position"] for udm_object in udm_objects]:
                 return True
 
         return False
@@ -388,16 +399,16 @@ class UDMClient:
         """
         Query the OU entry by name
         """
-        udm_json = self.query(model, 'name', name, properties=['name']).json()
-        if name != udm_json['_embedded']['udm:object'][0]['properties']['name']:
+        udm_json = self.query(model, "name", name, properties=["name"]).json()
+        if name != udm_json["_embedded"]["udm:object"][0]["properties"]["name"]:
             raise ValueError(
-                'Expected {} entry to have name == {!r}, but got {!r}'.format(
+                "Expected {} entry to have name == {!r}, but got {!r}".format(
                     model,
                     name,
-                    udm_json['_embedded']['udm:object'][0]['properties']['name'],
+                    udm_json["_embedded"]["udm:object"][0]["properties"]["name"],
                 ),
             )
-        return udm_json['_embedded']['udm:object'][0]['dn']
+        return udm_json["_embedded"]["udm:object"][0]["dn"]
 
     def user_query(self, prop_attr: str, prop_val: str):
         """
@@ -412,37 +423,36 @@ class UDMClient:
         return self.query(UDMModel.GROUP, prop_attr, prop_val)
 
     def list(
-            self,
-            model: UDMModel,
-            primary_key: str,
-            qfilter: Optional[str] = None,
-            position: Optional[str] = None,
-            properties: Optional[Sequence[str]] = None,
-        ) -> dict[str, UDMEntry]:
+        self,
+        model: UDMModel,
+        primary_key: str,
+        qfilter: Optional[str] = None,
+        position: Optional[str] = None,
+        properties: Optional[Sequence[str]] = None,
+    ) -> dict[str, UDMEntry]:
         """
         returns dict {source_primary_key: UDMEntry} of existing target entries
         """
         params = dict()
         if qfilter is not None:
-            params['filter'] = qfilter
+            params["filter"] = qfilter
         if position is not None:
-            params['position'] = position
+            params["position"] = position
         if properties is not None:
-            params['properties'] = properties
+            params["properties"] = properties
         udm_res = self.request(UDMMethod.GET, model, params=params)
         udm_json = udm_res.json()
 
-        if udm_json['results'] == 0:
+        if udm_json["results"] == 0:
             return {}
 
         entries = {
-            result['properties'][primary_key]: UDMEntry(
-                source_primary_key=result['properties'][primary_key],
-                dn=result['dn'],
-                properties=result['properties']
+            result["properties"][primary_key]: UDMEntry(
+                source_primary_key=result["properties"][primary_key],
+                dn=result["dn"],
+                properties=result["properties"],
             )
-
-            for result in udm_json['_embedded']['udm:object']
+            for result in udm_json["_embedded"]["udm:object"]
         }
-        logging.debug('Received %d %s results from UDM', len(entries), model)
+        logging.debug("Received %d %s results from UDM", len(entries), model)
         return entries

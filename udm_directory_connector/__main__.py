@@ -1,20 +1,21 @@
-# -*- coding: ascii -*-
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+
 """
 udm_directory_connector.__main__ - CLI entry point
 """
 
-import sys
-import os
 import logging
 import logging.config
+import os
+import sys
 
 from .__about__ import __version__
-
 from .config import ConnectorConfig
 from .connector import Connector
 
 # log format to use when logging to console
-CONSOLE_LOG_FORMAT = '%(asctime)s %(name)s[%(process)d] %(levelname)s %(message)s'
+CONSOLE_LOG_FORMAT = "%(asctime)s %(name)s[%(process)d] %(levelname)s %(message)s"
 
 
 def init_logger():
@@ -22,14 +23,14 @@ def init_logger():
     Configure either a global StreamHandler logger (stderr)
     """
     logger = logging.getLogger()
-    if 'LOG_CONF' in os.environ:
-        logging.config.fileConfig(os.environ['LOG_CONF'])
+    if "LOG_CONF" in os.environ:
+        logging.config.fileConfig(os.environ["LOG_CONF"])
     else:
         log_handler = logging.StreamHandler()
         log_handler.setFormatter(logging.Formatter(fmt=CONSOLE_LOG_FORMAT))
         logger.addHandler(log_handler)
-    if 'LOG_LEVEL' in os.environ:
-        logger.setLevel(os.environ['LOG_LEVEL'].upper())
+    if "LOG_LEVEL" in os.environ:
+        logger.setLevel(os.environ["LOG_LEVEL"].upper())
 
 
 def cli():
@@ -45,12 +46,21 @@ def cli():
         config_filename = sys.argv[1]
     except IndexError:
         try:
-            config_filename = os.environ['AD2UCS_CFG']
+            config_filename = os.environ["AD2UCS_CFG"]
         except KeyError:
-            logging.error('Starting %s %s failed, no config given', proc_name, __version__)
+            logging.error(
+                "Starting %s %s failed, no config given",
+                proc_name,
+                __version__,
+            )
             sys.exit(1)
 
-    logging.info('Starting %s %s, using config %s', proc_name, __version__, config_filename)
+    logging.info(
+        "Starting %s %s, using config %s",
+        proc_name,
+        __version__,
+        config_filename,
+    )
 
     # read and parse source and target configuration
     config = ConnectorConfig(config_filename)
@@ -60,5 +70,5 @@ def cli():
     # end of cli()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()
