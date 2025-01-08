@@ -7,7 +7,7 @@ services:
   test:
     build:
       context: ../
-      dockerfile: ./docker/udm-directory-connector/Dockerfile
+      dockerfile: docker/directory-importer/Dockerfile
       target: test
     volumes:
       - ./:/app/tests:ro

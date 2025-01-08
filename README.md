@@ -311,8 +311,9 @@ with the `docker-compose-test.yaml` file.
 To run them, just execute the following commands:
 
 ```bash
+cd tests
 # Start the test dependencies
-docker compose down -v && docker compose up --pull always udm-rest-api ldap-server
+docker compose down -v && docker compose up --pull always udm-rest-api ldap-server -d
 
 # Create the example.org maildomain
 ./maildomain.sh

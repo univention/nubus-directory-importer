@@ -7,7 +7,7 @@ services:
   udm-directory-connector:
     build:
       context: .
-      dockerfile: docker/udm-directory-connector/Dockerfile
+      dockerfile: docker/directory-importer/Dockerfile
       target: final
     volumes:
       - ./config/ad-domain-config.yaml:/etc/udm-directory-connector/config.yaml:ro
