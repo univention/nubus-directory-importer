@@ -7,6 +7,7 @@ services:
       context: .
       dockerfile: docker/directory-importer/Dockerfile
       target: final
+    image: artifacts.software-univention.de/nubus-dev/images/directory-importer:${IMAGE_TAG:-latest}
     volumes:
       - ./config/ad-domain-config.yaml:/etc/udm-directory-connector/config.yaml:ro
     environment:
