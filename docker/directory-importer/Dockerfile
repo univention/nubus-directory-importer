@@ -1,4 +1,7 @@
 # syntax=docker/dockerfile:1.9
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+
 # Inspired by: https://hynek.me/articles/docker-uv/
 
 ARG UCS_BASE_IMAGE_TAG=0.14.0-build-2024-12-12
@@ -34,7 +37,7 @@ RUN --mount=type=cache,target=/root/.cache \
     --no-dev \
     --no-install-project
 
-COPY udm_directory_connector udm_directory_connector
+COPY univention univention
 RUN --mount=type=cache,target=/root/.cache \
   uv sync --locked --no-dev --no-editable
 
@@ -59,21 +62,17 @@ useradd -r -d /app -g app -N app
 
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
       python3 \
+      libldap-2.5-0 \
     && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 COPY --from=build --chown=app:app /app /app
-COPY --from=build --chown=app:app \
-  /usr/lib/x86_64-linux-gnu/libldap-2.5.so.0 \
-  /usr/lib/x86_64-linux-gnu/liblber-2.5.so.0 \
-  /usr/lib/x86_64-linux-gnu/libsasl2.so.2 \
-  /usr/lib/x86_64-linux-gnu/
 
 USER app
 WORKDIR /app
 
-CMD [".venv/bin/python3.11", "-m", "udm_directory_connector"]
+CMD [".venv/bin/python3.11", "-m", "univention.directory_importer"]
 
 RUN \
   .venv/bin/python3.11 -V && \
   .venv/bin/python3.11 -m site && \
-  .venv/bin/python3.11 -c 'import udm_directory_connector'
+  .venv/bin/python3.11 -c 'import univention.directory_importer'

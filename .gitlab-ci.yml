@@ -1,0 +1,51 @@
+---
+
+# SPDX-FileCopyrightText: 2023-2024 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
+include:
+  - project: "univention/customers/dataport/upx/common-ci"
+    ref: "v1.36.1"
+    file:
+      - "defaults/stages.yaml"
+      - "defaults/nubus-workflow.yaml"
+      - "jobs/lint-pre-commit.yaml"
+      - "jobs/lint-commit-messages.yaml"
+      - "jobs/semantic-release-env.yaml"
+      - "jobs/container-build-external.yaml"
+      - "jobs/check-debian-updates.yaml"
+
+.build-matrix: &build-matrix
+  - IMAGE_NAME: "directory-importer"
+    KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
+    DOCKERFILE_PATH: "docker/directory-importer/Dockerfile"
+
+# Separate publish matrix to accomodate testrunner images
+# that should not be mirrored to artifacts.software-univention.de
+.publish-matrix: &publish-matrix
+  - IMAGE_NAME:
+      - "directory-importer"
+
+container-build:
+  parallel:
+    matrix: *build-matrix
+
+container-malware-scan:
+  parallel:
+    matrix: *publish-matrix
+
+push-image-external:
+  parallel:
+    matrix: *publish-matrix
+
+container-sign-external:
+  parallel:
+    matrix: *publish-matrix
+
+check-debian-updates:
+  parallel:
+    matrix: *build-matrix
+  variables:
+    TARGET_IMAGE: "${CI_REGISTRY_IMAGE}/${IMAGE_NAME}:latest"
+
+...

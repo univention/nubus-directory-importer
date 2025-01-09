@@ -1,0 +1,89 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2023 Univention GmbH
+
+---
+
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+repos:
+  - repo: "https://github.com/pre-commit/pre-commit-hooks"
+    rev: "v4.4.0"
+    hooks:
+      # "check for added large files"
+      - id: "check-added-large-files"
+      # "check for merge conflicts"
+      - id: "check-merge-conflict"
+      # "check yaml"
+      - id: "check-yaml"
+        args:
+          - "--allow-multiple-documents"
+        exclude: "^helm/.+/(templates|data-files)/|^udm/udm-data-loader/"
+      # "fix end of files"
+      - id: "end-of-file-fixer"
+        exclude: "^helm/.+/(README.md|.*.svg)"
+      # "fix python encoding pragma"
+      - id: "fix-encoding-pragma"
+        args:
+          - "--remove"
+      # "trim trailing whitespace"
+      - id: "trailing-whitespace"
+
+  - repo: "https://github.com/compilerla/conventional-pre-commit"
+    rev: "v2.1.1"
+    hooks:
+      - id: "conventional-pre-commit"
+        stages: ["commit-msg"]
+
+  # "Python linter"
+  - repo: "https://github.com/astral-sh/ruff-pre-commit"
+    rev: "v0.0.275"
+    hooks:
+      - id: "ruff"
+        args:
+          - "--fix"
+          - "--exit-non-zero-on-fix"
+          - "--extend-select"
+          - "COM"
+
+  # "Python formatter"
+  - repo: "https://github.com/psf/black"
+    rev: "23.3.0"
+    hooks:
+      - id: "black"
+
+  # This is a wrapper for shellcheck as long as
+  # shellcheck doesn't have it's own .pre-commit-hooks.yaml
+  # https://github.com/koalaman/shellcheck/pull/1032
+  - repo: "https://gitlab.com/univention/pre-commit-hooks/pre-commit-shell"
+    rev: "v1.0.6"
+    hooks:
+      # "Shell Syntax Check"
+      - id: "shell-lint"
+
+  # "docker-compose.yaml linter"
+  - repo: "https://gitlab.com/univention/pre-commit-hooks/docker-compose-check"
+    rev: "7702a8801a158b8595569dd29e2dd655d8a08310"
+    hooks:
+      # "Validate docker-compose files"
+      - id: "docker-compose-check"
+
+  # "Dockerfile linter"
+  - repo: "https://gitlab.com/univention/pre-commit-hooks/docker-pre-commit"
+    rev: "v2.0.0"
+    hooks:
+      # "Lint Dockerfiles"
+      - id: "hadolint-system"
+        args:
+          - --ignore
+          - DL3059
+          - --ignore
+          - DL3008
+
+  - repo: "https://git.knut.univention.de/univention/dist/pre-commit-hooks/addlicense"
+    rev: "v1.0.1"
+    hooks:
+      - id: "addlicense"
+        name: "Check or add license headers to files"
+
+...

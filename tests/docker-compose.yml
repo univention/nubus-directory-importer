@@ -1,10 +1,13 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+
 version: "3"
 
 services:
   test:
     build:
       context: ../
-      dockerfile: ./docker/udm-directory-connector/Dockerfile
+      dockerfile: docker/directory-importer/Dockerfile
       target: test
     volumes:
       - ./:/app/tests:ro

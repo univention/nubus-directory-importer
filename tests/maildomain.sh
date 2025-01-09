@@ -1,3 +1,7 @@
+#!/bin/bash
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+
 curl -X POST "http://localhost:9979/udm/mail/domain/" \
      -u "cn=admin:univention" \
      -H "accept: application/json" \

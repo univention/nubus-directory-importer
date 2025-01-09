@@ -1,7 +1,6 @@
-# -*- coding: ascii -*-
-"""
-Automatic tests module package udm_directory_connector
-"""
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2025 Univention GmbH
 
-from . import test_udm
-from . import test_connector
+"""
+Automatic tests module package univention.directory_importer
+"""

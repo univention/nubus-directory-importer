@@ -50,32 +50,32 @@ source:
         # function sequences to sanitize input values
         sanitizer:
             objectGUID:
-              - udm_directory_connector.sanitize:guid2uuid
+              - univention.directory_importer.sanitize:guid2uuid
             telephoneNumber:
-              - udm_directory_connector.sanitize:phone_sanitizer
+              - univention.directory_importer.sanitize:phone_sanitizer
             mobile:
-              - udm_directory_connector.sanitize:phone_sanitizer
+              - univention.directory_importer.sanitize:phone_sanitizer
             mobileTelephoneNumber:
-              - udm_directory_connector.sanitize:phone_sanitizer
+              - univention.directory_importer.sanitize:phone_sanitizer
             homePhone:
-              - udm_directory_connector.sanitize:phone_sanitizer
+              - univention.directory_importer.sanitize:phone_sanitizer
             homeTelephoneNumber:
-              - udm_directory_connector.sanitize:phone_sanitizer
+              - univention.directory_importer.sanitize:phone_sanitizer
             facsimileTelephoneNumber:
-              - udm_directory_connector.sanitize:phone_sanitizer
+              - univention.directory_importer.sanitize:phone_sanitizer
             fax:
-              - udm_directory_connector.sanitize:phone_sanitizer
+              - univention.directory_importer.sanitize:phone_sanitizer
             mail:
-              - udm_directory_connector.sanitize:mail_sanitizer
+              - univention.directory_importer.sanitize:mail_sanitizer
               - bytes.lower
             mailPrimaryAddress:
-              - udm_directory_connector.sanitize:mail_sanitizer
+              - univention.directory_importer.sanitize:mail_sanitizer
               - bytes.lower
             mailLocalAddress:
-              - udm_directory_connector.sanitize:mail_sanitizer
+              - univention.directory_importer.sanitize:mail_sanitizer
               - bytes.lower
             mailAlternativeAddress:
-              - udm_directory_connector.sanitize:mail_sanitizer
+              - univention.directory_importer.sanitize:mail_sanitizer
               - bytes.lower
         # attributes to be renamed (dict-key is UDM property name)
         rename_attrs:

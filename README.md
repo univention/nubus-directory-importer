@@ -21,7 +21,7 @@ not have to maintain any local state.
   * The connector always reads the full source and target data (users and groups)
     to calculate the required modifications in the target.
   * The connector does not store any local state.
-  * Only a single source is configured. If you want to sync from multiple 
+  * Only a single source is configured. If you want to sync from multiple
     sources simply run multiple instances with separate config files.
   * The OU structure of the AD source is ignored and all user and groups
     are written into a single dedicated target container (OU).
@@ -46,8 +46,8 @@ not have to maintain any local state.
 
 ### Encrypted connections with TLS
 
-Because this component sends clear-text passwords when connecting it is 
-required that all source and target systems are configured to properly 
+Because this component sends clear-text passwords when connecting it is
+required that all source and target systems are configured to properly
 support encrypted connections via transport layer security (TLS).
 
 See also: [BSI TR-02102 Kryptographische Verfahren: Empfehlungen und Schlüssellängen](https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html)
@@ -111,7 +111,7 @@ To provide stricter run-time settings with
 [Python's command-line arguments](https://docs.python.org/3/using/cmdline.html#command-line):
 
 ```
-/opt/udm-directory-connector/bin/python3 -W error -I -bb -m udm_directory_connector /etc/udm-directory-connector/config-ad.example.com.yml
+/opt/udm-directory-connector/bin/python3 -W error -I -bb -m univention.directory_importer /etc/udm-directory-connector/config-ad.example.com.yml
 ```
 
 ### Packaged executable
@@ -124,7 +124,7 @@ If installed from Debian/Ubuntu package:
 
 ### With systemd service units
 
-See example systemd service unit for a so-called one-shot service: 
+See example systemd service unit for a so-called one-shot service:
 [udm-directory-connector@.service](systemd/udm-directory-connector@.service)
 
 For running multiple synchronization processes on a single system
@@ -133,7 +133,7 @@ use systemd service instances and use
 referencing separate config files.
 
 For each sync process create a systemd timer unit triggering a service unit instance.
-See example systemd timer unit for triggering the one-short service: 
+See example systemd timer unit for triggering the one-short service:
 [udm-directory-connector.service](systemd/udm-directory-connector.timer)
 
 See relevant systemd man-pages:
@@ -151,117 +151,117 @@ See configuration example in source distribution directory [config/](config/).
 
 At the top hierarchy level there are these config dictionaries:
 
-  * udm: 
+  * udm:
     Parameters for configuring how to reach UDM and some more.
-  * source: 
-    Parameters for configuring how to connect to the LDAP source directory 
+  * source:
+    Parameters for configuring how to connect to the LDAP source directory
     and some data transformation rules.
 
 ### udm:
 
-  * uri: (mandatory) 
+  * uri: (mandatory)
     URI including base path for accessing UDM REST API
-  * user: (mandatory) 
+  * user: (mandatory)
     User's name used for authenticating to UDM
-  * password: (mandatory) 
+  * password: (mandatory)
     User's password used for authenticating to UDM
-  * ca_cert: (optional) 
-    Path name of the trusted CA certificate bundle file. 
+  * ca_cert: (optional)
+    Path name of the trusted CA certificate bundle file.
     Defaults to your platform-specific CA bundle file.
   * skip_writes: (optional)
     If `true` this skips write operations to UDM (default `false`).
-  * connect_timeout: (optional) 
+  * connect_timeout: (optional)
     Timeout in seconds to wait for connection to UDM (default 6.0 secs).
-  * read_timeout: (optional) 
+  * read_timeout: (optional)
     Timeout in seconds to wait for UDM results (default 1800 secs).
-  * user_ou: (mandatory) 
+  * user_ou: (mandatory)
     Name of the OU used as target container for user entries.
-  * user_primary_key_property: (optional) 
+  * user_primary_key_property: (optional)
     UDM property to use for storing the remote primary key for users.
   * user_properties: (optional)
     List of user property names the connector writes to.
-  * group_ou: (mandatory) 
+  * group_ou: (mandatory)
     Name of the OU used as target container for group entries.
-  * group_primary_key_property: (optional) 
+  * group_primary_key_property: (optional)
     UDM property to use for storing the remote primary key for groups.
   * group_properties: (optional)
     List of group property names the connector writes to.
 
 ### source:
 
-  * ldap_uri: (mandatory) 
-    LDAP URI of the source directory to connect to. 
-    Ideally you should configure an URI starting with `ldaps://` here to 
-    ensure LDAP over TLS is used right from the beginning. 
+  * ldap_uri: (mandatory)
+    LDAP URI of the source directory to connect to.
+    Ideally you should configure an URI starting with `ldaps://` here to
+    ensure LDAP over TLS is used right from the beginning.
     Note that the OpenLDAP client library (libldap) used by python-ldap
     implements a TLS hostname check strictly requring the hostname in
     the LDAP URI to match one of the DNS values of X.509v3 extension
     _subjectAltName_ in the source directory's TLS server certificate.
-  * bind_dn: (mandatory) 
+  * bind_dn: (mandatory)
     The bind DN to use authenticate to the source directory via LDAP simple bind operation.
-  * bind_pw: (mandatory) 
+  * bind_pw: (mandatory)
     The clear-text password to use with LDAP simple bind operation.
-  * ca_cert: (optional) 
-    Path name of the trusted CA certificate bundle file. 
+  * ca_cert: (optional)
+    Path name of the trusted CA certificate bundle file.
     Defaults to your platform-specific CA bundle file.
-  * timeout: (optional) 
+  * timeout: (optional)
     Timeout in seconds to wait for network (default 5 secs).
-  * search_pagesize: (optional) 
+  * search_pagesize: (optional)
     Page size to used when searching with _Simple Paged Results_ control.
-  * user_base: (mandatory) 
+  * user_base: (mandatory)
     search base used when searching user entries.
-  * user_scope: "sub" 
+  * user_scope: "sub"
     Search scope used when searching user entries.
     ("one" or "sub", default "sub").
-  * user_filter: (optional) 
+  * user_filter: (optional)
     LDAP filter used when searching user entries.
-  * user_attrs: (optional) 
+  * user_attrs: (optional)
     LDAP attributes to be requested while searching for users.
     Recommendation is to only list the attributes actually used in
     transformation/mapping later.
-  * user_range_attrs: (optional) 
+  * user_range_attrs: (optional)
     LDAP user attributes for which values are optionally retrieved by
     _Range Retrieval_ (for MS AD)
-  * user_trans: 
+  * user_trans:
     Data transformation configuration applied to user entries.
-  * group_base: (mandatory) 
+  * group_base: (mandatory)
     search base used when searching group entries.
-  * group_scope: "sub" 
+  * group_scope: "sub"
     Search scope used when searching group entries.
     ("one" or "sub", default "sub").
-  * group_filter: (optional) 
+  * group_filter: (optional)
     LDAP filter used when searching group entries.
-  * group_attrs: (optional) 
+  * group_attrs: (optional)
     LDAP attributes to be requested while searching for groups.
     Recommendation is to only list the attributes actually used in
     transformation/mapping later.
-  * group_range_attrs: (optional) 
+  * group_range_attrs: (optional)
     LDAP group attributes for which values are optionally retrieved by
     _Range Retrieval_ (for MS AD)
-  * group_trans: 
+  * group_trans:
     Data transformation configuration applied to group entries.
 
 ## Logging
 
 The connector writes log messages at different log level:
 
-  * DEBUG 
+  * DEBUG
     Very detailed messages only used for development and debugging.
     Do not use in production.
-  * INFO 
+  * INFO
     The normal log level used for production especially for logging
     all changes done to the target.
-  * WARN 
+  * WARN
     Messages indicating something went wrong to be investigated at a later time.
-  * ERROR 
+  * ERROR
     Messages indicating something went wrong to be investigated immediately.
 
 The following environment variables are used to influence logging before
 the connector reads its normal configuration file:
 
-  * LOG_LEVEL 
+  * LOG_LEVEL
     Minimum log level really written to logs (defaults to _INFO_)
-  * LOG_CONF 
+  * LOG_CONF
     Full path name of a Python logging configuration file.
     If not set all log messages are simply written to _stderr_ with a
     format including a time-stamp.
@@ -311,8 +311,9 @@ with the `docker-compose-test.yaml` file.
 To run them, just execute the following commands:
 
 ```bash
+cd tests
 # Start the test dependencies
-docker compose down -v && docker compose up --pull always udm-rest-api ldap-server
+docker compose down -v && docker compose up --pull always udm-rest-api ldap-server -d
 
 # Create the example.org maildomain
 ./maildomain.sh
