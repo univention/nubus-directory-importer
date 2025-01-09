@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-udm_directory_connector.connector - the connector
+univention.directory_importer.connector - the connector
 """
 
 import logging

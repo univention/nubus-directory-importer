@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-udm_directory_connector.config - parsing configuration
+univention.directory_importer.config - parsing configuration
 """
 
 import re
@@ -114,24 +114,26 @@ CFG_TRANSFORMER = Map(
         Optional(
             "sanitizer",
             default={
-                "objectGUID": ["udm_directory_connector.sanitize:guid2uuid"],
-                "telephoneNumber": ["udm_directory_connector.sanitize:phone_sanitizer"],
-                "mobile": ["udm_directory_connector.sanitize:phone_sanitizer"],
-                "mobileTelephoneNumber": [
-                    "udm_directory_connector.sanitize:phone_sanitizer",
+                "objectGUID": ["univention.directory_importer.sanitize:guid2uuid"],
+                "telephoneNumber": [
+                    "univention.directory_importer.sanitize:phone_sanitizer",
                 ],
-                "homePhone": ["udm_directory_connector.sanitize:phone_sanitizer"],
+                "mobile": ["univention.directory_importer.sanitize:phone_sanitizer"],
+                "mobileTelephoneNumber": [
+                    "univention.directory_importer.sanitize:phone_sanitizer",
+                ],
+                "homePhone": ["univention.directory_importer.sanitize:phone_sanitizer"],
                 "homeTelephoneNumber": [
-                    "udm_directory_connector.sanitize:phone_sanitizer",
+                    "univention.directory_importer.sanitize:phone_sanitizer",
                 ],
                 "facsimileTelephoneNumber": [
-                    "udm_directory_connector.sanitize:phone_sanitizer",
+                    "univention.directory_importer.sanitize:phone_sanitizer",
                 ],
-                "fax": ["udm_directory_connector.sanitize:phone_sanitizer"],
-                #'mail': ['udm_directory_connector.sanitize:mail_sanitizer'],
-                #'mailPrimaryAddress': ['udm_directory_connector.sanitize:mail_sanitizer'],
-                #'mailLocalAddress': ['udm_directory_connector.sanitize:mail_sanitizer'],
-                #'mailAlternativeAddress': ['udm_directory_connector.sanitize:mail_sanitizer'],
+                "fax": ["univention.directory_importer.sanitize:phone_sanitizer"],
+                #'mail': ['univention.directory_importer.sanitize:mail_sanitizer'],
+                #'mailPrimaryAddress': ['univention.directory_importer.sanitize:mail_sanitizer'],
+                #'mailLocalAddress': ['univention.directory_importer.sanitize:mail_sanitizer'],
+                #'mailAlternativeAddress': ['univention.directory_importer.sanitize:mail_sanitizer'],
             },
         ): MapPattern(Str(), Seq(Str())),
         Optional("fixed_attrs"): MapPattern(Str(), Seq(Str())),

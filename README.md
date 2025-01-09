@@ -111,7 +111,7 @@ To provide stricter run-time settings with
 [Python's command-line arguments](https://docs.python.org/3/using/cmdline.html#command-line):
 
 ```
-/opt/udm-directory-connector/bin/python3 -W error -I -bb -m udm_directory_connector /etc/udm-directory-connector/config-ad.example.com.yml
+/opt/udm-directory-connector/bin/python3 -W error -I -bb -m univention.directory_importer /etc/udm-directory-connector/config-ad.example.com.yml
 ```
 
 ### Packaged executable

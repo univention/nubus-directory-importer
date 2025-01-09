@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-Automatic tests for module udm_directory_connector.udm
+Automatic tests for module univention.directory_importer.udm
 """
 
 # from Python's standard lib
@@ -16,9 +16,9 @@ from http import HTTPStatus
 
 import ldap.dn
 
-from udm_directory_connector import gen_password, random_str
-from udm_directory_connector.config import ConnectorConfig
-from udm_directory_connector.udm import UDMClient, UDMMethod, UDMModel
+from univention.directory_importer import gen_password, random_str
+from univention.directory_importer.config import ConnectorConfig
+from univention.directory_importer.udm import UDMClient, UDMMethod, UDMModel
 
 CONNECTOR_CFG = ConnectorConfig("tests/data/connector.yml")
 

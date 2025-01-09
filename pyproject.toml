@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "udm-directory-connector"
+name = "directory-importer"
 version = "0.1.0"
-description = "UDM connector for LDAP source directories"
+description = "Enables a one way sync of user and group data from an LDAP source directory (Active Directory) to a Nubus deyployment"
 readme = "README.md"
 authors = [
   {name = "Univention GmbH", email = "packages@univention.de"},
@@ -31,14 +31,14 @@ dev = [
 
 [tool.hatch.build]
 include = [
-    "udm_directory_connector",
+    "univention.directory_importer",
 ]
 
 [project.urls]
 Homepage = "https://git.knut.univention.de:univention/nubus/udm-directory-connector"
 
 [project.scripts]
-udm-directory-connector = "udm_directory_connector.__main__:cli"
+udm-directory-connector = "univention.directory_importer.__main__:cli"
 
 [tool.tox]
 requires = ["tox>=4.0.0"]

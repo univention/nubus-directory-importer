@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-udm_directory_connector.__main__ - CLI entry point
+univention.directory_importer.__main__ - CLI entry point
 """
 
 import logging

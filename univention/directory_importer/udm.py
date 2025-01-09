@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-udm_directory_connector.udm - simple UDM API wrapper
+univention.directory_importer.udm - simple UDM API wrapper
 
 Limited functionality - not meant for general use!!!
 """

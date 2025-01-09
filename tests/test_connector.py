@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-Automatic tests for module udm_directory_connector.connector
+Automatic tests for module univention.directory_importer.connector
 
 Tests require OpenLDAP to be installed
 """
@@ -16,10 +16,10 @@ from ldap.ldapobject import ReconnectLDAPObject
 from ldapurl import LDAPUrl
 from slapdtest import SlapdObject, SlapdTestCase
 
-from udm_directory_connector import gen_password
-from udm_directory_connector.config import ConnectorConfig
-from udm_directory_connector.connector import Connector
-from udm_directory_connector.udm import UDMMethod, UDMModel
+from univention.directory_importer import gen_password
+from univention.directory_importer.config import ConnectorConfig
+from univention.directory_importer.connector import Connector
+from univention.directory_importer.udm import UDMMethod, UDMModel
 
 # a template string for generating simple slapd.d file
 SLAPD_CONF_TEMPLATE = r"""dn: cn=config

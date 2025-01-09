@@ -1,5 +1,5 @@
 """
-udm_directory_connector.__about__ - Meta information
+univention.directory_importer.__about__ - Meta information
 """
 
 import collections

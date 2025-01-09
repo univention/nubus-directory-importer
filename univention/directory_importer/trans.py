@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-udm_directory_connector.trans - customer Transformer classes
+univention.directory_importer.trans - customer Transformer classes
 """
 
 import logging

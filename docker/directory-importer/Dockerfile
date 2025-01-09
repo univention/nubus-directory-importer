@@ -37,7 +37,7 @@ RUN --mount=type=cache,target=/root/.cache \
     --no-dev \
     --no-install-project
 
-COPY udm_directory_connector udm_directory_connector
+COPY univention univention
 RUN --mount=type=cache,target=/root/.cache \
   uv sync --locked --no-dev --no-editable
 
@@ -70,9 +70,9 @@ COPY --from=build --chown=app:app /app /app
 USER app
 WORKDIR /app
 
-CMD [".venv/bin/python3.11", "-m", "udm_directory_connector"]
+CMD [".venv/bin/python3.11", "-m", "univention.directory_importer"]
 
 RUN \
   .venv/bin/python3.11 -V && \
   .venv/bin/python3.11 -m site && \
-  .venv/bin/python3.11 -c 'import udm_directory_connector'
+  .venv/bin/python3.11 -c 'import univention.directory_importer'

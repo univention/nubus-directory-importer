@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-udm_directory_connector module package
+univention.directory_importer module package
 """
 
 import secrets

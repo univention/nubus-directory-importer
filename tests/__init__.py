@@ -2,5 +2,5 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-Automatic tests module package udm_directory_connector
+Automatic tests module package univention.directory_importer
 """

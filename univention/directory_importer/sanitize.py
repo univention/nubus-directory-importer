@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 """
-udm_directory_connector.sanitize - low-level data sanitizer functions
+univention.directory_importer.sanitize - low-level data sanitizer functions
 """
 
 import uuid
