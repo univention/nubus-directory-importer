@@ -9,6 +9,7 @@ services:
       context: ../
       dockerfile: docker/directory-importer/Dockerfile
       target: test
+    image: gitregistry.knut.univention.de/univention/customers/dataport/upx/directory-importer/testrunner:${IMAGE_TAG:-latest}
     volumes:
       - ./:/app/tests:ro
 

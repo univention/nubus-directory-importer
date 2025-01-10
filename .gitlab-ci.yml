@@ -15,10 +15,19 @@ include:
       - "jobs/container-build-external.yaml"
       - "jobs/check-debian-updates.yaml"
 
+  - project: "univention/dist/docker-services"
+    ref: "master"
+    file:
+      - "dind.yml"
+
 .build-matrix: &build-matrix
   - IMAGE_NAME: "directory-importer"
     KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
     DOCKERFILE_PATH: "docker/directory-importer/Dockerfile"
+  - IMAGE_NAME: "testrunner"
+    KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
+    DOCKERFILE_PATH: "docker/directory-importer/Dockerfile"
+    KANIKO_ARGS: "--target=test"
 
 # Separate publish matrix to accomodate testrunner images
 # that should not be mirrored to artifacts.software-univention.de
@@ -47,5 +56,41 @@ check-debian-updates:
     matrix: *build-matrix
   variables:
     TARGET_IMAGE: "${CI_REGISTRY_IMAGE}/${IMAGE_NAME}:latest"
+
+integration-test-directory-importer:
+  stage: test
+  extends: .dind
+  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: "never"
+    - when: "on_success"
+  before_script:
+    - cd tests
+    # Allow that the Docker API version is negotiated between client and server
+    - unset DOCKER_API_VERSION
+    - export IMAGE_TAG=${RELEASE_VERSION}
+    - echo -e "\e[0Ksection_start:`date +%s`:docker_debug[collapsed=true]\r\e[0KDocker version details"
+    - echo $IMAGE_TAG
+    - docker version
+    - echo -e "\e[0Ksection_end:`date +%s`:docker_debug\r\e[0K"
+    - echo -e "\e[0Ksection_start:`date +%s`:docker_compose_config[collapsed=true]\r\e[0KDocker Compose configuration"
+    - docker compose config test
+    - echo -e "\e[0Ksection_end:`date +%s`:docker_compose_config\r\e[0K"
+    - docker compose up --no-build --quiet-pull --wait --wait-timeout 60 ldap-server udm-rest-api
+  script:
+    # - sleep 10
+    - docker compose run --quiet-pull test .venv/bin/python3 -m pytest
+  after_script:
+    - docker logs ldap-server >& ldap-server.log
+    - docker logs udm-rest-api >& udm-rest-api.log
+    - docker compose down --volumes
+  artifacts:
+    paths:
+      - ldap-server.log
+      - udm-rest-api.log
+    expire_in: "1 day"
+    when: "always"
+    expose_as: "docker compose server logs"
 
 ...
