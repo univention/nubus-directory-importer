@@ -8,8 +8,14 @@ services:
       dockerfile: docker/directory-importer/Dockerfile
       target: final
     image: artifacts.software-univention.de/nubus-dev/images/directory-importer:${IMAGE_TAG:-latest}
+    read_only: true
+    user: "1000:1000"
+    cap_drop:
+      - ALL
     volumes:
       - ./config/ad-domain-config.yaml:/etc/udm-directory-connector/config.yaml:ro
+      #- ./config/ca_nubus.crt:/etc/ssl/certs/ca-certificates-nubus.crt:ro
+      #- ./config/ca_ad.crt:/etc/ssl/certs/ca-certificates-ad.crt:ro
     environment:
       LOG_LEVEL: "INFO"
       AD2UCS_CFG: "/etc/udm-directory-connector/config.yaml"

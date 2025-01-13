@@ -59,6 +59,18 @@ Copy the example configuration and customize it to fit your environment.
 Then start the Directory importer using docker compose:
 `docker compose up --build`
 
+### TLS Support
+
+You can use TLS to connect to AD and Nubus, for doing that you should mount the
+`ca-certificates.crt` of those services in the respective place:
+ - Nubus: `/etc/ssl/certs/ca-certificates-nubus.crt`
+ - AD: `/etc/ssl/certs/ca-certificates-ad.crt`
+
+After that, you have to uncomment the respective lines in the configuration file.
+
+Also, you will have to adapt your `ad-domain-config.yaml` if you mount the certificates
+in a different place.
+
 ## Installation
 
 ### Dependencies
