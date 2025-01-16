@@ -1,0 +1,68 @@
+# Configuration for syncing from AD domain controller to UDM
+
+udm:
+    uri: "https://portal.NAMESPACE.univention.dev/univention/udm/"  # changeme
+    user: "Administrator"
+    password: "PASS"  # changeme
+    skip_writes: false
+    user_ou: "ou=ad-sync"
+    user_primary_key_property: "univentionObjectIdentifier"
+    group_ou: "ou=ad-sync"
+    group_primary_key_property: "univentionObjectIdentifier"
+
+source:
+    ldap_uri: "ldap://WIN-N8V5GD1V1VL.ad.test"  # changeme
+    bind_dn: "cn=Administrator,cn=users,DC=ad,DC=test"
+    bind_pw: "PASS"  # changeme
+    timeout: 300
+    search_pagesize: 500
+
+    # Search parameters for groups
+    group_base: "CN=Users,DC=ad,DC=test"
+    group_scope: "sub"
+    group_filter: "(&(objectClass=group)(!(|(isCriticalSystemObject=TRUE)(cn=Domain *)(cn=* Controllers))))"
+
+    # Search parameters for users
+    user_base: "CN=Users,DC=ad,DC=test"
+    user_scope: "sub"
+    user_filter: "(&(objectClass=user)(sAMAccountType=805306368)(cn=user*))"
+
+    # User attributes based on script
+    user_attrs:
+        - "objectGUID"
+        - "cn"
+        - "sn"
+        - "mail"
+        - "thumbnailPhoto"
+
+    user_trans:
+        # Sanitizers for input values
+        sanitizer:
+            objectGUID:
+              - univention.directory_importer.sanitize:guid2uuid
+            mail:
+              - univention.directory_importer.sanitize:mail_sanitizer
+              - bytes.lower
+
+        # Attribute renaming
+        rename_attrs:
+            univentionObjectIdentifier: "objectGUID"
+            username: "cn"
+            firstname: "name"
+            lastname: "sn"
+            "e-mail": "mail"
+
+        # Attributes to remove
+        remove_attrs:
+            - "objectGUID"
+            - "objectSid"
+            - "thumbnailPhoto"
+
+    group_trans:
+        rename_attrs:
+            univentionObjectIdentifier: "objectGUID"
+            name: "cn"
+            users: "member"
+        remove_attrs:
+            - "objectGUID"
+            - "objectSid"
