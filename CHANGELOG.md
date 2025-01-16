@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.0.1...v0.0.2) (2025-01-16)
+
+
+### Bug Fixes
+
+* BSI compliance ([d9f9b17](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/d9f9b1712cff9c17f82118e8e40ceb29ceeb1187))
+
 ## 0.0.1 (2025-01-09)
 
 
