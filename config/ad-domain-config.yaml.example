@@ -6,7 +6,7 @@ udm:
     uri: "https://nubus-kubernetes-deployment.test/univention/udm/"
     user: "Administrator"
     password: "supersecret"
-    # ca_cert: "/etc/ssl/certs/ca-certificates.crt"
+    # ca_cert: "/etc/ssl/certs/ca-certificates-nubus.crt"
     skip_writes: false
     user_ou: "ou=ad-domain-example"
     user_primary_key_property: "univentionObjectIdentifier"
@@ -17,7 +17,7 @@ source:
     ldap_uri: "ldap://my_active_directory_server.test:1234" # "ldaps://"
     bind_dn: "CN=readonly-ad-machine-user,CN=Users,DC=ad,DC=test"
     bind_pw: "supersecret"
-    # ca_cert: "/etc/ssl/certs/ca-certificates.crt"
+    # ca_cert: "/etc/ssl/certs/ca-certificates-ad.crt"
     timeout: 5
     search_pagesize: 500
     # search paramaters for groups
