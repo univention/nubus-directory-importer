@@ -40,39 +40,6 @@ Homepage = "https://git.knut.univention.de:univention/nubus/udm-directory-connec
 [project.scripts]
 udm-directory-connector = "univention.directory_importer.__main__:cli"
 
-[tool.tox]
-requires = ["tox>=4.0.0"]
-env_list = ["py311"]
-
-[tool.tox.testenv.py311]
-description = "Run unittests under Python 3.11"
-commands = [
-    "python -W error -I -bb -m unittest"
-]
-setenv = [
-    "LDAPNOINIT=1",
-    "LDAPTLS_CRLCHECK=none",
-    "SASL_CONF_PATH=tests/sasl2/slapd.conf",
-    "COVERAGE_FILE={envdir}/.coverage"
-]
-passenv = [
-    "BIN",
-    "SCHEMA",
-    "SLAPD",
-    "LDAP0_TRACE_LEVEL",
-    "SLAPD_LOGLEVEL",
-    "START_SLEEP",
-    "LDAP0_LOG_LEVEL",
-    "TMP",
-    "LIBLDAP0_DEFINES",
-    "LIBLDAP0_EXTRA_COMPILE_ARGS",
-    "LIBLDAP0_EXTRA_LINK_ARGS",
-    "LIBLDAP0_EXTRA_OBJECTS",
-    "LIBLDAP0_INCLUDE_DIRS",
-    "LIBLDAP0_LIBRARY_DIRS",
-    "LIBLDAP0_LIBS"
-]
-
 [tool.ruff]
 target-version = "py311"
 line-length = 120

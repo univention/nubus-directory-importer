@@ -277,13 +277,6 @@ in very strict mode (for details see
 You might have to set environment vars _BIN_ and _SBIN_ to indicate
 where the OpenLDAP command-line tools and the _slapd_ executable can be found.
 
-It is highly recommended to run the tests in a virtual env
-dynamically created by [tox](https://tox.wiki/en/latest/):
-
-```
-BIN=/opt/openldap-ms/bin:/opt/openldap-ms/sbin SBIN=/opt/openldap-ms/sbin tox
-```
-
 ## Test cases
 
 Note that modifying source entries and verifying the change in UCS depends
