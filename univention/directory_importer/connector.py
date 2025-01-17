@@ -9,9 +9,10 @@ import logging
 import time
 
 import ldap
-from junkaptor.trans import TransformerSeq
 from ldap.controls.pagedresults import SimplePagedResultsControl
 from ldap.ldapobject import ReconnectLDAPObject
+
+from junkaptor.trans import TransformerSeq
 
 from . import gen_password
 from .config import ConnectorConfig

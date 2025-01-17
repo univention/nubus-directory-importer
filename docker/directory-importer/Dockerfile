@@ -31,6 +31,7 @@ ENV UV_LINK_MODE=copy \
 
 WORKDIR /app
 COPY pyproject.toml uv.lock README.md ./
+COPY junkaptor junkaptor
 RUN --mount=type=cache,target=/root/.cache \
   uv sync \
     --locked \

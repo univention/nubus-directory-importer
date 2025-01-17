@@ -23,6 +23,7 @@ from typing import (
 
 import ldap
 import requests
+
 from junkaptor import decode_list
 
 from .__about__ import __version__

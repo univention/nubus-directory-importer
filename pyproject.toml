@@ -17,11 +17,11 @@ keywords = []
 requires-python = ">=3.10"
 dependencies = [
     "certifi",
-    "junkaptor>=0.0.5",
+    "junkaptor",
     "phonenumbers",
     "python-ldap",
     "requests",
-    "strictyaml"
+    "strictyaml",
 ]
 
 [dependency-groups]
@@ -48,3 +48,6 @@ extend-select = ["I"]  # activate isort
 
 [tool.ruff.isort]
 known-first-party = ["slapdsock", "univention"]
+
+[tool.uv.sources]
+junkaptor = { path = "junkaptor" }

@@ -10,7 +10,6 @@ from typing import Sequence
 
 import certifi
 import strictyaml
-from junkaptor.trans import Transformer
 
 # from python-ldap package
 from ldapurl import SEARCH_SCOPE, LDAPUrl
@@ -25,6 +24,8 @@ from strictyaml import (
     Seq,
     Str,
 )
+
+from junkaptor.trans import Transformer
 
 __all__ = ("ConnectorConfig",)
 
