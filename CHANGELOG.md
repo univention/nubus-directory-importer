@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.0.2...v0.1.0) (2025-01-20)
+
+
+### Features
+
+* standard nubus logging setup ([f75d623](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/f75d62306d0a8e5785b2c194817fcd4f0a3cb636))
+
 ## [0.0.2](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.0.1...v0.0.2) (2025-01-16)
 
 
