@@ -18,19 +18,15 @@ from .connector import Connector
 CONSOLE_LOG_FORMAT = "%(asctime)s %(name)s[%(process)d] %(levelname)s %(message)s"
 
 
-def init_logger():
-    """
-    Configure either a global StreamHandler logger (stderr)
-    """
+def setup_logging(log_level: str = "INFO") -> None:
+    logging.captureWarnings(True)
+    formatter = logging.Formatter(fmt=CONSOLE_LOG_FORMAT)
+    handler = logging.StreamHandler()
+    handler.setLevel(log_level)
+    handler.setFormatter(formatter)
     logger = logging.getLogger()
-    if "LOG_CONF" in os.environ:
-        logging.config.fileConfig(os.environ["LOG_CONF"])
-    else:
-        log_handler = logging.StreamHandler()
-        log_handler.setFormatter(logging.Formatter(fmt=CONSOLE_LOG_FORMAT))
-        logger.addHandler(log_handler)
-    if "LOG_LEVEL" in os.environ:
-        logger.setLevel(os.environ["LOG_LEVEL"].upper())
+    logger.setLevel(log_level)
+    logger.addHandler(handler)
 
 
 def cli():
@@ -39,7 +35,15 @@ def cli():
     """
 
     proc_name = os.path.basename(os.path.split(sys.argv[0])[-2])
-    init_logger()
+
+    # Set up logging with environment variable or default
+    log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
+
+    # Use LOG_CONF if specified, otherwise use setup_logging
+    if "LOG_CONF" in os.environ:
+        logging.config.fileConfig(os.environ["LOG_CONF"])
+    else:
+        setup_logging(log_level)
 
     # determine path name of configuration file
     try:
