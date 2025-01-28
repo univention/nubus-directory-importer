@@ -25,17 +25,6 @@ app = typer.Typer(
 )
 
 
-def setup_logging(log_level: str = "INFO") -> None:
-    logging.captureWarnings(True)
-    formatter = logging.Formatter(fmt=CONSOLE_LOG_FORMAT)
-    handler = logging.StreamHandler()
-    handler.setLevel(log_level)
-    handler.setFormatter(formatter)
-    logger = logging.getLogger()
-    logger.setLevel(log_level)
-    logger.addHandler(handler)
-
-
 @app.command()
 def cli(
     config_filename: Annotated[
@@ -87,6 +76,17 @@ def cli(
     config = ConnectorConfig(config_filename)
     connector = Connector(config)
     connector()
+
+
+def setup_logging(log_level: str = "INFO") -> None:
+    logging.captureWarnings(True)
+    formatter = logging.Formatter(fmt=CONSOLE_LOG_FORMAT)
+    handler = logging.StreamHandler()
+    handler.setLevel(log_level)
+    handler.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.setLevel(log_level)
+    logger.addHandler(handler)
 
 
 if __name__ == "__main__":
