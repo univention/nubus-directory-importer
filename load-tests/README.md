@@ -8,7 +8,7 @@ This document provides setup instructions for testing the Directory Importer wit
 
 ### Prerequisites
 
-* An AD machine generated with https://jenkins2022.knut.univention.de/job/UCS-5.0/job/UCS-5.0-9/view/Personal%20environments/job/UcsW2k19ADEnvironment/ The AD connection details can be found in the UCS primary with `ucr dump | grep connector/ad`. You need to add the windows hostename to `/etc/hosts`.
+* An AD machine generated with https://jenkins2022.knut.univention.de/job/UCS-5.0/job/UCS-5.0-9/view/Personal%20environments/job/UcsW2k19ADEnvironment/ The AD connection details can be found in the UCS primary with `ucr dump | grep connector/ad`. You need to add the windows hostname to `/etc/hosts`.
 * A Nubus for k8s deployment and it's UDM credentials.
 
 
