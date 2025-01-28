@@ -32,6 +32,14 @@ def stub_config(tmp_path):
     return stub_config
 
 
+@pytest.fixture
+def stub_log_conf(tmp_path):
+    """Created a stub log configuration file."""
+    stub_log_conf = tmp_path / "log-conf.yaml"
+    stub_log_conf.write_text("")
+    return stub_log_conf
+
+
 def test_pass_config_filename_as_cli_option(mock_connector_config, stub_config):
     result = runner.invoke(app, [str(stub_config)])
     assert result.exit_code == 0
@@ -87,9 +95,7 @@ def test_logs_by_default_on_level_info(mocker):
     setup_logging_mock.assert_called_once_with("INFO")
 
 
-def test_set_log_conf_via_cli(mocker, tmp_path):
-    stub_log_conf = tmp_path / "log-conf.yaml"
-    stub_log_conf.write_text("")
+def test_set_log_conf_via_cli(mocker, stub_log_conf):
     mocker.patch.dict("os.environ")
     os.environ.pop("LOG_CONF", None)
     file_config_mock = mocker.patch("logging.config.fileConfig")
@@ -100,9 +106,7 @@ def test_set_log_conf_via_cli(mocker, tmp_path):
     file_config_mock.assert_called_once_with(stub_log_conf)
 
 
-def test_set_log_conf_via_environment(mocker, tmp_path):
-    stub_log_conf = tmp_path / "log-conf.yaml"
-    stub_log_conf.write_text("")
+def test_set_log_conf_via_environment(mocker, stub_log_conf):
     mocker.patch.dict("os.environ")
     os.environ["LOG_CONF"] = str(stub_log_conf)
     file_config_mock = mocker.patch("logging.config.fileConfig")
@@ -113,9 +117,7 @@ def test_set_log_conf_via_environment(mocker, tmp_path):
     file_config_mock.assert_called_once_with(stub_log_conf)
 
 
-def test_log_conf_overrides_log_level(mocker, tmp_path):
-    stub_log_conf = tmp_path / "log-conf.yaml"
-    stub_log_conf.write_text("")
+def test_log_conf_overrides_log_level(mocker, stub_log_conf):
     mocker.patch.dict("os.environ")
     os.environ |= {
         "LOG_CONF": str(stub_log_conf),
