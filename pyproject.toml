@@ -27,6 +27,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "pytest-mock>=3.14.0",
     "pytest>=8.3.4",
 ]
 
@@ -39,7 +40,7 @@ include = [
 Homepage = "https://git.knut.univention.de:univention/nubus/udm-directory-connector"
 
 [project.scripts]
-directory-importer = "univention.directory_importer.__main__:cli"
+directory-importer = "univention.directory_importer.__main__:app"
 
 [tool.ruff]
 target-version = "py311"
