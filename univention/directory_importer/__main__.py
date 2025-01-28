@@ -7,8 +7,6 @@ univention.directory_importer.__main__ - CLI entry point
 
 import logging
 import logging.config
-import os
-import sys
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -75,26 +73,20 @@ def cli(
     entry-point for invocation on command-line
     """
 
-    proc_name = os.path.basename(os.path.split(sys.argv[0])[-2])
-
     if log_conf:
         logging.config.fileConfig(log_conf)
     else:
         setup_logging(log_level.upper())
 
     logging.info(
-        "Starting %s %s, using config %s",
-        proc_name,
+        "Directory importer version %s, using config %s",
         __version__,
         config_filename,
     )
 
-    # read and parse source and target configuration
     config = ConnectorConfig(config_filename)
     connector = Connector(config)
     connector()
-
-    # end of cli()
 
 
 if __name__ == "__main__":
