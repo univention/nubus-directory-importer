@@ -30,7 +30,7 @@ def cli(
     config_filename: Annotated[
         Path,
         typer.Argument(
-            envvar="AD2UCS_CFG",
+            envvar="CONFIG_FILENAME",
             help="Path to the configuration file.",
             file_okay=True,
             dir_okay=False,
@@ -59,7 +59,7 @@ def cli(
     ] = None,
 ):
     """
-    entry-point for invocation on command-line
+    Directory importer - Sync users from a source directory into a target UDM Rest API.
     """
 
     if log_conf:

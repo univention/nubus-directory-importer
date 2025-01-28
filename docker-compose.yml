@@ -18,5 +18,5 @@ services:
       #- ./config/ca_ad.crt:/etc/ssl/certs/ca-certificates-ad.crt:ro
     environment:
       LOG_LEVEL: "INFO"
-      AD2UCS_CFG: "/etc/udm-directory-connector/config.yaml"
+      CONFIG_FILENAME: "/etc/udm-directory-connector/config.yaml"
     network_mode: host

@@ -47,7 +47,7 @@ def test_pass_config_filename_as_cli_option(mock_connector_config, stub_config):
 
 
 def test_reads_config_filename_from_environment(mock_connector_config, stub_config):
-    result = runner.invoke(app, [], env={"AD2UCS_CFG": str(stub_config)})
+    result = runner.invoke(app, [], env={"CONFIG_FILENAME": str(stub_config)})
     assert result.exit_code == 0
     mock_connector_config.assert_called_once_with(stub_config)
 
