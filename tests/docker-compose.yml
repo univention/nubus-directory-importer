@@ -14,6 +14,8 @@ services:
       - ALL
     volumes:
       - ./:/app/tests:ro
+    extra_hosts:
+      - "WIN-N8V5GD1V1L.ad.test:10.207.116.197"
 
   udm-rest-api:
     image: gitregistry.knut.univention.de/univention/customers/dataport/upx/container-udm-rest/udm-rest-api:latest

@@ -57,6 +57,61 @@ check-debian-updates:
   variables:
     TARGET_IMAGE: "${CI_REGISTRY_IMAGE}/${IMAGE_NAME}:latest"
 
+test-with-ad:
+  stage: test
+  # This blocks the job from being runned by two pipelines simultaneously
+  resource_group: kvm
+  extends: .dind
+  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
+  when: manual
+  variables:
+    KVM_SERVER: "skurup.knut.univention.de"
+    KVM_USER: "build"
+    KVM_VM_NAME: "nubus_W2k19AD_directory_importer"
+    KVM_BASE_SNAPSHOT_NAME: "base"
+    AD_HOST: "WIN-N8V5GD1V1L.ad.test"
+    AD_IP: "10.207.116.197"
+  before_script:
+    # Start VM
+    - echo "${AD_IP} ${AD_HOST}" >> /etc/hosts
+    - apk add iputils-ping
+    - chmod 400 ${KVM_BUILD_SSH_KEY}
+    - echo "Reverting VM to base snapshot (this turns the VM on)"
+    - ssh -i ${KVM_BUILD_SSH_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${KVM_USER}@${KVM_SERVER} "virsh snapshot-revert ${KVM_VM_NAME} ${KVM_BASE_SNAPSHOT_NAME}"
+    # The VM is started by the state of the snapshot
+    # - ssh -i ${KVM_BUILD_SSH_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${KVM_USER}@${KVM_SERVER} "virsh start ${KVM_VM_NAME}"
+    - until ping -c 1 -W 1 "$AD_HOST"; do sleep 1; done
+    - echo "Active Directory Windows VM is up"
+    # Prepare for the tests
+    - cd tests
+    - cat ${E2E_DIRECTORY_IMPORTER_CONFIG} > e2e/importer-config.yaml
+    # Allow that the Docker API version is negotiated between client and server
+    - unset DOCKER_API_VERSION
+    - export IMAGE_TAG=${RELEASE_VERSION}
+    - echo -e "\e[0Ksection_start:`date +%s`:docker_debug[collapsed=true]\r\e[0KDocker version details"
+    - echo $IMAGE_TAG
+    - docker version
+    - echo -e "\e[0Ksection_end:`date +%s`:docker_debug\r\e[0K"
+    - echo -e "\e[0Ksection_start:`date +%s`:docker_compose_config[collapsed=true]\r\e[0KDocker Compose configuration"
+    - docker compose config test
+    - echo -e "\e[0Ksection_end:`date +%s`:docker_compose_config\r\e[0K"
+    - docker compose up --no-build --quiet-pull --wait --wait-timeout 60 ldap-server udm-rest-api
+  script:
+    - docker compose run --quiet-pull test -- pytest tests/e2e --connector-config=tests/e2e/importer-config.yaml
+  after_script:
+    - docker logs ldap-server >& ldap-server.log
+    - docker logs udm-rest-api >& udm-rest-api.log
+    - docker compose down --volumes
+    - echo "Shutting down Windows VM"
+    - ssh -i ${KVM_BUILD_SSH_KEY} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${KVM_USER}@${KVM_SERVER} "virsh destroy ${KVM_VM_NAME}"
+  artifacts:
+    paths:
+      - ldap-server.log
+      - udm-rest-api.log
+    expire_in: "1 day"
+    when: "always"
+    expose_as: "docker compose server logs"
+
 integration-test-directory-importer:
   stage: test
   extends: .dind
