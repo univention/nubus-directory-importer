@@ -52,6 +52,63 @@ support encrypted connections via transport layer security (TLS).
 
 See also: [BSI TR-02102 Kryptographische Verfahren: Empfehlungen und Schlüssellängen](https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr02102_node.html)
 
+### Performance optimizations for large environments < 25,000 users
+
+To synchronize a large number of users and groups to Nubus for Kubernetes
+using the Nubus Directory Importer
+in an acceptable time frame
+some configuration changes are recommended:
+
+#### Disable primary group updates.
+
+Add the UCR variable `directory/manager/user/primarygroup/update: false` to the custom-values.yaml of your Nubus deployment:
+
+```yaml
+global:
+  configUcr:
+    directory:
+      manager:
+        user:
+          primarygroup:
+            update: false
+```
+
+Background:
+
+By default, all synchronized users are added to the `Domain Users` group as their primary group in Nubus.
+This group with a very large number of group members will eventually degrade user creation performance in an exponential way.
+Our load tests showed significant performance degradation at 40000 group members / synchronized users.
+This problem is specific to the size of a user's primary group.
+See [this issue](https://git.knut.univention.de/univention/customers/dataport/team-souvap/-/issues/1016) for more details.
+
+#### Index the `univentionObjectIdentifier' attribute in LDAP
+
+**LDAP indexes can currently only be configured during initial deployment.**
+
+Add `univentionObjectIdentifier` to the `ldap/index/eq` UCR variable.
+**All existing indexes must be repeated.**
+
+```yaml
+    global:
+      configUcr:
+        directory:
+          manager:
+            user:
+              primarygroup:
+                update: false
+        ldap:
+          index:
+            eq: aRecord,automountInformation,cNAMERecord,cn,description,dhcpHWAddress,displayName,entryUUID,gidNumber,givenName,homeDirectory,krb5PrincipalName,macAddress,mail,mailAlternativeAddress,mailPrimaryAddress,memberUid,objectClass,ou,pTRRecord,relativeDomainName,sambaAcctFlags,sambaDomainName,sambaGroupType,sambaPrimaryGroupSID,sambaSID,sambaSIDList,secretary,shadowExpire,sn,uid,uidNumber,uniqueMember,univentionCanonicalRecipientRewriteEnabled,univentionDataType,univentionInventoryNumber,univentionLicenseModule,univentionLicenseObject,univentionMailHomeServer,univentionNagiosHostname,univentionObjectFlag,univentionObjectType,univentionPolicyReference,univentionServerRole,univentionService,univentionShareGid,univentionShareSambaName,univentionShareWriteable,univentionUDMOptionModule,univentionUDMPropertyCLIName,univentionUDMPropertyCopyable,univentionUDMPropertyDefault,univentionUDMPropertyDeleteObjectClass,univentionUDMPropertyDoNotSearch,univentionUDMPropertyHook,univentionUDMPropertyLayoutOverwritePosition,univentionUDMPropertyLayoutOverwriteTab,univentionUDMPropertyLayoutPosition,univentionUDMPropertyLayoutTabAdvanced,univentionUDMPropertyLayoutTabName,univentionUDMPropertyLdapMapping,univentionUDMPropertyLongDescription,univentionUDMPropertyModule,univentionUDMPropertyMultivalue,univentionUDMPropertyObjectClass,univentionUDMPropertyOptions,univentionUDMPropertyShortDescription,univentionUDMPropertySyntax,univentionUDMPropertyTranslationLongDescription,univentionUDMPropertyTranslationShortDescription,univentionUDMPropertyTranslationTabName,univentionUDMPropertyValueMayChange,univentionUDMPropertyValueRequired,univentionUDMPropertyVersion,zoneName,univentionObjectIdentifier
+```
+
+Background:
+
+`univentionObjectIdentifier` stores the primary ID of an object in the source directory.
+UDM enforces the uniqueness of this attribute by searching for existing occurrences in LDAP.
+This search eventually leads to exponential performance degradation if the attribute is not indexed.
+Our load tests showed significant performance degradation between 50,000 and 60,000 synchronized users.
+See [this comment](https://git.knut.univention.de/univention/customers/dataport/team-souvap/-/issues/1016#note_410827)
+
 ## Run it in docker compose
 
 Copy the example configuration and customize it to fit your environment.
