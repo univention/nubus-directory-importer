@@ -31,14 +31,14 @@ dev = [
 
 [tool.hatch.build]
 include = [
-    "univention.directory_importer",
+    "univention/directory_importer",
 ]
 
 [project.urls]
 Homepage = "https://git.knut.univention.de:univention/nubus/udm-directory-connector"
 
 [project.scripts]
-udm-directory-connector = "univention.directory_importer.__main__:cli"
+directory-importer = "univention.directory_importer.__main__:cli"
 
 [tool.ruff]
 target-version = "py311"
