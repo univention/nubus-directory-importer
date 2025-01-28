@@ -10,7 +10,7 @@ import logging.config
 import os
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Optional
 
 import typer
 
@@ -58,6 +58,18 @@ def cli(
             help="Configuration of the logging level, e.g. warning, info, debug",
         ),
     ] = "INFO",
+    log_conf: Annotated[
+        Optional[Path],
+        typer.Option(
+            envvar="LOG_CONF",
+            help="Logging configuration file to configure the logging subsystem. "
+            "See: https://docs.python.org/3/library/logging.config.html#logging-config-fileformat.",
+            file_okay=True,
+            dir_okay=False,
+            exists=True,
+            readable=True,
+        ),
+    ] = None,
 ):
     """
     entry-point for invocation on command-line
@@ -65,9 +77,8 @@ def cli(
 
     proc_name = os.path.basename(os.path.split(sys.argv[0])[-2])
 
-    # Use LOG_CONF if specified, otherwise use setup_logging
-    if "LOG_CONF" in os.environ:
-        logging.config.fileConfig(os.environ["LOG_CONF"])
+    if log_conf:
+        logging.config.fileConfig(log_conf)
     else:
         setup_logging(log_level.upper())
 

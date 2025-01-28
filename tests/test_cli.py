@@ -85,3 +85,47 @@ def test_logs_by_default_on_level_info(mocker):
 
     assert result.exit_code == 0
     setup_logging_mock.assert_called_once_with("INFO")
+
+
+def test_set_log_conf_via_cli(mocker, tmp_path):
+    stub_log_conf = tmp_path / "log-conf.yaml"
+    stub_log_conf.write_text("")
+    mocker.patch.dict("os.environ")
+    os.environ.pop("LOG_CONF", None)
+    file_config_mock = mocker.patch("logging.config.fileConfig")
+
+    result = runner.invoke(app, ["--log-conf", str(stub_log_conf)])
+
+    assert result.exit_code == 0
+    file_config_mock.assert_called_once_with(stub_log_conf)
+
+
+def test_set_log_conf_via_environment(mocker, tmp_path):
+    stub_log_conf = tmp_path / "log-conf.yaml"
+    stub_log_conf.write_text("")
+    mocker.patch.dict("os.environ")
+    os.environ["LOG_CONF"] = str(stub_log_conf)
+    file_config_mock = mocker.patch("logging.config.fileConfig")
+
+    result = runner.invoke(app)
+
+    assert result.exit_code == 0
+    file_config_mock.assert_called_once_with(stub_log_conf)
+
+
+def test_log_conf_overrides_log_level(mocker, tmp_path):
+    stub_log_conf = tmp_path / "log-conf.yaml"
+    stub_log_conf.write_text("")
+    mocker.patch.dict("os.environ")
+    os.environ |= {
+        "LOG_CONF": str(stub_log_conf),
+        "LOG_LEVEL": "debug",
+    }
+    file_config_mock = mocker.patch("logging.config.fileConfig")
+    setup_logging_mock = mocker.patch.object(__main__, "setup_logging")
+
+    result = runner.invoke(app)
+
+    assert result.exit_code == 0
+    file_config_mock.assert_called_once_with(stub_log_conf)
+    setup_logging_mock.assert_not_called()
