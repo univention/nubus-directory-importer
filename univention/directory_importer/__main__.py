@@ -65,6 +65,13 @@ def cli(
             help="Run the sync repeatedly forever.",
         ),
     ] = False,
+    repeat_delay: Annotated[
+        Optional[float],
+        typer.Option(
+            envvar="REPEAT_DELAY",
+            help=f"Delay in seconds between repeated runs, {Repeater.DEFAULT_DELAY} seconds by default.",
+        ),
+    ] = None,
 ):
     """
     Directory importer - Sync users from a source directory into a target UDM Rest API.
@@ -84,7 +91,7 @@ def cli(
     config = ConnectorConfig(config_filename)
     connector = Connector(config)
     if repeat:
-        repeater = Repeater(target=connector)
+        repeater = Repeater(target=connector, delay=repeat_delay)
         repeater.call()
     else:
         connector()

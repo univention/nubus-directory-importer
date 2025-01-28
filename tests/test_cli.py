@@ -3,6 +3,7 @@
 
 
 import os
+from unittest import mock
 
 import pytest
 from typer.testing import CliRunner
@@ -155,7 +156,11 @@ def test_calls_connector_repeatedly(mock_connector, mocker):
     mock_connector_instance.side_effect = [None, StopException("STOP")]
 
     with pytest.raises(StopException):
-        runner.invoke(app, ["--repeat"], catch_exceptions=False)
+        runner.invoke(
+            app,
+            ["--repeat", "--repeat-delay", "0.002"],
+            catch_exceptions=False,
+        )
 
     assert mock_connector_instance.call_count == 2
 
@@ -173,3 +178,28 @@ def test_calls_connector_repeatedly_env(repeat_value, mock_connector, mocker):
         runner.invoke(app, catch_exceptions=False)
 
     assert mock_connector_instance.call_count == 2
+
+
+def test_repeat_with_custom_delay(mocker):
+    repeater_mock = mocker.patch.object(__main__, "Repeater")
+    result = runner.invoke(
+        app,
+        ["--repeat", "--repeat-delay", "10"],
+        catch_exceptions=False,
+    )
+    assert result.exit_code == 0
+    repeater_mock.assert_called_once_with(target=mock.ANY, delay=10)
+
+
+def test_repeat_with_custom_delay_env(mocker):
+    mocker.patch.dict("os.environ")
+    os.environ |= {
+        "REPEAT": "1",
+        "REPEAT_DELAY": "10",
+    }
+    repeater_mock = mocker.patch.object(__main__, "Repeater")
+
+    result = runner.invoke(app, catch_exceptions=False)
+
+    assert result.exit_code == 0
+    repeater_mock.assert_called_once_with(target=mock.ANY, delay=10)
