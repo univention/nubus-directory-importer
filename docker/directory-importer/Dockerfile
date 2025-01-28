@@ -58,8 +58,8 @@ FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS final
 SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
 
 RUN \
-groupadd -r app && \
-useradd -r -d /app -g app -N app
+    groupadd -r app -g 1000 && \
+    useradd -r -d /app -g app -N app -u 1000
 
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
       python3 \
