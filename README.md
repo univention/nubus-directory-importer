@@ -304,7 +304,7 @@ docker compose down -v && docker compose up --pull always udm-rest-api ldap-serv
 ./maildomain.sh
 
 # Run the integration tests
-docker compose run --build test .venv/bin/python3 -m pytest
+docker compose run --build test pytest
 ```
 
 ### Running the integration tests locally (not recommended)

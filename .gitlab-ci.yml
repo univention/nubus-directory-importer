@@ -79,7 +79,7 @@ integration-test-directory-importer:
     - echo -e "\e[0Ksection_end:`date +%s`:docker_compose_config\r\e[0K"
     - docker compose up --no-build --quiet-pull --wait --wait-timeout 60 ldap-server udm-rest-api
   script:
-    - docker compose run --quiet-pull test .venv/bin/python3 -m pytest
+    - docker compose run --quiet-pull test -- pytest
   after_script:
     - docker logs ldap-server >& ldap-server.log
     - docker logs udm-rest-api >& udm-rest-api.log
