@@ -9,7 +9,7 @@ services:
       target: final
     image: artifacts.software-univention.de/nubus-dev/images/directory-importer:${IMAGE_TAG:-latest}
     read_only: true
-    user: "1000:1000"
+    user: "app:app"
     cap_drop:
       - ALL
     volumes:
