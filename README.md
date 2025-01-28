@@ -117,21 +117,24 @@ Then start the Directory importer using docker compose in one of the following w
 
 ```shell
 # Using the sub-command "up"
-docker compose up --build
+docker compose up
 
 # Inspecting the CLI interface
-docker compose -it --rm run --build udm-directory-importer udm-directory-importer --help
+docker compose -it --rm run udm-directory-importer udm-directory-importer --help
 
 # Launching an interactive shell in the container
-docker compose -it --rm run --build udm-directory-importer bash
+docker compose -it --rm run udm-directory-importer bash
 ```
+
+Note: The parameter `--build` can be added if you want to build the container
+images from the local sources instead of fetching it from the registry.
 
 ### CLI interface and environment variables
 
 The details of the CLI interface can be inspected with the following command:
 
 ```shell
-docker compose -it --rm run --build udm-directory-importer --help
+docker compose -it --rm run udm-directory-importer --help
 ```
 
 All arguments can also be influenced via environment variables. The environment
