@@ -136,7 +136,7 @@ class UDMClient:
             current_position = ou_dn[i + 1 :]
             self.create_ou(
                 name=current_ou[0][1],
-                description="Created by udm connector",
+                description="Created by the Nubus Directory Importer",
                 position=ldap.dn.dn2str(current_position + base_position),
             )
 
