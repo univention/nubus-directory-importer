@@ -9,6 +9,10 @@ import logging
 import logging.config
 import os
 import sys
+from pathlib import Path
+from typing import Annotated
+
+import typer
 
 from .__about__ import __version__
 from .config import ConnectorConfig
@@ -16,6 +20,11 @@ from .connector import Connector
 
 # log format to use when logging to console
 CONSOLE_LOG_FORMAT = "%(asctime)s %(name)s[%(process)d] %(levelname)s %(message)s"
+
+app = typer.Typer(
+    add_completion=False,
+    pretty_exceptions_enable=False,
+)
 
 
 def setup_logging(log_level: str = "INFO") -> None:
@@ -29,7 +38,16 @@ def setup_logging(log_level: str = "INFO") -> None:
     logger.addHandler(handler)
 
 
-def cli():
+@app.command()
+def cli(
+    config_filename: Annotated[
+        Path,
+        typer.Argument(
+            envvar="AD2UCS_CFG",
+            help="Path to the configuration file.",
+        ),
+    ],
+):
     """
     entry-point for invocation on command-line
     """
@@ -44,20 +62,6 @@ def cli():
         logging.config.fileConfig(os.environ["LOG_CONF"])
     else:
         setup_logging(log_level)
-
-    # determine path name of configuration file
-    try:
-        config_filename = sys.argv[1]
-    except IndexError:
-        try:
-            config_filename = os.environ["AD2UCS_CFG"]
-        except KeyError:
-            logging.error(
-                "Starting %s %s failed, no config given",
-                proc_name,
-                __version__,
-            )
-            sys.exit(1)
 
     logging.info(
         "Starting %s %s, using config %s",
@@ -75,4 +79,4 @@ def cli():
 
 
 if __name__ == "__main__":
-    cli()
+    app()
