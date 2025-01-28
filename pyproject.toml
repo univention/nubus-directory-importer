@@ -29,6 +29,7 @@ dependencies = [
 dev = [
     "pytest-mock>=3.14.0",
     "pytest>=8.3.4",
+    "pdbpp>=0.10.3",
 ]
 
 [tool.hatch.build]
