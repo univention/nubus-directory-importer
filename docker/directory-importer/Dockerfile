@@ -51,6 +51,7 @@ WORKDIR /app
 RUN --mount=type=cache,target=/root/.cache \
   uv sync
 
+COPY docker/directory-importer/activate_venv.envsh /entrypoint.d/
 COPY tests tests
 
 ##########################################################################
@@ -67,6 +68,7 @@ RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
     && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 COPY --from=build --chown=app:app /app /app
+COPY docker/directory-importer/activate_venv.envsh /entrypoint.d/
 
 USER app
 WORKDIR /app
