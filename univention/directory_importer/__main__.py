@@ -51,6 +51,13 @@ def cli(
             readable=True,
         ),
     ],
+    log_level: Annotated[
+        str,
+        typer.Option(
+            envvar="LOG_LEVEL",
+            help="Configuration of the logging level, e.g. warning, info, debug",
+        ),
+    ] = "INFO",
 ):
     """
     entry-point for invocation on command-line
@@ -58,14 +65,11 @@ def cli(
 
     proc_name = os.path.basename(os.path.split(sys.argv[0])[-2])
 
-    # Set up logging with environment variable or default
-    log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
-
     # Use LOG_CONF if specified, otherwise use setup_logging
     if "LOG_CONF" in os.environ:
         logging.config.fileConfig(os.environ["LOG_CONF"])
     else:
-        setup_logging(log_level)
+        setup_logging(log_level.upper())
 
     logging.info(
         "Starting %s %s, using config %s",

@@ -2,6 +2,8 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 
+import os
+
 import pytest
 from typer.testing import CliRunner
 
@@ -48,3 +50,35 @@ def test_fails_if_config_file_does_not_exist(mocker, tmp_path):
     missing_file = tmp_path / "does-not-exist.yaml"
     result = runner.invoke(app, str(missing_file))
     assert result.exit_code != 0
+
+
+def test_set_log_level_via_cli(mocker):
+    mocker.patch.dict("os.environ")
+    os.environ.pop("LOG_LEVEL", None)
+    setup_logging_mock = mocker.patch.object(__main__, "setup_logging")
+
+    result = runner.invoke(app, ["--log-level", "debug"])
+
+    assert result.exit_code == 0
+    setup_logging_mock.assert_called_once_with("DEBUG")
+
+
+def test_set_log_level_via_environment(mocker):
+    mocker.patch.dict("os.environ", {"LOG_LEVEL": "debug"})
+    setup_logging_mock = mocker.patch.object(__main__, "setup_logging")
+
+    result = runner.invoke(app, ["--log-level", "debug"])
+
+    assert result.exit_code == 0
+    setup_logging_mock.assert_called_once_with("DEBUG")
+
+
+def test_logs_by_default_on_level_info(mocker):
+    mocker.patch.dict("os.environ")
+    os.environ.pop("LOG_LEVEL", None)
+    setup_logging_mock = mocker.patch.object(__main__, "setup_logging")
+
+    result = runner.invoke(app)
+
+    assert result.exit_code == 0
+    setup_logging_mock.assert_called_once_with("INFO")
