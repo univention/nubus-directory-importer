@@ -73,7 +73,7 @@ COPY docker/directory-importer/activate_venv.envsh /entrypoint.d/
 USER app
 WORKDIR /app
 
-CMD [".venv/bin/python3.11", "-m", "univention.directory_importer"]
+CMD ["udm-directory-importer"]
 
 RUN \
   .venv/bin/python3.11 -V && \
