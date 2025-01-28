@@ -13,10 +13,21 @@ from univention.directory_importer.__main__ import app
 runner = CliRunner()
 
 
+class StopException(Exception):
+    """Utility to force stop the repeated iteration."""
+
+
 @pytest.fixture(autouse=True)
 def mock_connector(mocker):
     """Replace the Connector object with a Mock."""
     return mocker.patch.object(__main__, "Connector")
+
+
+@pytest.fixture(autouse=True)
+def super_short_default_delay(mocker):
+    value = 0.001
+    mocker.patch.object(__main__.Repeater, "DEFAULT_DELAY", value)
+    return value
 
 
 @pytest.fixture
@@ -131,3 +142,34 @@ def test_log_conf_overrides_log_level(mocker, stub_log_conf):
     assert result.exit_code == 0
     file_config_mock.assert_called_once_with(stub_log_conf)
     setup_logging_mock.assert_not_called()
+
+
+def test_calls_connector_by_default_only_once(mock_connector):
+    result = runner.invoke(app)
+    assert result.exit_code == 0
+    mock_connector().assert_called_once()
+
+
+def test_calls_connector_repeatedly(mock_connector, mocker):
+    mock_connector_instance = mock_connector()
+    mock_connector_instance.side_effect = [None, StopException("STOP")]
+
+    with pytest.raises(StopException):
+        runner.invoke(app, ["--repeat"], catch_exceptions=False)
+
+    assert mock_connector_instance.call_count == 2
+
+
+@pytest.mark.parametrize("repeat_value", ["1", "yes", "true"])
+def test_calls_connector_repeatedly_env(repeat_value, mock_connector, mocker):
+    mock_connector_instance = mock_connector()
+    mock_connector_instance.side_effect = [None, StopException("STOP")]
+    mocker.patch.dict("os.environ")
+    os.environ |= {
+        "REPEAT": repeat_value,
+    }
+
+    with pytest.raises(StopException):
+        runner.invoke(app, catch_exceptions=False)
+
+    assert mock_connector_instance.call_count == 2

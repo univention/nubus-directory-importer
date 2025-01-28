@@ -15,6 +15,7 @@ import typer
 from .__about__ import __version__
 from .config import ConnectorConfig
 from .connector import Connector
+from .util import Repeater
 
 # log format to use when logging to console
 CONSOLE_LOG_FORMAT = "%(asctime)s %(name)s[%(process)d] %(levelname)s %(message)s"
@@ -57,6 +58,13 @@ def cli(
             readable=True,
         ),
     ] = None,
+    repeat: Annotated[
+        bool,
+        typer.Option(
+            envvar="REPEAT",
+            help="Run the sync repeatedly forever.",
+        ),
+    ] = False,
 ):
     """
     Directory importer - Sync users from a source directory into a target UDM Rest API.
@@ -75,7 +83,11 @@ def cli(
 
     config = ConnectorConfig(config_filename)
     connector = Connector(config)
-    connector()
+    if repeat:
+        repeater = Repeater(target=connector)
+        repeater.call()
+    else:
+        connector()
 
 
 def setup_logging(log_level: str = "INFO") -> None:
