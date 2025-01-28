@@ -19,6 +19,12 @@ class StopException(Exception):
 
 
 @pytest.fixture(autouse=True)
+def set_config_in_environment(mocker):
+    mocker.patch.dict("os.environ")
+    os.environ["CONFIG_FILENAME"] = "tests/data/connector.yml"
+
+
+@pytest.fixture(autouse=True)
 def mock_connector(mocker):
     """Replace the Connector object with a Mock."""
     return mocker.patch.object(__main__, "Connector")
