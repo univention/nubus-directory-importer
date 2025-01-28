@@ -113,8 +113,29 @@ See [this comment](https://git.knut.univention.de/univention/customers/dataport/
 
 Copy the example configuration and customize it to fit your environment.
 `cp ./config/ad-domain-config.yaml.example ./config/ad-domain-config.yaml`
-Then start the Directory importer using docker compose:
-`docker compose up --build`
+Then start the Directory importer using docker compose in one of the following ways:
+
+```shell
+# Using the sub-command "up"
+docker compose up --build
+
+# Inspecting the CLI interface
+docker compose -it --rm run --build udm-directory-importer udm-directory-importer --help
+
+# Launching an interactive shell in the container
+docker compose -it --rm run --build udm-directory-importer bash
+```
+
+### CLI interface and environment variables
+
+The details of the CLI interface can be inspected with the following command:
+
+```shell
+docker compose -it --rm run --build udm-directory-importer --help
+```
+
+All arguments can also be influenced via environment variables. The environment
+variables take precedence if set.
 
 ### TLS Support
 
@@ -228,32 +249,45 @@ At the top hierarchy level there are these config dictionaries:
 
 ## Logging
 
-The connector writes log messages at different log level:
+The connector writes log messages at different log levels based on Python's
+logging framework:
 
-  * DEBUG
+  * `DEBUG`
     Very detailed messages only used for development and debugging.
     Do not use in production.
-  * INFO
+  * `INFO`
     The normal log level used for production especially for logging
     all changes done to the target.
-  * WARN
+  * `WARN`
     Messages indicating something went wrong to be investigated at a later time.
-  * ERROR
+  * `ERROR`
     Messages indicating something went wrong to be investigated immediately.
 
-The following environment variables are used to influence logging before
-the connector reads its normal configuration file:
+The following parameters are used to influence logging before the connector
+reads its normal configuration file:
 
-  * LOG_LEVEL
+  * `LOG_LEVEL` / `--log-level`
     Minimum log level really written to logs (defaults to _INFO_)
-  * LOG_CONF
+  * `LOG_CONF` / `--log-conf`
     Full path name of a Python logging configuration file.
     If not set all log messages are simply written to _stderr_ with a
     format including a time-stamp.
 
 See also:
 
-  * [Python 3 docs -- logging: Configuration file format](https://docs.python.org/3/library/logging.config.html?highlight=logging#logging-config-fileformat)
+  * [Python 3 docs -- logging: Configuration file format](https://docs.python.org/3/library/logging.config.html#logging-config-fileformat)
+
+## Running repeatedly
+
+The directory importer can be configured to repeat the synchronization with a
+adjustable delay.
+
+The following parameters are relevant for this mode:
+
+  * `REPEAT=1` / `--repeat`
+    Repeats the synchronization forever.
+  * `REPEAT_DEPLAY` / `--repeat-delay`
+    Allows to customize the delay after a synchronization run.
 
 ## Monitoring
 
