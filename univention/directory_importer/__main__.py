@@ -45,6 +45,10 @@ def cli(
         typer.Argument(
             envvar="AD2UCS_CFG",
             help="Path to the configuration file.",
+            file_okay=True,
+            dir_okay=False,
+            exists=True,
+            readable=True,
         ),
     ],
 ):
