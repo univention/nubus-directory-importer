@@ -56,3 +56,9 @@ known-first-party = ["slapdsock", "univention"]
 
 [tool.uv.sources]
 junkaptor = { path = "junkaptor" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "-v"
+pythonpath = [".", "tests"]
