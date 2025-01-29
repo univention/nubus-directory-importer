@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.2.0...v0.2.1) (2025-01-29)
+
+
+### Bug Fixes
+
+* Rename udm connector to directory importer ([85a2f6b](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/85a2f6b76863667b697e3bb36dca93cad6313a7c))
+
 ## [0.2.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.1.0...v0.2.0) (2025-01-22)
 
 
