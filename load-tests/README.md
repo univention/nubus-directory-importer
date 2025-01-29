@@ -42,3 +42,12 @@ python ad_provisioner.py \
   ```bash
    while true; do docker stats --no-stream --format "{{.Name}}: {{.MemUsage}}" directory-importer-udm-directory-connector-1 | xargs -I {} echo "$(date '+%Y-%m-%d %H:%M:%S') {}" >> container_memory.log; sleep 1; done
    ```
+
+## Debug performance bottlenecks
+
+* Look at the CPU load of the pods:
+`kubectl -n jlohmer-nubus-load-test top pods`
+* Filter UDM REST API logs and get a feeling for the average request duration:
+`kubectl -n jlohmer-nubus-load-test logs nubus-udm-rest-api-7cc947bfc7-nwxks --tail 1000 | rg ms`
+* Filter LDAP logs and try to identify requests from UDM that take longer than they should:
+`kubectl -n jlohmer-nubus-load-test logs nubus-ldap-server-primary-0 --tail 1000 --timestamps=true | rg conn=1570 | less`
