@@ -11,7 +11,7 @@ import ldap3
 from ldap3.core.connection import Connection
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s",
 )
 logger = logging.getLogger(__name__)
@@ -73,16 +73,20 @@ class Group:
         if self.users_counter < self.size:
             return
 
-        self.create(self.users)
+        self.create()
         self.users_counter = 0
         self.users = []
 
-    def create(self, users: list[str]) -> None:
+    def create(self) -> None:
+        if len(self.users) == 0:
+            logger.warning(
+                "Not creating a new group with prefix: %s because it currently has no members",
+            )
         self.group_counter += 1
         name = f"{self.name_prefix}_{self.group_counter}"
-        logger.debug("creating group: %s\n with users %s", name, users)
+        logger.debug("creating group: %s\n with users %s", name, self.users)
 
-        self.create_group_callback(name, users)
+        self.create_group_callback(name, self.users)
 
 
 class ADConnection:
@@ -119,19 +123,15 @@ class ADConnection:
         dn = self.dn_builder(groupname)
         member_dn = [self.dn_builder(username) for username in member]
 
-        group = (
-            {
-                "cn": groupname,
-                "objectClass": ["top", "group"],
-                "description": f"Group name: {groupname}",
-                "member": member_dn,
-            },
-        )
-
-        logger.debug(f"Attempting to create group at DN: {dn}")
-
+        attributes = {
+            "cn": groupname,
+            "objectClass": ["top", "group"],
+            "description": f"Group name: {groupname}",
+            "member": member_dn,
+        }
+        logger.debug("Attempting to create group at DN: %s", dn)
         try:
-            success = self.conn.add(dn, attributes=group)
+            success = self.conn.add(dn, attributes=attributes)
             if success:
                 logger.info(f"Created group: {groupname}")
                 self.groups_created += 1
@@ -143,7 +143,7 @@ class ADConnection:
         except Exception as e:
             logger.error(f"Error creating group {groupname}: {str(e)}", exc_info=True)
             raise
-            return False
+        return False
 
     def create_user(self, username: str, user: Dict) -> bool:
         """Create AD user"""
@@ -227,7 +227,7 @@ def main():
     groups: list[Group] = []
     # Configure groups
     for index, max_size in enumerate(config.groups):
-        groupname = f"{config.name_prefix}_g{index}m{max_size}"
+        groupname = f"{config.name_prefix}_group:{index}_max-members:{max_size}"
         groups.append(Group(groupname, max_size, connection.create_group))
 
     # Generate users
@@ -258,6 +258,9 @@ def main():
 
         for group in groups:
             group.add(username)
+
+    for group in groups:
+        group.create()
 
     logger.info("Directory provisioning completed")
 
