@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.4.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.3.0...v0.4.0) (2025-01-30)
+
+
+### Features
+
+* Activate venv by default via entrypoint.d ([9c1d715](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/9c1d715303bf999ef2c3b7fcd1dde07469cf67f6))
+* Add logging output into the class "Repeater" ([f9c6172](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/f9c617215551e14384838915428227e1f6dc5f15))
+* Add utility class "Repeater" ([d1bec13](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/d1bec133922899a111ea433f73dec9415231b199))
+* Allow to specify a custom delay between repeated runs ([cd25c32](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/cd25c32cd5438dc6bbe1f10e51e27fe6d1b948b1))
+* Allow to switch on "repeat" mode to run the sync repeatedly ([464e064](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/464e06495c73db84b204c574b74af8521661f9f0))
+* Consolidate executable name to "directory-importer" ([b26f2ab](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/b26f2abb0d15b5cc9652391bbfab8cc3d82b2ef2))
+* Ensure that the configuration file is a file and can be read ([9e1f11b](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/9e1f11bf176e062a06d04b9905aa0e41e9f33f51))
+* Read configuration file name via typer ([65e343a](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/65e343aa02c24266a5ad0972f59e1681f593c519))
+
+
+### Bug Fixes
+
+* Add user and group "app" with ID 1000 ([ea367a5](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/ea367a5144b72008fc230153b21dcc0d5e593a0e))
+* Call udm-directory-importer script directly ([1af2b12](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/1af2b1220345019b4a09807d0328ffa42de8fb94))
+
 ## [0.3.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.2.1...v0.3.0) (2025-01-30)
 
 
