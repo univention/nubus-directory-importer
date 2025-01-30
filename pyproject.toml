@@ -38,7 +38,7 @@ include = [
 ]
 
 [project.urls]
-Homepage = "https://git.knut.univention.de:univention/nubus/udm-directory-connector"
+Homepage = "https://git.knut.univention.de/univention/nubus/directory-importer"
 
 [project.scripts]
 directory-importer = "univention.directory_importer.__main__:app"

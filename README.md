@@ -120,10 +120,10 @@ Then start the Directory importer using docker compose in one of the following w
 docker compose up
 
 # Inspecting the CLI interface
-docker compose -it --rm run udm-directory-importer udm-directory-importer --help
+docker compose run -it --rm directory-importer directory-importer --help
 
 # Launching an interactive shell in the container
-docker compose -it --rm run udm-directory-importer bash
+docker compose run -it --rm directory-importer bash
 ```
 
 Note: The parameter `--build` can be added if you want to build the container
@@ -134,7 +134,7 @@ images from the local sources instead of fetching it from the registry.
 The details of the CLI interface can be inspected with the following command:
 
 ```shell
-docker compose -it --rm run udm-directory-importer --help
+docker compose run -it --rm directory-importer directory-importer --help
 ```
 
 All arguments can also be influenced via environment variables. The environment
@@ -313,13 +313,13 @@ Deploy the dependencies:
 	N4K does not need to be inside the VPN. The directory connector can also be configured to talk to a public or local IP.
 3. Configure the Active Directory and UDM REST API connection and authorization parameters in the config.yaml file.
 
-Executing the directory-connector inside a docker container using docker compose:
+Executing the directory-importer inside a docker container using docker compose:
 `docker compose up --build`
 
 Alternatively run it locally:
 Install shared objects for ldap python library to your system
 - `uv sync -p /usr/bin/python3.10` (use system python to get shared objects)
-- `uv run udm-directory-connector config/ad-domain-config.yaml.example`
+- `uv run directory-importer config/ad-domain-config.yaml.example`
 
 ### Running the integration tests in docker compose
 
@@ -358,7 +358,7 @@ You can directly execute the tests by invoking
 from the command-line:
 
 ```
-cd udm-directory-connector/
+cd directory-importer/
 python3 -m venv /path/to/venv
 /path/to/venv/bin/pip install -e .
 /path/to/venv/bin/python3 -W error -I -bb -m unittest

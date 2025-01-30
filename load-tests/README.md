@@ -40,7 +40,7 @@ python ad_provisioner.py \
   ```
 1. Monitor the process:
   ```bash
-   while true; do docker stats --no-stream --format "{{.Name}}: {{.MemUsage}}" directory-importer-udm-directory-connector-1 | xargs -I {} echo "$(date '+%Y-%m-%d %H:%M:%S') {}" >> container_memory.log; sleep 1; done
+   while true; do docker stats --no-stream --format "{{.Name}}: {{.MemUsage}}" directory-importer-directory-importer-1 | xargs -I {} echo "$(date '+%Y-%m-%d %H:%M:%S') {}" >> container_memory.log; sleep 1; done
    ```
 
 ## Debug performance bottlenecks

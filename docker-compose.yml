@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 services:
-  udm-directory-connector:
+  directory-importer:
     build:
       context: .
       dockerfile: docker/directory-importer/Dockerfile
@@ -13,10 +13,10 @@ services:
     cap_drop:
       - ALL
     volumes:
-      - ./config/ad-domain-config.yaml:/etc/udm-directory-connector/config.yaml:ro
+      - ./config/ad-domain-config.yaml:/etc/directory-importer/config.yaml:ro
       #- ./config/ca_nubus.crt:/etc/ssl/certs/ca-certificates-nubus.crt:ro
       #- ./config/ca_ad.crt:/etc/ssl/certs/ca-certificates-ad.crt:ro
     environment:
       LOG_LEVEL: "INFO"
-      CONFIG_FILENAME: "/etc/udm-directory-connector/config.yaml"
+      CONFIG_FILENAME: "/etc/directory-importer/config.yaml"
     network_mode: host
