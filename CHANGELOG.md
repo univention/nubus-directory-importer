@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.2.1...v0.3.0) (2025-01-30)
+
+
+### Features
+
+* Add much more group configurability to the ad provisioner and refactor it in the process ([6b3ac01](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/6b3ac0110223e0ba4e6f8e8ae409ff62f722fbeb))
+
+
+### Bug Fixes
+
+* Fix ad provisioner script after refactoring ([ad0c47f](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/ad0c47feb0e7c51d40db6e907831a2731b9f5720))
+* Fix the python packaging configuration so that the .py sources are included ([8bf0ccd](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/8bf0ccdd76ad318d62290a9c7fe98cb4a7178a50))
+
 ## [0.2.1](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.2.0...v0.2.1) (2025-01-29)
 
 
