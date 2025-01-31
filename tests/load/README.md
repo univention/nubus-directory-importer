@@ -8,20 +8,70 @@ This document provides setup instructions for testing the Directory Importer wit
 
 ### Prerequisites
 
-* An AD machine generated with https://jenkins2022.knut.univention.de/job/UCS-5.0/job/UCS-5.0-9/view/Personal%20environments/job/UcsW2k19ADEnvironment/ The AD connection details can be found in the UCS primary with `ucr dump | grep connector/ad`. You need to add the windows hostname to `/etc/hosts`.
+* An AD machine generated with https://jenkins2022.knut.univention.de/job/UCS-5.2/job/UCS-5.2-0/view/Personal%20environments/job/UcsW2k19ADEnvironment/ The AD connection details can be found in the UCS primary with `ucr dump | grep connector/ad`. You need to add the windows hostname to `/etc/hosts`.
 * A Nubus for k8s deployment and it's UDM credentials.
 
+After you've provisioned the AD and UCS VM's,
+shut both down and enable the `Always start VM with host`
+flag in the UVMM UI.
+This ensures that the VM's are excluded from the nightly test VM shutdown,
+which would interrupt the load tests.
+
+### Directory Connector host
+
+You could start the directory connector on your laptop. For initial testing this is perfect.
+But it has a couple major drawbacks for running a load test:
+- The test performance will be scewed by your internet connection performance and the performance of the Univention VPN
+- The load tests take a long time, often multiple days. You'll probably want to disconnect your laptop long before the load test is finished.
+
+Instead you should use the UCS machine deployed by Jenkins alongside your AD VM.
+
+To do that some pre-configuration is necessary:
+
+#### Increase the VM memory
+
+The Directory Importer is not particularly memory efficient.
+It loads the complete source LDAP subtree into memory.
+For this load test with 100k users this leads to about 10 GB of memory consumption
+by the Directory Importer process.
+
+To prepare for this, you need to shut down the VM
+and increase it's memory to 12 - 16 GB depending on how
+
+#### Configure the UCS host
+
+Install TMUX:
+
+```sh
+apt update && apt install -y tmux && tmux
+```
+
+Run the setup script: `./setup-directory-importer-host.sh`
+
+Optionally configure the TMUX monitoring environment: `./configure-tmux.sh`
+
+#### Run the Directory Importer
 
 ### Test Data Generation
 
 ```bash
-python ad_provisioner.py \
-    --host ldap://your-ad-server \
+python3 ad_provisioner.py \
+    --host ldap://10.207.118.192 \
     --admin-dn "cn=Administrator,cn=users,DC=ad,DC=test" \
-    --password "password" \
+    --password Univention.99 \
     --base-dn "DC=ad,DC=test" \
-    --user-count 1000 \
-    --users-per-group 100
+    --group-with-max-users 10 \
+    --group-with-max-users 10 \
+    --group-with-max-users 10 \
+    --group-with-max-users 10 \
+    --group-with-max-users 10 \
+    --group-with-max-users 10 \
+    --group-with-max-users 10 \
+    --group-with-max-users 10 \
+    --group-with-max-users 10 \
+    --group-with-max-users 1000 \
+    --user-count 40000 \
+    --name-prefix 202501301544
 ```
 
 ### Directory Importer Configuration
