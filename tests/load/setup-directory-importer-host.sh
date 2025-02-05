@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 apt install -y nload htop python3-pip
-pip3 install ldap3
+pip3 install --break-system-packages ldap3
 
 # Install docker
 curl -fsSL https://get.docker.com -o get-docker.sh

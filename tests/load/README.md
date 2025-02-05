@@ -70,7 +70,7 @@ python3 ad_provisioner.py \
     --group-with-max-users 10 \
     --group-with-max-users 10 \
     --group-with-max-users 1000 \
-    --user-count 40000 \
+    --user-count 100 \
     --name-prefix 202501301544
 ```
 
