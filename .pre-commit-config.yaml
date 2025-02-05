@@ -12,6 +12,8 @@ repos:
     hooks:
       # "check for added large files"
       - id: "check-added-large-files"
+        args:
+          - "--maxkb=2048"
       # "check for merge conflicts"
       - id: "check-merge-conflict"
       # "check yaml"
@@ -28,6 +30,8 @@ repos:
           - "--remove"
       # "trim trailing whitespace"
       - id: "trailing-whitespace"
+        # Whitespace is specific syntax in markdown
+        exclude: '.*\.md$'
 
   - repo: "https://github.com/compilerla/conventional-pre-commit"
     rev: "v2.1.1"
