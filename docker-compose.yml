@@ -18,5 +18,7 @@ services:
       #- ./config/ca_ad.crt:/etc/ssl/certs/ca-certificates-ad.crt:ro
     environment:
       LOG_LEVEL: "INFO"
+      REPEAT: true
+      REPEAT_DELAY: 300
       CONFIG_FILENAME: "/etc/directory-importer/config.yaml"
     network_mode: host
