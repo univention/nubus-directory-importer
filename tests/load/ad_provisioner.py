@@ -51,6 +51,11 @@ def parse_args() -> ADConfig:
         default="",
         help="Prefix for all user and group names to avoid collisions",
     )
+    parser.add_argument(
+        "--delete",
+        action="store_true",
+        help="Delete all existing users and groups in AD. (cleanup)",
+    )
 
     args = parser.parse_args()
     logger.debug(f"Parsed arguments: {args}")
@@ -63,6 +68,7 @@ def parse_args() -> ADConfig:
         user_count=args.user_count,
         groups=args.group_with_max_users,
         name_prefix=args.name_prefix,
+        delete=args.delete,
     )
 
 
@@ -75,6 +81,15 @@ def main():
         raise SystemExit(1)
 
     connection = ADConnection(config)
+
+    if config.delete:
+        for entry in connection.get_entries_by_prefix(
+            config.name_prefix,
+            attributes=[],
+            page_size=500,
+        ):
+            connection.delete_entry(entry["dn"])
+        return
 
     logger.debug("Starting test data generation")
 

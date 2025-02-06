@@ -2,8 +2,9 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 import logging
+from collections.abc import Generator
 from dataclasses import dataclass, field
-from typing import Dict
+from typing import Any, Dict
 
 import ldap3
 from ldap3.core.connection import Connection
@@ -22,6 +23,7 @@ class ADConfig:
     groups: list[int] = field(default_factory=list)
     user_count: int = 1000
     name_prefix: str = ""
+    delete: bool = False
 
     def __post_init__(self):
         """Validate configuration parameters"""
@@ -116,3 +118,65 @@ class ADConnection:
 
     def dn_builder(self, username: str) -> str:
         return f"CN={username},CN=Users,{self.config.base_dn}"
+
+    def get_entries_by_prefix(
+        self,
+        prefix: str,
+        object_classes: list[str] | None = None,
+        attributes: list[str] | None = None,
+        page_size: int = 1000,
+    ) -> Generator[Dict[str, Any], None, None]:
+        attributes = attributes if attributes else []
+
+        if object_classes is None:
+            object_classes = ["user", "group"]
+
+        object_class_filter = "".join([f"(objectClass={oc})" for oc in object_classes])
+        object_class_filter = f"(|{object_class_filter})"
+
+        search_filter = f"(&(cn=*{prefix}*){object_class_filter})"
+        logger.debug(
+            f"Searching with filter: {search_filter}, attributes: {attributes}, page_size={page_size}",
+        )
+
+        try:
+            paged_resp = self.conn.extend.standard.paged_search(
+                search_base=f"CN=Users,{self.config.base_dn}",
+                search_filter=search_filter,
+                search_scope=ldap3.SUBTREE,
+                attributes=attributes,
+                paged_size=page_size,
+                generator=True,  # <-- yields a generator rather than a list
+            )
+
+            # Yield each entry as it comes in
+            for entry in paged_resp:
+                # 'searchResEntry' indicates an actual result entry
+                if entry["type"] == "searchResEntry":
+                    yield entry
+
+        except Exception as error:
+            logger.error(f"Error while searching: {error}")
+            raise
+
+    def delete_entry(self, dn: str):
+        """
+        Deletes an entry (user or group) by its distinguished name (DN).
+
+        :param dn: The DN of the entry to delete, e.g., 'CN=JohnDoe,OU=Users,DC=example,DC=com'
+        :return: True if deletion succeeded, False otherwise.
+        """
+        logger.debug(f"Attempting to delete entry with DN: {dn}")
+        try:
+            self.conn.delete(dn)
+            if self.conn.result["result"] == 0:
+                logger.info(f"Successfully deleted entry: {dn}")
+                return True
+            else:
+                logger.error(
+                    f"Failed to delete entry {dn}, error: {self.conn.result}",
+                )
+                return False
+        except Exception as error:
+            logger.error(f"Error while deleting entry: {error}")
+            raise
