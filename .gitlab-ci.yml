@@ -57,7 +57,8 @@ check-debian-updates:
   variables:
     TARGET_IMAGE: "${CI_REGISTRY_IMAGE}/${IMAGE_NAME}:latest"
 
-test-with-ad:
+
+test-e2e-with-active-directory:
   stage: test
   # This blocks the job from being runned by two pipelines simultaneously
   resource_group: kvm
@@ -112,7 +113,7 @@ test-with-ad:
     when: "always"
     expose_as: "docker compose server logs"
 
-integration-test-directory-importer:
+test-unit-and-integration::
   stage: test
   extends: .dind
   image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
@@ -134,7 +135,7 @@ integration-test-directory-importer:
     - echo -e "\e[0Ksection_end:`date +%s`:docker_compose_config\r\e[0K"
     - docker compose up --no-build --quiet-pull --wait --wait-timeout 60 ldap-server udm-rest-api
   script:
-    - docker compose run --quiet-pull test -- pytest tests/unit
+    - docker compose run --quiet-pull test -- pytest tests/unit tests/integration
   after_script:
     - docker logs ldap-server >& ldap-server.log
     - docker logs udm-rest-api >& udm-rest-api.log
