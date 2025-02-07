@@ -61,7 +61,7 @@ Optionally configure the TMUX monitoring environment: `./configure-tmux.sh`
 ### Test Data Generation
 
 ```bash
-python3 ad_provisioner.py \
+PYTHONPATH=./tests python3 tests/load/ad_provisioner.py \
     --host ldap://10.207.118.192 \
     --admin-dn "cn=Administrator,cn=users,DC=ad,DC=test" \
     --password Univention.99 \
