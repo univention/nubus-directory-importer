@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.6.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.5.0...v0.6.0) (2025-02-07)
+
+
+### Features
+
+* **load-test:** Jupyter notebook to create load test graphs from log files ([82fd164](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/82fd164459a6e5d5ee2b1764068cb2852c7bb15a))
+
+
+### Bug Fixes
+
+* **load-test:** Add cleanup functionality to load testing script ([e49b68a](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/e49b68a99546b0275be60bf699b8132aac844f61))
+* **load-tests:** final fixes ([6982c7f](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/6982c7f7eb9e572ad149a0e8471e693675b2a792))
+* **load-test:** simple import fixes ([c33d848](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/c33d8489b89a6d442d5bdb827058e8cc5d7e57d5))
+* Resync every 5 minutes in the example docker compose ([33e892e](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/33e892ee8fe1164586f13351e377e7fbf96f1457))
+
 ## [0.5.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.4.0...v0.5.0) (2025-02-07)
 
 
