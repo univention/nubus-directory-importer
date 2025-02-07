@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.4.0...v0.5.0) (2025-02-07)
+
+
+### Features
+
+* Allow passing credentials as environment variables ([81e8d12](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/81e8d12662de0e81be11f2eb25862fd96f34f3a7))
+
 ## [0.4.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.3.0...v0.4.0) (2025-01-30)
 
 
