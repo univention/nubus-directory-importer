@@ -61,13 +61,80 @@ def stub_log_conf(tmp_path):
 def test_pass_config_filename_as_cli_option(mock_connector_config, stub_config):
     result = runner.invoke(app, [str(stub_config)])
     assert result.exit_code == 0
-    mock_connector_config.assert_called_once_with(stub_config)
+    mock_connector_config.assert_called_once_with(
+        stub_config,
+        source_password=None,
+        udm_password=None,
+    )
 
 
 def test_reads_config_filename_from_environment(mock_connector_config, stub_config):
     result = runner.invoke(app, [], env={"CONFIG_FILENAME": str(stub_config)})
     assert result.exit_code == 0
-    mock_connector_config.assert_called_once_with(stub_config)
+    mock_connector_config.assert_called_once_with(
+        stub_config,
+        source_password=None,
+        udm_password=None,
+    )
+
+
+def test_pass_passwords_as_cli_options(mock_connector_config, stub_config):
+    result = runner.invoke(
+        app,
+        [
+            str(stub_config),
+            "--source-password",
+            "src123",
+            "--udm-password",
+            "udm123",
+        ],
+    )
+    assert result.exit_code == 0
+    mock_connector_config.assert_called_once_with(
+        stub_config,
+        source_password="src123",
+        udm_password="udm123",
+    )
+
+
+def test_reads_passwords_from_environment(mock_connector_config, stub_config):
+    result = runner.invoke(
+        app,
+        [str(stub_config)],
+        env={
+            "SOURCE_PASSWORD": "src123",
+            "UDM_PASSWORD": "udm123",
+        },
+    )
+    assert result.exit_code == 0
+    mock_connector_config.assert_called_once_with(
+        stub_config,
+        source_password="src123",
+        udm_password="udm123",
+    )
+
+
+def test_cli_passwords_override_environment(mock_connector_config, stub_config):
+    result = runner.invoke(
+        app,
+        [
+            str(stub_config),
+            "--source-password",
+            "src_cli",
+            "--udm-password",
+            "udm_cli",
+        ],
+        env={
+            "SOURCE_PASSWORD": "src_env",
+            "UDM_PASSWORD": "udm_env",
+        },
+    )
+    assert result.exit_code == 0
+    mock_connector_config.assert_called_once_with(
+        stub_config,
+        source_password="src_cli",
+        udm_password="udm_cli",
+    )
 
 
 def test_fails_if_config_path_is_a_directory(tmp_path):
