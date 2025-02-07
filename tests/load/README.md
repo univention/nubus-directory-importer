@@ -60,7 +60,10 @@ Optionally configure the TMUX monitoring environment: `./configure-tmux.sh`
 
 ### Test Data Generation
 
+Use at least Python 3.11
+
 ```bash
+pip install ldap3
 PYTHONPATH=./tests python3 tests/load/ad_provisioner.py \
     --host ldap://10.207.118.192 \
     --admin-dn "cn=Administrator,cn=users,DC=ad,DC=test" \

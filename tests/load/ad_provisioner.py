@@ -96,7 +96,7 @@ def main():
     groups: list[Group] = []
     # Configure groups
     for index, max_size in enumerate(config.groups):
-        groupname = f"{config.name_prefix}_group:{index}_max-members:{max_size}"
+        groupname = f"{config.name_prefix}_group-{index}_max-members-{max_size}"
         groups.append(Group(groupname, max_size, connection.create_group))
 
     # Generate users
