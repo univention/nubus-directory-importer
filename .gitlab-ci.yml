@@ -64,7 +64,10 @@ test-e2e-with-active-directory:
   resource_group: kvm
   extends: .dind
   image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
-  when: manual
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: "never"
+    - when: "on_success"
   variables:
     KVM_SERVER: "skurup.knut.univention.de"
     KVM_USER: "build"
