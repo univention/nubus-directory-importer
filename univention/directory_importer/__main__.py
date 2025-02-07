@@ -72,6 +72,20 @@ def cli(
             help=f"Delay in seconds between repeated runs, {Repeater.DEFAULT_DELAY} seconds by default.",
         ),
     ] = None,
+    source_password: Annotated[
+        Optional[str],
+        typer.Option(
+            envvar="SOURCE_PASSWORD",
+            help="Password for the source directory.",
+        ),
+    ] = None,
+    udm_password: Annotated[
+        Optional[str],
+        typer.Option(
+            envvar="UDM_PASSWORD",
+            help="Password for the UDM REST API.",
+        ),
+    ] = None,
 ):
     """
     Directory importer - Sync users from a source directory into a target UDM Rest API.
@@ -88,7 +102,11 @@ def cli(
         config_filename,
     )
 
-    config = ConnectorConfig(config_filename)
+    config = ConnectorConfig(
+        config_filename,
+        source_password=source_password,
+        udm_password=udm_password,
+    )
     connector = Connector(config)
     if repeat:
         repeater = Repeater(target=connector, delay=repeat_delay)

@@ -153,7 +153,7 @@ CFG_SCHEMA_SOURCE_LDAP = Map(
     {
         "ldap_uri": Str(),
         Optional("bind_dn"): Str(),
-        Optional("bind_pw"): Str(),
+        Optional("password"): Str(),
         Optional("sasl_method"): Str(),
         Optional("ca_cert", default=certifi.where()): Str(),
         Optional("timeout", default=5.0): Float(),
@@ -193,7 +193,7 @@ class SourceConfig:
         # Connection config
         "ldap_uri",
         "bind_dn",
-        "bind_pw",
+        "password",
         "ca_cert",
         # Logging config
         "trace_level",
@@ -217,7 +217,7 @@ class SourceConfig:
 
     ldap_uri: LDAPUrl
     bind_dn: str
-    bind_pw: bytes
+    password: bytes
     ca_cert: str
     trace_level: int
     timeout: float
@@ -235,11 +235,11 @@ class SourceConfig:
     group_range_attrs: Sequence[str]
     group_trans: Transformer
 
-    def __init__(self, yml):
+    def __init__(self, yml, password=None):
         self._yml = yml
         self.ldap_uri = LDAPUrl(yml["ldap_uri"].text)
         self.bind_dn = yml["bind_dn"].text
-        self.bind_pw = yml["bind_pw"].text.encode("utf-8")
+        self.password = (password or yml.get("password").text).encode("utf-8")
         self.ca_cert = yml["ca_cert"].text
         self.trace_level = yml["trace_level"].data
         self.timeout = yml["timeout"].data
@@ -302,11 +302,11 @@ class UDMConfig:
     user_primary_key_property: str
     group_primary_key_property: str
 
-    def __init__(self, yml):
+    def __init__(self, yml, password=None):
         self._yml = yml
         self.uri = yml["uri"].text
         self.user = yml["user"].text
-        self.password = yml["password"].text
+        self.password = password or yml["password"].text
         self.ca_cert = yml["ca_cert"].text
         self.skip_writes = yml["skip_writes"].data
         self.connect_timeout = yml["connect_timeout"].data
@@ -333,8 +333,8 @@ class ConnectorConfig:
     src: SourceConfig
     udm: UDMConfig
 
-    def __init__(self, config_filename):
+    def __init__(self, config_filename, source_password=None, udm_password=None):
         with open(config_filename, "r", encoding=CFG_ENCODING) as config_file:
             yml = strictyaml.load(config_file.read(), CFG_SCHEMA)
-        self.src = SourceConfig(yml["source"])
-        self.udm = UDMConfig(yml["udm"])
+        self.src = SourceConfig(yml["source"], password=source_password)
+        self.udm = UDMConfig(yml["udm"], password=udm_password)

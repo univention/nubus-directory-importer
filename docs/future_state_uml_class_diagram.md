@@ -34,7 +34,7 @@ classDiagram
     class LDAPConfig {
         -LDAPUrl ldap_uri
         -str bind_dn
-        -bytes bind_pw
+        -bytes password
         -str ca_cert
         -int search_pagesize
         -float timeout

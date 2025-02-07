@@ -173,7 +173,8 @@ At the top hierarchy level there are these config dictionaries:
   * user: (mandatory)
     User's name used for authenticating to UDM
   * password: (mandatory)
-    User's password used for authenticating to UDM
+    User's password used for authenticating to UDM.
+    Can be also passed via environment variable `UDM_PASSWORD`.
   * ca_cert: (optional)
     Path name of the trusted CA certificate bundle file.
     Defaults to your platform-specific CA bundle file.
@@ -208,8 +209,9 @@ At the top hierarchy level there are these config dictionaries:
     _subjectAltName_ in the source directory's TLS server certificate.
   * bind_dn: (mandatory)
     The bind DN to use authenticate to the source directory via LDAP simple bind operation.
-  * bind_pw: (mandatory)
+  * password: (mandatory)
     The clear-text password to use with LDAP simple bind operation.
+    Can be also passed via environment variable `SOURCE_PASSWORD`.
   * ca_cert: (optional)
     Path name of the trusted CA certificate bundle file.
     Defaults to your platform-specific CA bundle file.

@@ -77,7 +77,7 @@ class Connector:
             new_conn.set_option(ldap.OPT_REFERRALS, 0)
             new_conn.set_option(ldap.OPT_X_TLS_CACERTFILE, self._config.src.ca_cert)
             new_conn.set_option(ldap.OPT_X_TLS_NEWCTX, 0)
-            new_conn.simple_bind_s(self._config.src.bind_dn, self._config.src.bind_pw)
+            new_conn.simple_bind_s(self._config.src.bind_dn, self._config.src.password)
             try:
                 wai = new_conn.whoami_s()
             except ldap.PROTOCOL_ERROR:

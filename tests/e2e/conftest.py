@@ -51,7 +51,7 @@ def ad_config(pytestconfig, directory_importer_config) -> ADConfig:
     return ADConfig(
         host=directory_importer_config.src.ldap_uri.hostport,
         admin_dn=directory_importer_config.src.bind_dn,
-        password=directory_importer_config.src.bind_pw,
+        password=directory_importer_config.src.password,
         base_dn=pytestconfig.option.ad_base_dn,
     )
 

@@ -15,7 +15,7 @@ udm:
 source:
     ldap_uri: "ldapi://__dummy__"
     bind_dn: "cn=Manager,o=source"
-    bind_pw: "password"
+    password: "password"
     timeout: 10
     search_pagesize: 3
     #trace_level: 2

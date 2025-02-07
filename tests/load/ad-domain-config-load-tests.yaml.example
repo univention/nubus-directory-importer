@@ -13,7 +13,7 @@ udm:
 source:
     ldap_uri: "ldap://WIN-N8V5GD1V1VL.ad.test"  # changeme
     bind_dn: "cn=Administrator,cn=users,DC=ad,DC=test"
-    bind_pw: "PASS"  # changeme
+    password: "PASS"  # changeme
     timeout: 300
     search_pagesize: 500
 
