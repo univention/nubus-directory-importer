@@ -49,7 +49,7 @@ def process_log_file(file_path, line_parser):
             try:
                 timestamp = pd.Timestamp(line.split(" root[7]")[0])
             except Exception:
-                print(f"failed to parse line: {line_number}: {line}")
+                print(f"failed to parse timestamp: {line_number}: {line}")
                 continue
 
             parsed_line = line_parser(line)

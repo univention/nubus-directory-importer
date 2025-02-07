@@ -10,6 +10,10 @@ This document provides setup instructions for testing the Directory Importer wit
 
 * An AD machine generated with https://jenkins2022.knut.univention.de/job/UCS-5.2/job/UCS-5.2-0/view/Personal%20environments/job/UcsW2k19ADEnvironment/ The AD connection details can be found in the UCS primary with `ucr dump | grep connector/ad`. You need to add the windows hostname to `/etc/hosts`.
 * A Nubus for k8s deployment and it's UDM credentials.
+  To run load tests with many users and groups, some configuration changes for large Nubus environments are necessary.
+  If you deploy nubus with the helmfile configuration in the `ums-stack` repo, you can activate this configuration with: `--state-values-set toggles.loadTest=true`
+
+  for more details see the [load test results documentation](./load-test-results_2025-02.md)
 
 After you've provisioned the AD and UCS VM's,
 shut both down and enable the `Always start VM with host`
@@ -33,7 +37,9 @@ To do that some pre-configuration is necessary:
 The Directory Importer is not particularly memory efficient.
 It loads the complete source LDAP subtree into memory.
 For this load test with 100k users this leads to about 10 GB of memory consumption
-by the Directory Importer process.
+by the Directory Importer process.  
+Each user came with a 100kB profile picture, thus
+100k users * 0.1 MiB/user = 10 GiB
 
 To prepare for this, you need to shut down the VM
 and increase it's memory to 12 - 16 GB depending on how
