@@ -186,12 +186,16 @@ At the top hierarchy level there are these config dictionaries:
     Timeout in seconds to wait for UDM results (default 1800 secs).
   * user_ou: (mandatory)
     Name of the OU used as target container for user entries.
+    The Directory Importer considers itself the exclusive owner of this ou.
+    It will delete all existing entries inside it that are not present in the source directory
   * user_primary_key_property: (optional)
     UDM property to use for storing the remote primary key for users.
   * user_properties: (optional)
     List of user property names the connector writes to.
   * group_ou: (mandatory)
     Name of the OU used as target container for group entries.
+    The Directory Importer considers itself the exclusive owner of this ou.
+    It will delete all existing entries inside it that are not present in the source directory
   * group_primary_key_property: (optional)
     UDM property to use for storing the remote primary key for groups.
   * group_properties: (optional)
