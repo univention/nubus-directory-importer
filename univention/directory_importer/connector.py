@@ -20,6 +20,10 @@ from .trans import MemberRefsTransformer
 from .udm import UDMClient, UDMEntry, UDMMethod, UDMModel
 
 
+class ReadSourceDirectoryError(Exception):
+    ...
+
+
 class Connector:
     """
     The connector for syncing data
@@ -113,7 +117,7 @@ class Connector:
         ignore_dn_regex = self._config.src.ignore_dn_regex
         paged_search = page_size > 0
         search_ctrls = []
-        if paged_search > 0:
+        if paged_search:
             paged_results_control = SimplePagedResultsControl(
                 True,
                 size=page_size,
@@ -210,7 +214,7 @@ class Connector:
                 ldap.ADMINLIMIT_EXCEEDED,
             ) as err:
                 logging.error("Aborting because of error: %s", err)
-                break
+                raise ReadSourceDirectoryError() from err
         # end of .source_search()
 
     def log_summary(

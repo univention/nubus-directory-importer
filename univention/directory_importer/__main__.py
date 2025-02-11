@@ -7,6 +7,7 @@ univention.directory_importer.__main__ - CLI entry point
 
 import logging
 import logging.config
+import sys
 from pathlib import Path
 from typing import Annotated, Optional
 
@@ -14,7 +15,7 @@ import typer
 
 from .__about__ import __version__
 from .config import ConnectorConfig
-from .connector import Connector
+from .connector import Connector, ReadSourceDirectoryError
 from .util import Repeater
 
 # log format to use when logging to console
@@ -110,9 +111,22 @@ def cli(
     connector = Connector(config)
     if repeat:
         repeater = Repeater(target=connector, delay=repeat_delay)
-        repeater.call()
+        try:
+            repeater.call()
+        except ReadSourceDirectoryError:
+            logging.warning(
+                "Synchnonization failed due to an error reading the source LDAP direcyory. "
+                "A new synchronization attempt will be started after the configured repeat delay",
+            )
+
     else:
-        connector()
+        try:
+            connector()
+        except ReadSourceDirectoryError:
+            logging.error(
+                "Synchnonization failed due to an error reading the source LDAP direcyory.",
+            )
+            sys.exit(1)
 
 
 def setup_logging(log_level: str = "INFO") -> None:
