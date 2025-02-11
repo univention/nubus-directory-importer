@@ -11,11 +11,6 @@ SOURCE_PASSWORD = "source_password"
 
 
 @pytest.fixture()
-def connector_yaml_path():
-    return "tests/data/connector.yml"
-
-
-@pytest.fixture()
 def connector_yaml(connector_yaml_path):
     with open(connector_yaml_path, "r") as f:
         return strictyaml.load(f.read())
