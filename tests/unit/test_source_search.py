@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 import ldap
 import pytest
 
+from tests.unit.test_cli import StopException
 from univention.directory_importer.__main__ import cli, setup_logging
 from univention.directory_importer.config import ConnectorConfig
 from univention.directory_importer.connector import Connector, ReadSourceDirectoryError
@@ -50,12 +51,8 @@ def connector(connector_yaml_path, ldap_mock, udm_mock):
     return connector
 
 
-@pytest.fixture
-def test_logging():
+def test_source_search(connector):
     setup_logging("DEBUG")
-
-
-def test_source_search(connector, test_logging):
     with pytest.raises(ReadSourceDirectoryError):
         dict(
             connector.source_search(
@@ -71,19 +68,35 @@ def test_source_search(connector, test_logging):
 def test_importer_repeats_after_failed_source_search(
     connector_yaml_path,
     connector,
-    udm_mock,
+    ldap_mock,
 ):
+    ldap_mock.result3.side_effect = iter(
+        [
+            LDAP_RESULT,
+            LDAP_RESULT,
+            LDAP_RESULT,
+            ldap.ADMINLIMIT_EXCEEDED,
+            LDAP_RESULT,
+            LDAP_RESULT,
+            LDAP_RESULT,
+            ldap.ADMINLIMIT_EXCEEDED,
+            StopException,
+        ],
+    )
+
     with patch("univention.directory_importer.__main__.Connector") as mock:
         mock.return_value = connector
-        cli(
-            config_filename=connector_yaml_path,
-            log_level="INFO",
-            log_conf=None,
-            repeat=True,
-            repeat_delay=0.001,
-            source_password="foo",
-            udm_password="bar",
-        )
+        with pytest.raises(StopException):
+            cli(
+                config_filename=connector_yaml_path,
+                log_level="INFO",
+                log_conf=None,
+                repeat=True,
+                repeat_delay=0.001,
+                source_password="foo",
+                udm_password="bar",
+            )
+        assert ldap_mock.result3.call_count == 9
 
 
 def test_importer_fails_after_failed_source_search(

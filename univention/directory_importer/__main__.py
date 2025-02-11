@@ -109,15 +109,19 @@ def cli(
         udm_password=udm_password,
     )
     connector = Connector(config)
-    if repeat:
-        repeater = Repeater(target=connector, delay=repeat_delay)
+
+    def run_connector():
         try:
-            repeater.call()
+            connector()
         except ReadSourceDirectoryError:
             logging.warning(
                 "Synchnonization failed due to an error reading the source LDAP direcyory. "
                 "A new synchronization attempt will be started after the configured repeat delay",
             )
+
+    if repeat:
+        repeater = Repeater(target=run_connector, delay=repeat_delay)
+        repeater.call()
 
     else:
         try:
