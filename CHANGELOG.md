@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.1](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.6.0...v0.6.1) (2025-02-11)
+
+
+### Bug Fixes
+
+* Handle failures during requests to the source LDAP correctly ([9b45f86](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/9b45f864734d74d8bfd6e98a6995881ca5b6cc0f))
+* Make the repeater actually repeat after source_search throws an exception ([4ee8087](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/4ee808794f92d4c6b09dc8b82e429497a4caefe2))
+
 ## [0.6.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.5.0...v0.6.0) (2025-02-07)
 
 
