@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.6.1...v1.0.0) (2025-02-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* trigger the directory importer 1.0.0 version bump
+
+### Features
+
+* Update the project version to 1.0.0 ([40b88f7](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/40b88f77c3d670458b17e8f4074a731b4123d956))
+
 ## [0.6.1](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.6.0...v0.6.1) (2025-02-11)
 
 
