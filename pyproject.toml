@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "directory-importer"
-version = "0.1.0"
+version = "1.0.0"
 description = "Enables a one way sync of user and group data from an LDAP source directory (Active Directory) to a Nubus deyployment"
 readme = "README.md"
 authors = [
