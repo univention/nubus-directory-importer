@@ -1,15 +1,8 @@
-# Disclaimer - Work in progress
-
-The repository you are looking into is work in progress.
-It contains proof of concept and preview builds in development.
-
-The repository's content provides you with first insights into the containerized cloud IAM from Univention, derived from the UCS appliance.
-
-# LDAP directory synchronization with UCS
+# LDAP directory synchronization with Univention Nubus
 
 This component searches user and group entries via LDAP, e.g. in
 MS Active Directory or OpenLDAP,  and syncs the users and groups found
-via UDM REST API to UCS.
+via the UDM REST API to Nubus.
 
 The synchronization always processes the full source data and thus does
 not have to maintain any local state.
@@ -35,12 +28,12 @@ not have to maintain any local state.
 
   * The source directory should have a dedicated service account configured
     which allows searching/reading all wanted users and groups entries.
-  * A service account has to be created in UCS which allows to write
+  * A service account has to be created in Nubus which allows to write
     users and groups in the configured target container (OU).
 
 ### Firewalling
 
-  * The connector has to reach the target UCS system on port _443/tcp_.
+  * The connector has to reach the target Nubus UDM REST API on port _443/tcp_.
   * The connector has to reach the source directory via TCP (e.g. port _636/tcp_).
   * No inbound connections are needed.
 
@@ -379,7 +372,7 @@ where the OpenLDAP command-line tools and the _slapd_ executable can be found.
 
 ## Test cases
 
-Note that modifying source entries and verifying the change in UCS depends
+Note that modifying source entries and verifying the change in Nubus depends
 on the actual configuration (attribute mapping/composition etc.). So this
 section does not contain detailed attribute/property values.
 
@@ -389,7 +382,7 @@ section does not contain detailed attribute/property values.
 
 Action in the source directory:
 
-  * Add a new user not present in UCS yet.
+  * Add a new user not present in Nubus yet.
 
 Expected result:
 
@@ -441,7 +434,7 @@ Expected result:
 
 Action in the source directory:
 
-  * Add a new group not present in UCS yet.
+  * Add a new group not present in Nubus yet.
 
 Expected result:
 

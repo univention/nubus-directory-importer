@@ -274,7 +274,7 @@ class UDMClient:
     @property
     def base_position(self):
         """
-        return the LDAP base DN / search root configured in UCS
+        return the LDAP base DN / search root configured in Nubus
         """
         if self._base_position is None:
             # FIX ME! There is probably a better way to find the configured suffix.
