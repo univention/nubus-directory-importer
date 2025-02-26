@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v1.0.0...v1.1.0) (2025-02-26)
+
+
+### Features
+
+* Bump ucs-base-image to use released apt sources ([da25cd9](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/da25cd9317f63b5ab5e4e50f443a21160a26a47f))
+
 ## [1.0.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v0.6.1...v1.0.0) (2025-02-12)
 
 
