@@ -101,8 +101,8 @@ repos:
       name: Helm Docs
       require_serial: true
 
-  # - repo: "https://git.knut.univention.de/univention/customers/dataport/upx/kyverno-test-pre-commit"
-  #   rev: "v0.2.0"
-  #   hooks:
-  #     - id: "kyverno-test"
+  - repo: "https://git.knut.univention.de/univention/customers/dataport/upx/kyverno-test-pre-commit"
+    rev: "v0.2.0"
+    hooks:
+      - id: "kyverno-test"
 ...

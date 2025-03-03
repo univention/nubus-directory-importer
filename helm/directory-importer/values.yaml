@@ -200,6 +200,19 @@ resources:
     memory: "4Gi"
     cpu: "4"
 
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  privileged: false
+  readOnlyRootFilesystem: true
+  runAsGroup: 1000
+  runAsNonRoot: true
+  runAsUser: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
 # TODO: Do we implement probes for this thing?
 probes:
   liveness:

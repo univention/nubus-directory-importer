@@ -15,3 +15,7 @@ examples/*.private.env.json
 python-ldap-test-*
 
 /config/ad-domain-config.yaml
+
+helm/**/.kyverno/kyverno-test.yaml
+helm/**/.kyverno/manifest.yaml
+**/charts/
