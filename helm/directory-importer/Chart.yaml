@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
+---
+
+apiVersion: v2
+name: "directory-importer"
+description: |
+  The Nubus Directory Importer provides a daemon
+  that can synchronize users from a source Directory to a Nubus deployment.
+  An example source directory is an Active Directory LDAP
+
+  More documentation can be found at:
+  https://docs.software-univention.de/nubus-kubernetes-operation/latest/en/howto-connect-external-iam.html#howto-connect-external-iam-setup
+
+type: "application"
+
+version: "1.0.1"
+
+dependencies:
+  - name: "nubus-common"
+    version: "^0.8.x"
+    repository: "oci://artifacts.software-univention.de/nubus/charts"
+...

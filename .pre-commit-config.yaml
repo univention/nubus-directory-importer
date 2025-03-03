@@ -90,4 +90,19 @@ repos:
       - id: "addlicense"
         name: "Check or add license headers to files"
 
+  - repo: "https://github.com/norwoodj/helm-docs"
+    rev: "v1.12.0"
+    hooks:
+    - id: helm-docs
+      args:
+        - --chart-search-root=helm
+      description: Uses 'helm-docs' to create documentation from the Helm chart's 'values.yaml' file, and inserts the result into a corresponding 'README.md' file.
+      language: script
+      name: Helm Docs
+      require_serial: true
+
+  # - repo: "https://git.knut.univention.de/univention/customers/dataport/upx/kyverno-test-pre-commit"
+  #   rev: "v0.2.0"
+  #   hooks:
+  #     - id: "kyverno-test"
 ...
