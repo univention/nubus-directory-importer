@@ -4,24 +4,22 @@
 
 ---
 {{- $name := include "common.names.fullname" . }}
-# TODO: Make labels into variable
+{{- $commonLabels := include "common.labels.standard" . | fromYaml }}
+{{- $uiLabels := dict "app.kubernetes.io/name" $name }}
+{{- $mergedLabels := merge dict $uiLabels $commonLabels}}
 
 apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
   name: $name
   labels:
-    {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
-    {{- $uiLabels := dict "app.kubernetes.io/name" $name }}
-    {{- $mergedLabels := merge $uiLabels $commonLabels}}
     {{- toYaml $mergedLabels | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- $commonLabels := include "common.labels.matchLabels" . | fromYaml }}
-      {{- $uiLabels := dict "app.kubernetes.io/name" $name }}
-      {{- merge $uiLabels $commonLabels | toYaml | nindent 6 }}
+      {{- $matchLabels := include "common.labels.matchLabels" . | fromYaml }}
+      {{- merge $uiLabels $matchLabels | toYaml | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -31,9 +29,6 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
-        {{- $uiLabels := dict "app.kubernetes.io/name" $name }}
-        {{- $mergedLabels := merge $uiLabels $commonLabels}}
         {{- toYaml $mergedLabels | nindent 8 }}
     spec:
       {{- if .Values.serviceAccount.create }}
