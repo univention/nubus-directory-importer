@@ -28,6 +28,8 @@ image:
   # -- Define image sha256 as an alternative to `tag`
   sha256: null
 
+replicaCount: 1
+
 sourceDirectory:
   auth:
     password:

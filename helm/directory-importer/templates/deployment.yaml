@@ -15,7 +15,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- $matchLabels := include "common.labels.matchLabels" ( dict "customLabels" .Values.additionalLabels "context" $ ) | nindent 6 }}
+      {{- include "common.labels.matchLabels" ( dict "customLabels" .Values.additionalLabels "context" $ ) | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -102,12 +102,18 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- if .Values.extraVolumeMounts }}
           volumeMounts:
-              {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" .) | nindent 12 }}
-          {{- end }}
-      {{- if .Values.extraVolumes }}
+            - name: "config-file"
+              mountPath: "/etc/directory-importer/"
+            {{- if .Values.extraVolumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" .) | nindent 12 }}
+            {{- end }}
       volumes:
+        - name: "config-file"
+          configMap:
+            defaultMode: 0555
+            name: {{ printf "%s-config-file" (include "common.names.fullname" .) | trunc 63 | trimSuffix "-" }}
+        {{- if .Values.extraVolumes }}
           {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes  "context" .) | nindent 8 }}
-      {{- end }}
+        {{- end }}
 ...

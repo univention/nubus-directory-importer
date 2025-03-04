@@ -966,6 +966,15 @@ true
 			<td></td>
 		</tr>
 		<tr>
+			<td>replicaCount</td>
+			<td>int</td>
+			<td><pre lang="json">
+1
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
 			<td>resources.limits.cpu</td>
 			<td>string</td>
 			<td><pre lang="json">
