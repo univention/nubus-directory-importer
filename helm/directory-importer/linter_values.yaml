@@ -3,6 +3,9 @@
 
 ---
 
+additionalLabels:
+  foo: bar
+
 sourceDirectory:
   auth:
     # TODO: Test password path aswell

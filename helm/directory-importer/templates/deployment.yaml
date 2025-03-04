@@ -4,22 +4,18 @@
 
 ---
 {{- $name := include "common.names.fullname" . }}
-{{- $commonLabels := include "common.labels.standard" . | fromYaml }}
-{{- $uiLabels := dict "app.kubernetes.io/name" $name }}
-{{- $mergedLabels := merge dict $uiLabels $commonLabels}}
 
 apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
   name: {{ $name }}
   labels:
-    {{- toYaml $mergedLabels | nindent 4 }}
+    {{- include "common.labels.standard" ( dict "customLabels" .Values.additionalLabels "context" $ ) | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- $matchLabels := include "common.labels.matchLabels" . | fromYaml }}
-      {{- merge $uiLabels $matchLabels | toYaml | nindent 6 }}
+      {{- $matchLabels := include "common.labels.matchLabels" ( dict "customLabels" .Values.additionalLabels "context" $ ) | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -29,7 +25,7 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- toYaml $mergedLabels | nindent 8 }}
+        {{- include "common.labels.standard" ( dict "customLabels" .Values.additionalLabels "context" $ ) | nindent 8 }}
     spec:
       {{- if .Values.serviceAccount.create }}
       serviceAccountName: {{ $name }}
@@ -61,6 +57,7 @@ spec:
         - name: "directory-importer"
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+# TODO: Make only the string value into a nubus-common template
           image: "{{ coalesce .Values.image.registry .Values.global.imageRegistry }}/{{ .Values.image.repository }}{{ if .Values.image.sha256 }}@sha256:{{ .Values.image.sha256 }}{{ else }}:{{ .Values.image.tag }}{{ end }}"
           imagePullPolicy: {{ coalesce .Values.image.imagePullPolicy .Values.global.imagePullPolicy | quote }}
           envFrom:
@@ -70,13 +67,13 @@ spec:
             - name: SOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ tpl .Values.sourceDirectory.auth.existingSecret.name . }}
-                  key: {{ tpl .Values.sourceDirectory.auth.existingSecret.keyMapping.password . }}
+                  name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.sourceDirectory.auth.existingSecret "defaultNameSuffix" "udm" "context" .) | quote }}
+                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.sourceDirectory.auth.existingSecret "key" "password") | quote }}
             - name: UDM_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ tpl .Values.udm.auth.existingSecret.name . }}
-                  key: {{ tpl .Values.udm.auth.existingSecret.keyMapping.password . }}
+                  name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.udm.auth.existingSecret "defaultNameSuffix" "udm" "context" .) | quote }}
+                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.udm.auth.existingSecret "key" "password") | quote }}
           {{- with .Values.extraEnvVars }}
             {{- . | toYaml | nindent 12 }}
           {{- end }}
