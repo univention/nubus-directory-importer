@@ -2,14 +2,10 @@ load("ext://helm_resource", "helm_resource")
 
 helm_resource(
     "directory-importer",
-    chart="../helm/directory-importer/",
+    chart="./helm/directory-importer/",
     deps=[
       "tilt-values.yaml",
-      "../helm/directory-importer/",
-      "../docker/directory-importer/",
-      "../pyproject.toml",
-      "../uv.lock",
-      "../univention/",
+      "helm/directory-importer/",
     ],
     flags=[
       "--values", "tilt-values.yaml"
@@ -24,6 +20,6 @@ helm_resource(
 
 docker_build(
     "artifacts.software-univention.de/nubus-dev/images/directory-importer:latest",
-    "../",
-    dockerfile="../docker/directory-importer/Dockerfile",
+    "./",
+    dockerfile="./docker/directory-importer/Dockerfile",
 )
