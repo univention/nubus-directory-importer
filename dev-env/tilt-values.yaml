@@ -1,13 +1,20 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
+sourceDirectory:
+  auth:
+    password: "Univention.99"
+udm:
+  auth:
+    password: "univention"
+
+config:
+  logLevel: "DEBUG"
+
 configFile:
   udm:
     uri: "http://udm-rest-api:9979/udm/"
     user: "cn=admin"
-    password: "univention"
-
   source:
-    ldap_uri: "ldap://my_active_directory_server.test:1234"
-    bind_dn: "CN=readonly-ad-machine-user,CN=Users,DC=ad,DC=test"
-    password: "supersecret"
+    ldap_uri: "ldap://10.207.116.197"
+    bind_dn: "CN=Administrator,CN=Users,DC=ad,DC=test"
