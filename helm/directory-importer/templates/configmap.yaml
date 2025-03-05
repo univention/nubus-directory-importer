@@ -5,7 +5,7 @@
 kind: "ConfigMap"
 apiVersion: "v1"
 metadata:
-  name: "{{ include "common.names.fullname" . }}"
+  name: {{ include "common.names.fullname" . | quote }}
   namespace: {{ include "common.names.namespace" . | quote }}
   labels:
     {{- include "common.labels.standard" ( dict "customLabels" .Values.additionalLabels "context" $ ) | nindent 4 }}
@@ -13,8 +13,8 @@ metadata:
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.additionalAnnotations "context" . ) | nindent 4 }}
   {{- end }}
 data:
-  LOG_LEVEL: "{{ .Values.config.logLevel }}"
-  LOG_CONF: "{{ .Values.config.logginConfig }}"
-  REPEAT: "{{ .Values.config.repeat }}"
-  REPEAT_DELAY: "{{ .Values.config.repeatDelay }}"
+  LOG_LEVEL: {{ .Values.config.logLevel | quote }}
+  LOG_CONF: {{ .Values.config.logginConfig | quote }}
+  REPEAT: {{ .Values.config.repeat | quote }}
+  REPEAT_DELAY: {{ .Values.config.repeatDelay | quote }}
   CONFIG_FILENAME: "/etc/directory-importer/config.yaml"

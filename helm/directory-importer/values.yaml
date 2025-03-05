@@ -30,20 +30,38 @@ image:
 
 replicaCount: 1
 
+# -- Source connection configuration that is not part of the main config file
 sourceDirectory:
   auth:
+    # -- The password used to authenticate with the source LDAP directory.
+    # Either this value or an existing Secret has to be specified.
     password:
     existingSecret:
+      # -- The name of an existing Secret to use for retrieving the password
+      # to authenticate with the source LDAP directory.
+      #
+      # "udm.auth.password" will be ignored if this value is set.
       name: null
       keyMapping:
+        # -- The key to retrieve the password from. Setting this value allows to use
+        # a key with a different name.
         password: null
 
+# -- UDM REST API connection configuration that is not part of the main config file
 udm:
   auth:
+    # -- The password used to authenticate with the UDM Rest API.
+    # Either this value or an existing Secret has to be specified.
     password:
     existingSecret:
+      # -- The name of an existing Secret to use for retrieving the password
+      # to use with the UDM Rest API.
+      #
+      # "udm.auth.password" will be ignored if this value is set.
       name: null
       keyMapping:
+        # -- The key to retrieve the password from. Setting this value allows to use
+        # a key with a different name.
         password: null
 
 config:
@@ -199,9 +217,6 @@ configFile:
 
 
 resources:
-  requests:
-    memory: "512Mi"
-    cpu: "250m"
   limits:
     memory: "4Gi"
     cpu: "4"

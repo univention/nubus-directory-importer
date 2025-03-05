@@ -14,8 +14,6 @@ https://docs.software-univention.de/nubus-kubernetes-operation/latest/en/howto-c
 
 ## Introduction
 
-This chart does install the Guardian Authorization API.
-
 ## Requirements
 
 | Repository | Name | Version |
@@ -885,24 +883,6 @@ null
 			<td></td>
 		</tr>
 		<tr>
-			<td>resources.requests.cpu</td>
-			<td>string</td>
-			<td><pre lang="json">
-"250m"
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>resources.requests.memory</td>
-			<td>string</td>
-			<td><pre lang="json">
-"512Mi"
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
 			<td>securityContext.allowPrivilegeEscalation</td>
 			<td>bool</td>
 			<td><pre lang="json">
@@ -1020,13 +1000,32 @@ true
 			<td></td>
 		</tr>
 		<tr>
+			<td>sourceDirectory</td>
+			<td>object</td>
+			<td><pre lang="json">
+{
+  "auth": {
+    "existingSecret": {
+      "keyMapping": {
+        "password": null
+      },
+      "name": null
+    },
+    "password": null
+  }
+}
+</pre>
+</td>
+			<td>Source connection configuration that is not part of the main config file</td>
+		</tr>
+		<tr>
 			<td>sourceDirectory.auth.existingSecret.keyMapping.password</td>
 			<td>string</td>
 			<td><pre lang="json">
 null
 </pre>
 </td>
-			<td></td>
+			<td>The key to retrieve the password from. Setting this value allows to use a key with a different name.</td>
 		</tr>
 		<tr>
 			<td>sourceDirectory.auth.existingSecret.name</td>
@@ -1035,7 +1034,7 @@ null
 null
 </pre>
 </td>
-			<td></td>
+			<td>The name of an existing Secret to use for retrieving the password to authenticate with the source LDAP directory.  "udm.auth.password" will be ignored if this value is set.</td>
 		</tr>
 		<tr>
 			<td>sourceDirectory.auth.password</td>
@@ -1044,7 +1043,26 @@ null
 null
 </pre>
 </td>
-			<td></td>
+			<td>The password used to authenticate with the source LDAP directory. Either this value or an existing Secret has to be specified.</td>
+		</tr>
+		<tr>
+			<td>udm</td>
+			<td>object</td>
+			<td><pre lang="json">
+{
+  "auth": {
+    "existingSecret": {
+      "keyMapping": {
+        "password": null
+      },
+      "name": null
+    },
+    "password": null
+  }
+}
+</pre>
+</td>
+			<td>UDM REST API connection configuration that is not part of the main config file</td>
 		</tr>
 		<tr>
 			<td>udm.auth.existingSecret.keyMapping.password</td>
@@ -1053,7 +1071,7 @@ null
 null
 </pre>
 </td>
-			<td></td>
+			<td>The key to retrieve the password from. Setting this value allows to use a key with a different name.</td>
 		</tr>
 		<tr>
 			<td>udm.auth.existingSecret.name</td>
@@ -1062,7 +1080,7 @@ null
 null
 </pre>
 </td>
-			<td></td>
+			<td>The name of an existing Secret to use for retrieving the password to use with the UDM Rest API.  "udm.auth.password" will be ignored if this value is set.</td>
 		</tr>
 		<tr>
 			<td>udm.auth.password</td>
@@ -1071,7 +1089,7 @@ null
 null
 </pre>
 </td>
-			<td></td>
+			<td>The password used to authenticate with the UDM Rest API. Either this value or an existing Secret has to be specified.</td>
 		</tr>
 	</tbody>
 </table>

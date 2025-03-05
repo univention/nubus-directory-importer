@@ -13,4 +13,8 @@ global:
 
 replicaCount: 42
 
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
 ...

@@ -2,25 +2,4 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 ---
-
-additionalLabels:
-  foo: bar
-
-sourceDirectory:
-  auth:
-    # TODO: Test password path aswell
-    # password:
-    existingSecret:
-      name: "fake-source-directory-secret-name"
-      keyMapping:
-        password: "fake-source-directory-password-key"
-
-udm:
-  auth:
-    # TODO: Test password path aswell
-    # password:
-    existingSecret:
-      name: "fake-udm-secret-naem"
-      keyMapping:
-        password: "fake-udm-password-key"
 ...
