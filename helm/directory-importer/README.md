@@ -153,7 +153,7 @@ true
 			<td>configFile.source.password</td>
 			<td>string</td>
 			<td><pre lang="json">
-"supersecret"
+null
 </pre>
 </td>
 			<td></td>
@@ -720,7 +720,7 @@ true
 			<td>configFile.udm.password</td>
 			<td>string</td>
 			<td><pre lang="json">
-"supersecret"
+null
 </pre>
 </td>
 			<td></td>
@@ -856,114 +856,6 @@ null
 </pre>
 </td>
 			<td>Define image sha256 as an alternative to `tag`</td>
-		</tr>
-		<tr>
-			<td>probes.liveness.enabled</td>
-			<td>bool</td>
-			<td><pre lang="json">
-true
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.liveness.failureThreshold</td>
-			<td>int</td>
-			<td><pre lang="json">
-3
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.liveness.initialDelaySeconds</td>
-			<td>int</td>
-			<td><pre lang="json">
-120
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.liveness.periodSeconds</td>
-			<td>int</td>
-			<td><pre lang="json">
-30
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.liveness.successThreshold</td>
-			<td>int</td>
-			<td><pre lang="json">
-1
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.liveness.timeoutSeconds</td>
-			<td>int</td>
-			<td><pre lang="json">
-3
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.readiness.enabled</td>
-			<td>bool</td>
-			<td><pre lang="json">
-true
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.readiness.failureThreshold</td>
-			<td>int</td>
-			<td><pre lang="json">
-30
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.readiness.initialDelaySeconds</td>
-			<td>int</td>
-			<td><pre lang="json">
-30
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.readiness.periodSeconds</td>
-			<td>int</td>
-			<td><pre lang="json">
-15
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.readiness.successThreshold</td>
-			<td>int</td>
-			<td><pre lang="json">
-1
-</pre>
-</td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>probes.readiness.timeoutSeconds</td>
-			<td>int</td>
-			<td><pre lang="json">
-3
-</pre>
-</td>
-			<td></td>
 		</tr>
 		<tr>
 			<td>replicaCount</td>

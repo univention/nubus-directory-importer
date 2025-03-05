@@ -56,7 +56,9 @@ configFile:
   udm:
     uri: "https://nubus-kubernetes-deployment.test/univention/udm/"
     user: "Administrator"
-    password: "supersecret"
+    # This configuration is not used by the directory-importer because the env value takes precedence.
+    # The udm password needs to be configured in udm.auth.password
+    password: null
     # ca_cert: "/etc/ssl/certs/ca-certificates-nubus.crt"
     skip_writes: false
     user_ou: "ou=ad-domain-example"
@@ -67,8 +69,10 @@ configFile:
   source:
     ldap_uri: "ldap://my_active_directory_server.test:1234" # "ldaps://"
     bind_dn: "CN=readonly-ad-machine-user,CN=Users,DC=ad,DC=test"
-    password: "supersecret"
     # ca_cert: "/etc/ssl/certs/ca-certificates-ad.crt"
+    # This configuration is not used by the directory-importer because the env value takes precedence.
+    # The source password needs to be configured in sourcDirectory.auth.password
+    password: null
     timeout: 5
     search_pagesize: 500
     # search paramaters for groups
@@ -214,24 +218,6 @@ securityContext:
   runAsUser: 1000
   seccompProfile:
     type: RuntimeDefault
-
-# TODO: Do we implement probes for this thing?
-probes:
-  liveness:
-    enabled: true
-    initialDelaySeconds: 120
-    timeoutSeconds: 3
-    periodSeconds: 30
-    failureThreshold: 3
-    successThreshold: 1
-
-  readiness:
-    enabled: true
-    initialDelaySeconds: 30
-    timeoutSeconds: 3
-    periodSeconds: 15
-    failureThreshold: 30
-    successThreshold: 1
 
 # -- Optionally specify a secret to create (primarily intended to be used in development environments to provide custom certificates)
 extraSecrets: []

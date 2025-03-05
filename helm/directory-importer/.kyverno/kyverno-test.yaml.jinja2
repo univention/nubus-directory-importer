@@ -32,12 +32,13 @@ results:
     kind: "Deployment"
     rule: "disallow-default-serviceAccountName"
     result: "pass"
-  - resources:
-      - "release-name-directory-importer"
-    policy: "require-health-and-liveness-check"
-    kind: "Deployment"
-    rule: "require-health-and-liveness-check"
-    result: "pass"
+  # The directory importer currently does not support any /healthz endpoint.
+  # - resources:
+  #     - "release-name-directory-importer"
+  #   policy: "require-health-and-liveness-check"
+  #   kind: "Deployment"
+  #   rule: "require-health-and-liveness-check"
+  #   result: "pass"
   - resources:
       - "release-name-directory-importer"
     policy: "require-containersecuritycontext"
