@@ -1,1 +1,11 @@
 .venv
+
+docs
+.gitlab-ci.yml
+examples
+docker-compose.yml
+helm
+tests
+config
+README-tilt.md
+Tiltfile
