@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v1.1.0...v1.2.0) (2025-03-06)
+
+
+### Features
+
+* Initial helm chart templates ([7a1c94a](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/7a1c94ad4e799f49f9cef90d0ffef773cad84af1))
+
+
+### Bug Fixes
+
+* Clean up helm chart and try to implement best-practices ([67f3501](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/67f35014338e66dfd03366b53b0dc1823c900c96))
+* Deduplicate label templating ([c6af031](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/c6af0316dc3a326a9a34521805cc18c9b1bc56e1))
+* Dockerignore to trigger fewer container rebuilds ([52a15e3](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/52a15e3e80fce50acbe26a3337dc4ae8d0f92725))
+* Implement best-practices from pairing with Johannes B ([0e26be5](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/0e26be537097c339d3c81a24e6d6577fa9ba9a94))
+* Mount config file configmap into directory-importer pod ([67854ee](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/67854ee98b404c40f316f48e607963af78473e7f))
+* Set the password in the config file to null to make it clearer that it's provided by env values ([6524996](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/65249967c0f09f0169476983218bb14de421e91a))
+
 ## [1.1.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v1.0.0...v1.1.0) (2025-02-26)
 
 
