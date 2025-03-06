@@ -13,8 +13,10 @@ metadata:
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.additionalAnnotations "context" . ) | nindent 4 }}
   {{- end }}
 data:
-  LOG_LEVEL: {{ .Values.config.logLevel | quote }}
-  LOG_CONF: {{ .Values.config.logginConfig | quote }}
-  REPEAT: {{ .Values.config.repeat | quote }}
-  REPEAT_DELAY: {{ .Values.config.repeatDelay | quote }}
+  LOG_LEVEL: {{ .Values.config.logLevel | required ".Values.config.LogLevel is required" | quote }}
+  {{- if .Values.config.loggingConfig }}
+  LOG_CONF: {{ .Values.config.loggingConfig | quote }}
+  {{- end }}
+  REPEAT: {{ .Values.config.repeat | required ".Values.config.repeat is required" | quote }}
+  REPEAT_DELAY: {{ .Values.config.repeatDelay | required ".Values.config.repeatDelay is required" | quote }}
   CONFIG_FILENAME: "/etc/directory-importer/config.yaml"
