@@ -838,7 +838,7 @@ false
 {
   "imagePullPolicy": "",
   "registry": "",
-  "repository": "nubus/images/directory-importer",
+  "repository": "nubus-dev/images/directory-importer",
   "sha256": null,
   "tag": "latest"
 }

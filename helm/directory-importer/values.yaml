@@ -22,7 +22,7 @@ global:
 # -- Container image configuration
 image:
   registry: ""
-  repository: "nubus/images/directory-importer"
+  repository: "nubus-dev/images/directory-importer"
   imagePullPolicy: ""
   tag: "latest"
   # -- Define image sha256 as an alternative to `tag`
