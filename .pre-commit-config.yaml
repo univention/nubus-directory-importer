@@ -50,12 +50,6 @@ repos:
           - "--extend-select"
           - "COM"
 
-  # "Python formatter"
-  - repo: "https://github.com/psf/black"
-    rev: "23.3.0"
-    hooks:
-      - id: "black"
-
   # This is a wrapper for shellcheck as long as
   # shellcheck doesn't have it's own .pre-commit-hooks.yaml
   # https://github.com/koalaman/shellcheck/pull/1032
