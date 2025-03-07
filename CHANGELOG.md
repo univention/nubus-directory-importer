@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v1.2.0...v1.2.1) (2025-03-07)
+
+
+### Bug Fixes
+
+* build and publish the helm chart in CI ([db95957](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/db95957171a73564df71e1bea9fd55c88f2301cf))
+
 ## [1.2.0](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v1.1.0...v1.2.0) (2025-03-06)
 
 
