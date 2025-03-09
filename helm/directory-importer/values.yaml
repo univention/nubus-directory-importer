@@ -215,13 +215,16 @@ configFile:
         - "objectGUID"
         - "objectSid"
 
-
 resources:
   limits:
     memory: "4Gi"
     cpu: "4"
 
-securityContext:
+podSecurityContext:
+  enabled: false
+
+containerSecurityContext:
+  enabled: false
   allowPrivilegeEscalation: false
   capabilities:
     drop:
