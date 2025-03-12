@@ -13,12 +13,12 @@ authors = [
 # license = "GNU Affero General Public License v3"
 keywords = []
 
-
 requires-python = ">=3.10"
 dependencies = [
     "certifi",
     "junkaptor",
     "phonenumbers",
+    "pytest-helm>=0.0.1.dev0",
     "python-ldap",
     "requests",
     "strictyaml",
@@ -32,10 +32,21 @@ dev = [
     "pdbpp>=0.10.3",
     "ldap3>=2.9.1",
     "faker>=35.2.0",
-    "pytest-helm",
+    "pytest-helm==0.0.1.dev0+pre.jlohmer.publish.pip.5bcb3f53",
     "pyyaml",
     "python-jsonpath",
+    "pytest-xdist",
 ]
+
+[tool.uv.sources]
+junkaptor = { path = "junkaptor" }
+# For easier development with local dependencies, you can temporarily replace the following line with the one below it.
+pytest-helm = { index = "pytest-helm" }
+# pytest-helm = { path = "../pytest_helm/", editable = true }
+
+[[tool.uv.index]]
+name = "pytest-helm"
+url = "https://git.knut.univention.de/api/v4/projects/900/packages/pypi/simple"
 
 [tool.hatch.build]
 include = [
@@ -56,10 +67,6 @@ extend-select = ["I"]  # activate isort
 
 [tool.ruff.isort]
 known-first-party = ["slapdsock", "univention"]
-
-[tool.uv.sources]
-junkaptor = { path = "junkaptor" }
-pytest-helm = { path = "../pytest_helm/", editable = true }
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
