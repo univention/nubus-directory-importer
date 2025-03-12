@@ -51,8 +51,9 @@ WORKDIR /app
 RUN --mount=type=cache,target=/root/.cache \
   uv sync
 
+COPY --from=alpine/helm:3.17.1@sha256:e8d29e13b8218a8cb7b117a10a5210922474a74467bf70b6f3f1f7d9c1818ab0 /usr/bin/helm /usr/local/bin/helm
+
 COPY docker/directory-importer/activate_venv.envsh /entrypoint.d/
-COPY tests tests
 
 ##########################################################################
 FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS final
@@ -66,6 +67,8 @@ RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
       python3 \
       libldap-2.5-0 \
     && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+COPY --from=ghcr.io/astral-sh/uv:0.5.8@sha256:0bc959d4cc56e42cbd9aa9b63374d84481ee96c32803eea30bd7f16fd99d8d56 /uv /usr/local/bin/uv
 
 COPY --from=build --chown=app:app /app /app
 COPY docker/directory-importer/activate_venv.envsh /entrypoint.d/

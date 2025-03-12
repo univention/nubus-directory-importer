@@ -14,6 +14,7 @@ services:
       - ALL
     volumes:
       - ./:/app/tests:ro
+      - ../helm:/app/helm:ro
     extra_hosts:
       - "WIN-N8V5GD1V1L.ad.test:10.207.116.197"
 
