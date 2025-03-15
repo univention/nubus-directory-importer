@@ -2,7 +2,8 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 import pytest
-from pytest_helm.manifests.configmap import (
+
+from univention.testing.helm.configmap import (
     ConfigMap,
     OptionalEnvVariables,
     RequiredEnvVariables,
@@ -10,7 +11,7 @@ from pytest_helm.manifests.configmap import (
 
 
 class TestConfigMap(ConfigMap):
-    manifest = "templates/configmap.yaml"
+    template_file = "templates/configmap.yaml"
 
 
 @pytest.mark.parametrize(
@@ -22,7 +23,7 @@ class TestConfigMap(ConfigMap):
     ],
 )
 class TestRequiredConfigMapEnv(RequiredEnvVariables):
-    manifest = "templates/configmap.yaml"
+    template_file = "templates/configmap.yaml"
 
 
 @pytest.mark.parametrize(
@@ -32,8 +33,8 @@ class TestRequiredConfigMapEnv(RequiredEnvVariables):
     ],
 )
 class TestOptionalConfigMapEnv(OptionalEnvVariables):
-    manifest = "templates/configmap.yaml"
+    template_file = "templates/configmap.yaml"
 
 
 class TestConfigMapConfigFile(ConfigMap):
-    manifest = "templates/configmap-config-file.yaml"
+    template_file = "templates/configmap-config-file.yaml"

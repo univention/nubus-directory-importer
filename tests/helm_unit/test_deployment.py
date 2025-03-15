@@ -3,15 +3,13 @@
 
 
 import pytest
-from pytest_helm.manifests.container import Container
-from pytest_helm.manifests.deployment import Deployment
+
+from univention.testing.helm.container import ContainerEnvVarSecret
+from univention.testing.helm.deployment import Deployment
 
 
 class TestDeployment(Deployment):
-    manifest = "templates/deployment.yaml"
-
-    def values(self, localpart: dict) -> dict:
-        return localpart
+    template_file = "templates/deployment.yaml"
 
 
 @pytest.mark.parametrize(
@@ -21,6 +19,6 @@ class TestDeployment(Deployment):
         ("sourceDirectory", "SOURCE_PASSWORD"),
     ],
 )
-class TestMainContainer(Container):
-    manifest = "templates/deployment.yaml"
-    name = "directory-importer"
+class TestMainContainer(ContainerEnvVarSecret):
+    template_file = "templates/deployment.yaml"
+    container_name = "directory-importer"
