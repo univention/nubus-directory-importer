@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.2](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v1.2.1...v1.2.2) (2025-03-20)
+
+
+### Bug Fixes
+
+* **helm-test:** Adjust to updated testing library ([d92d473](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/d92d47314491d5d9dbb896de9fd038fc642e34ee))
+* **helm:** make either password or existingSecret required ([e55c1f7](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/e55c1f776f2830e5fc8ee8e12cab5717c8d03756))
+* **helm:** Make loggingConfig optional ([d90a6a9](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/d90a6a92ad538690307f384ba14d433330b67766))
+* **helm:** Split pod and container security context and adapt securityContext configuration to the nubus standard ([2cb1b07](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/2cb1b07d18a42975a6f1c23182a5c2976f74b042))
+* **helm:** Template namespace on deployments aswell ([06e4fa8](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/commit/06e4fa800d201e3d1a41735ad8e753b83d057220))
+
 ## [1.2.1](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v1.2.0...v1.2.1) (2025-03-07)
 
 
