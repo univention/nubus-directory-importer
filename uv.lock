@@ -146,11 +146,11 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "faker", specifier = ">=35.2.0" },
-    { name = "helm-test-harness", specifier = "==0.9.1", index = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/simple" },
+    { name = "helm-test-harness", specifier = "==0.11.2", index = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/simple" },
     { name = "ldap3", specifier = ">=2.9.1" },
     { name = "pdbpp", specifier = ">=0.10.3" },
     { name = "pytest", specifier = ">=8.3.4" },
-    { name = "pytest-helm", specifier = "==0.9.1", index = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/simple" },
+    { name = "pytest-helm", specifier = "==0.11.2", index = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/simple" },
     { name = "pytest-mock", specifier = ">=3.14.0" },
     { name = "pytest-xdist" },
     { name = "python-jsonpath" },
@@ -203,14 +203,14 @@ wheels = [
 
 [[package]]
 name = "helm-test-harness"
-version = "0.9.1"
+version = "0.11.2"
 source = { registry = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/simple" }
 dependencies = [
     { name = "pytest-helm" },
 ]
-sdist = { url = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/files/172bd2b9759aee1891b58edead531bb233736936cffabb59ab76a91ae575fb4b/helm_test_harness-0.9.1.tar.gz", hash = "sha256:172bd2b9759aee1891b58edead531bb233736936cffabb59ab76a91ae575fb4b" }
+sdist = { url = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/files/f0d23c7e5587e1a68b52a511c28e71e93df8c0a9bfa0cd67034ac935d601d55c/helm_test_harness-0.11.2.tar.gz", hash = "sha256:f0d23c7e5587e1a68b52a511c28e71e93df8c0a9bfa0cd67034ac935d601d55c" }
 wheels = [
-    { url = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/files/9beda718196f212744fdc053f074fd6b6c57337ca2d04018f1e104675294fcfb/helm_test_harness-0.9.1-py3-none-any.whl", hash = "sha256:9beda718196f212744fdc053f074fd6b6c57337ca2d04018f1e104675294fcfb" },
+    { url = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/files/3d639f87d5869ebb64e1685d49e34b0d6246d2b0f997064c9f267a0f771615dd/helm_test_harness-0.11.2-py3-none-any.whl", hash = "sha256:3d639f87d5869ebb64e1685d49e34b0d6246d2b0f997064c9f267a0f771615dd" },
 ]
 
 [[package]]
@@ -377,7 +377,7 @@ wheels = [
 
 [[package]]
 name = "pytest-helm"
-version = "0.9.1"
+version = "0.11.2"
 source = { registry = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/simple" }
 dependencies = [
     { name = "pytest" },
@@ -385,9 +385,9 @@ dependencies = [
     { name = "python-jsonpath" },
     { name = "pyyaml" },
 ]
-sdist = { url = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/files/0a85f8d0bc230b3d5937382252414c26b3b3a195decf7cb8c36343687d100c99/pytest_helm-0.9.1.tar.gz", hash = "sha256:0a85f8d0bc230b3d5937382252414c26b3b3a195decf7cb8c36343687d100c99" }
+sdist = { url = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/files/5f7cca9e8310e3eb6f099cb8875049558ee6211c2eebbcf62e06914a4b1a7fdd/pytest_helm-0.11.2.tar.gz", hash = "sha256:5f7cca9e8310e3eb6f099cb8875049558ee6211c2eebbcf62e06914a4b1a7fdd" }
 wheels = [
-    { url = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/files/f66c3d5642e90c71680145ae059bc3fab9ba7926be1a6e7dbfba8f0e24cabb83/pytest_helm-0.9.1-py3-none-any.whl", hash = "sha256:f66c3d5642e90c71680145ae059bc3fab9ba7926be1a6e7dbfba8f0e24cabb83" },
+    { url = "https://git.knut.univention.de/api/v4/projects/829/packages/pypi/files/6879945d6dc480071900fad45c2808023da0a1db4bb9ebe603f7f532adf1f76f/pytest_helm-0.11.2-py3-none-any.whl", hash = "sha256:6879945d6dc480071900fad45c2808023da0a1db4bb9ebe603f7f532adf1f76f" },
 ]
 
 [[package]]
