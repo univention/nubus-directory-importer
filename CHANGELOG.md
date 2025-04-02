@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.3](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.2.2...v1.2.3) (2025-04-02)
+
+
+### Bug Fixes
+
+* **deps:** Bump version of pytest-helm and helm-test-harness ([f2173c8](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/f2173c8d9db99b403eed1e10fed13ba458c2bfab)), closes [univention/dev/internal/team-nubus#1096](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1096)
+* **helm directory-importer:** Fix helm deployment ([1f66752](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/1f667524b930b7e0ab38b26287ce9c4d0634ea2f)), closes [univention/dev/internal/team-nubus#1096](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1096)
+
 ## [1.2.2](https://git.knut.univention.de/univention/customers/dataport/upx/directory-importer/compare/v1.2.1...v1.2.2) (2025-03-20)
 
 
