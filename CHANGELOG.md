@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.2.3...v1.3.0) (2025-04-29)
+
+
+### Features
+
+* Bump ucs-base-image version ([b58f735](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/b58f7351f8aa0dbd60f6a7fb24e1b9e07b6b57cb)), closes [univention/dev/internal/team-nubus#1155](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1155)
+
 ## [1.2.3](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.2.2...v1.2.3) (2025-04-02)
 
 
