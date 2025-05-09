@@ -78,7 +78,7 @@ repos:
           - --ignore
           - DL3008
 
-  - repo: "https://git.knut.univention.de/univention/dist/pre-commit-hooks/addlicense"
+  - repo: "https://git.knut.univention.de/univention/infrastructure/pre-commit-hooks/addlicense"
     rev: "v1.0.1"
     hooks:
       - id: "addlicense"
