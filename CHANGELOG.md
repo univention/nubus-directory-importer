@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.3.1](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.3.0...v1.3.1) (2025-05-10)
+
+
+### Bug Fixes
+
+* missing variable for ldap-server in tests docker-compose.yml ([08d90a5](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/08d90a555e562e3436e033ec42ed0b9dfa8f07dd))
+* move addlicense pre-commit hook ([7fb4428](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/7fb4428c3aa95b9129a6af5e1741ad4118e2111a))
+* move docker-services ([366d127](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/366d127f6176a83c00d4760d6c6b8880f2e7fd64))
+* update common-ci to main ([b5279ce](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/b5279ceae6d47277d11e8d5eebe583c55a40a027))
+
 ## [1.3.0](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.2.3...v1.3.0) (2025-04-29)
 
 
