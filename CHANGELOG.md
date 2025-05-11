@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.3.1...v1.4.0) (2025-05-11)
+
+
+### Features
+
+* move and upgrade ucs-base-image to 0.17.3-build-2025-05-11 ([4ff65fd](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/4ff65fdf86e32816bfc4139eda8cabeb4995dd60))
+
 ## [1.3.1](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.3.0...v1.3.1) (2025-05-10)
 
 
