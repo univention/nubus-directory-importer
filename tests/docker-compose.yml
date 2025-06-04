@@ -19,7 +19,9 @@ services:
       - "WIN-N8V5GD1V1L.ad.test:10.207.116.197"
 
   udm-rest-api:
-    image: gitregistry.knut.univention.de/univention/customers/dataport/upx/container-udm-rest/udm-rest-api:latest
+    # pin to 0.33.0 for now until https://forge.univention.org/bugzilla/show_bug.cgi?id=58318 is integrated
+    # causes test failure otherwise
+    image: gitregistry.knut.univention.de/univention/customers/dataport/upx/container-udm-rest/udm-rest-api:0.33.0
     container_name: "udm-rest-api"
     platform: "linux/amd64"
     ports:
