@@ -21,8 +21,8 @@ services:
   udm-rest-api:
     # pin to 0.33.0 for now until https://forge.univention.org/bugzilla/show_bug.cgi?id=58318 is integrated
     # causes test failure otherwise
-    image: gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/udm-rest-api/udm-rest-api:0.35.2
-    # image: artifacts.software-univention.de/nubus/images/udm-rest-api:0.35.2
+    # image: gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/udm-rest-api/udm-rest-api:0.35.2
+    image: artifacts.software-univention.de/nubus/images/udm-rest-api:0.33.0
     container_name: "udm-rest-api"
     platform: "linux/amd64"
     ports:

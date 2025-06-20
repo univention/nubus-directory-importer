@@ -13,7 +13,6 @@ SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
 COPY --from=ghcr.io/astral-sh/uv:0.5.8@sha256:0bc959d4cc56e42cbd9aa9b63374d84481ee96c32803eea30bd7f16fd99d8d56 /uv /usr/local/bin/uv
 
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
-  procps \
   build-essential \
   python3-dev \
   python3 \
@@ -21,24 +20,14 @@ RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
   libsasl2-dev \
   libssl-dev \
   ldap-utils\
-  && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
-
-# Download and unpack slapd package since the postinst script
-# requires a running LDAP server which "sometimes" fails in Docker
-RUN apt-get update && \
-  apt-get --assume-yes --verbose-versions --no-install-recommends install slapd; \
-  mv /etc/init.d/slapd /etc/init.d/slapd.real \
-  && printf '#!/bin/sh\nexit 0\n' > /etc/init.d/slapd \
-  && chmod +x /etc/init.d/slapd \
-  && dpkg --configure slapd \
-  && mv /etc/init.d/slapd.real /etc/init.d/slapd \
+  slapd \
   && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 ENV UV_LINK_MODE=copy \
   UV_COMPILE_BYTECODE=1 \
   UV_PYTHON_DOWNLOADS=never \
-  UV_PYTHON=python3.11 \
-  UV_PROJECT_ENVIRONMENT=/app
+  UV_PYTHON=python3.11
+# UV_PROJECT_ENVIRONMENT=/app
 
 WORKDIR /app
 COPY pyproject.toml uv.lock README.md ./
