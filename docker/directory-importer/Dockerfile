@@ -4,8 +4,8 @@
 
 # Inspired by: https://hynek.me/articles/docker-uv/
 
-ARG UCS_BASE_IMAGE_TAG=0.17.3-build-2025-05-11
-ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base-521
+ARG UCS_BASE_IMAGE_TAG=0.18.2-build-2025-06-12
+ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base-522
 
 FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS build
 SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
@@ -13,30 +13,41 @@ SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
 COPY --from=ghcr.io/astral-sh/uv:0.5.8@sha256:0bc959d4cc56e42cbd9aa9b63374d84481ee96c32803eea30bd7f16fd99d8d56 /uv /usr/local/bin/uv
 
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
-      build-essential \
-      python3-dev \
-      python3 \
-      libldap2-dev \
-      libsasl2-dev \
-      libssl-dev \
-      ldap-utils\
-      slapd \
-    && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
+  procps \
+  build-essential \
+  python3-dev \
+  python3 \
+  libldap2-dev \
+  libsasl2-dev \
+  libssl-dev \
+  ldap-utils\
+  && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+# Download and unpack slapd package since the postinst script
+# requires a running LDAP server which "sometimes" fails in Docker
+RUN apt-get update && \
+  apt-get --assume-yes --verbose-versions --no-install-recommends install slapd; \
+  mv /etc/init.d/slapd /etc/init.d/slapd.real \
+  && printf '#!/bin/sh\nexit 0\n' > /etc/init.d/slapd \
+  && chmod +x /etc/init.d/slapd \
+  && dpkg --configure slapd \
+  && mv /etc/init.d/slapd.real /etc/init.d/slapd \
+  && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 ENV UV_LINK_MODE=copy \
   UV_COMPILE_BYTECODE=1 \
   UV_PYTHON_DOWNLOADS=never \
-  UV_PYTHON=python3.11
-  # UV_PROJECT_ENVIRONMENT=/app
+  UV_PYTHON=python3.11 \
+  UV_PROJECT_ENVIRONMENT=/app
 
 WORKDIR /app
 COPY pyproject.toml uv.lock README.md ./
 COPY junkaptor junkaptor
 RUN --mount=type=cache,target=/root/.cache \
   uv sync \
-    --locked \
-    --no-dev \
-    --no-install-project
+  --locked \
+  --no-dev \
+  --no-install-project
 
 COPY univention univention
 RUN --mount=type=cache,target=/root/.cache \
@@ -60,13 +71,13 @@ FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS final
 SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
 
 RUN \
-    groupadd -r app -g 1000 && \
-    useradd -r -d /app -g app -N app -u 1000
+  groupadd -r app -g 1000 && \
+  useradd -r -d /app -g app -N app -u 1000
 
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
-      python3 \
-      libldap-2.5-0 \
-    && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
+  python3 \
+  libldap-2.5-0 \
+  && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 COPY --from=ghcr.io/astral-sh/uv:0.5.8@sha256:0bc959d4cc56e42cbd9aa9b63374d84481ee96c32803eea30bd7f16fd99d8d56 /uv /usr/local/bin/uv
 
