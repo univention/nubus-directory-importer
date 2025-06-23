@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.4.0...v1.4.1) (2025-06-23)
+
+
+### Bug Fixes
+
+* bump umc-base-image version ([8ee62b0](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/8ee62b070bfe671212a507aac2e520676b32655f)), closes [univention/dev/internal/team-nubus#1263](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1263)
+* wip: reverted attempts to fix slapd installation in Dockerfile ([223aa5d](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/223aa5df3db9c9fa30f99e96f322a7e4323d0658)), closes [univention/dev/internal/team-nubus#1263](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1263)
+
 ## [1.4.0](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.3.1...v1.4.0) (2025-05-11)
 
 
