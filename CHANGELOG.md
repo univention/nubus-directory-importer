@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.4.1...v1.5.0) (2025-07-17)
+
+
+### Features
+
+* update ucs-base to 5.2.2-build.20250714 ([40a7aa8](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/40a7aa808e9e43c4f2bea89cad1b31eb954eca7b)), closes [univention/dev/internal/team-nubus#1320](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1320)
+
 ## [1.4.1](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.4.0...v1.4.1) (2025-06-23)
 
 
