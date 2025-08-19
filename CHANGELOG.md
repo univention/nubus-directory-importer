@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.2](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.5.1...v1.5.2) (2025-08-19)
+
+
+### Bug Fixes
+
+* **deps:** Update gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base Docker tag to v5.2.2-build.20250814 ([dcf14a8](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/dcf14a810797af6d782afc212f92a00368775c3d)), closes [#0](https://git.knut.univention.de/univention/dev/projects/directory-importer/issues/0)
+
 ## [1.5.1](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.5.0...v1.5.1) (2025-08-19)
 
 
