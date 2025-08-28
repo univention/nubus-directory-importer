@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.4](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.5.3...v1.5.4) (2025-08-28)
+
+
+### Bug Fixes
+
+* **deps:** Update dependency univention/dev/nubus-for-k8s/common-ci to v1.44.2 ([fa4c958](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/fa4c958c0541bce4876ca179651a6ef900a3452e)), closes [#0](https://git.knut.univention.de/univention/dev/projects/directory-importer/issues/0)
+
 ## [1.5.3](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.5.2...v1.5.3) (2025-08-27)
 
 
