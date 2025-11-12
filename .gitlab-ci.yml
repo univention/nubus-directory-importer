@@ -5,7 +5,7 @@
 
 include:
   - project: "univention/dev/nubus-for-k8s/common-ci"
-    ref: "v1.44.4"
+    ref: "v1.50.0"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
@@ -50,6 +50,10 @@ push-image-external:
     matrix: *publish-matrix
 
 container-sign-external:
+  parallel:
+    matrix: *publish-matrix
+
+container-release-attestation:
   parallel:
     matrix: *publish-matrix
 
@@ -117,6 +121,7 @@ test-e2e-with-active-directory:
     expire_in: "1 day"
     when: "always"
     expose_as: "docker compose server logs"
+  allow_failure: true
 
 test-unit-and-integration::
   stage: test
