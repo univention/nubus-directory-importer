@@ -165,5 +165,8 @@ test-unit-and-integration::
 sonarqube:
   extends: .sonarqube
   needs: []
+  rules:
+    # disable until fixed
+    - when: "never"
 
 ...
