@@ -119,6 +119,8 @@ docker compose run -it --rm directory-importer directory-importer --help
 docker compose run -it --rm directory-importer bash
 ```
 
+**Important:** When using docker compose, the Directory Importer must run in a single instance only. Running multiple instances simultaneously can cause conflicts and data inconsistencies. If you need to sync from multiple sources, run separate docker compose setups with different configuration files, or use the Kubernetes Helm chart which supports multiple instances.
+
 Note: The parameter `--build` can be added if you want to build the container
 images from the local sources instead of fetching it from the registry.
 
