@@ -218,6 +218,11 @@ At the top hierarchy level there are these config dictionaries:
     Timeout in seconds to wait for network (default 5 secs).
   * search_pagesize: (optional)
     Page size to used when searching with _Simple Paged Results_ control.
+  * phone_region: (optional)
+    ISO country code (e.g., "DE", "US", "GB") for phone number parsing.
+    When phone numbers don't include a country prefix (+), this region is used
+    to interpret the number format. Defaults to "DE" (Germany) for backward
+    compatibility. This replaces the hard-coded German country prefix.
   * user_base: (mandatory)
     search base used when searching user entries.
   * user_scope: "sub"
