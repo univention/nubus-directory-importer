@@ -211,6 +211,9 @@ At the top hierarchy level there are these config dictionaries:
   * password: (mandatory)
     The clear-text password to use with LDAP simple bind operation.
     Can be also passed via environment variable `SOURCE_PASSWORD`.
+    
+    **Note:** The configuration field name is `password`, not `bind_pw`. Some documentation
+    may incorrectly reference `source.bind_pw`, but the correct field name is `source.password`.
   * ca_cert: (optional)
     Path name of the trusted CA certificate bundle file.
     Defaults to your platform-specific CA bundle file.
