@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.6.0](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.5.7...v1.6.0) (2025-11-28)
+
+
+### Features
+
+* **ci:** use vul-man CI component for SBOM and VEX attestations ([6f62780](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/6f627806b9fc77d86247973d4b2074e895aedf47)), closes [univention/dev/internal/team-nubus#1472](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1472)
+* use prod Dependency-Track URLs ([17b8b39](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/17b8b392f94f6ca85a0a6fc676ee00a86e319f2c)), closes [univention/dev/internal/team-nubus#1512](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1512)
+
+
+### Bug Fixes
+
+* ci: vul-man SBOM upload cleans tag before uploading new SBOMs for a tag ([9c9d93d](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/9c9d93d31dd65e020fc18a463a8a427dfacace02)), closes [univention/dev/internal/team-nubus#1529](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1529)
+* **ci:** Bump common-ci ([c757708](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/c7577087039a7c16c9f6251e0504fe2706986f25)), closes [univention/dev/internal/team-nubus#1532](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1532)
+
 ## [1.5.7](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.5.6...v1.5.7) (2025-09-12)
 
 
