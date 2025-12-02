@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.6.0...v1.6.1) (2025-12-02)
+
+
+### Bug Fixes
+
+* bump image to errata 298 ([eaf7ffd](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/eaf7ffdcf14fcb4adb6fb4e1e340d090e01f059b)), closes [univention/dev/internal/team-nubus#1543](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1543)
+
 ## [1.6.0](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.5.7...v1.6.0) (2025-11-28)
 
 
