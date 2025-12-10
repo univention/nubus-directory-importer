@@ -6,37 +6,61 @@ univention.directory_importer.sanitize - low-level data sanitizer functions
 """
 
 import uuid
+from functools import partial
 
 import phonenumbers
 
-PHONE_REGION = "DE"
+# Default phone region (backward compatibility)
+PHONE_REGION_DEFAULT = "DE"
 
-PHONE_PREFIX_MAP = (
+# Default phone prefix map for German numbers (backward compatibility)
+PHONE_PREFIX_MAP_DEFAULT = (
     ("+049 ", "+49"),
     ("+0", "0"),
 )
 
 
-def phone_sanitizer(val: bytes) -> bytes:
+def create_phone_sanitizer(region: str = PHONE_REGION_DEFAULT, prefix_map=None):
     """
-    sanitize a phone number value to an international format
+    Create a phone sanitizer function with configurable region and prefix map.
+    
+    Args:
+        region: ISO country code (e.g., "DE", "US", "GB") for parsing numbers without country prefix
+        prefix_map: Optional list of (old_prefix, new_prefix) tuples for prefix normalization.
+                   If None, uses default German prefix map for backward compatibility.
+    
+    Returns:
+        A phone sanitizer function that takes bytes and returns bytes.
     """
-    val_u = val.decode("utf-8").replace("\u2013", "-").strip()
-    for old, new in PHONE_PREFIX_MAP:
-        if val_u.startswith(old):
-            val_u = new + val_u[len(old) :]
-            break
-    try:
-        res = phonenumbers.format_number(
-            phonenumbers.parse(
-                val_u,
-                region=(None if val_u[0] == "+" else PHONE_REGION),
-            ),
-            phonenumbers.PhoneNumberFormat.INTERNATIONAL,
-        ).encode("ascii")
-    except phonenumbers.phonenumberutil.NumberParseException as err:
-        raise ValueError(f"{val_u!r} cannot be parsed as valid phone number") from err
-    return res
+    if prefix_map is None:
+        prefix_map = PHONE_PREFIX_MAP_DEFAULT
+    
+    def phone_sanitizer(val: bytes) -> bytes:
+        """
+        sanitize a phone number value to an international format
+        """
+        val_u = val.decode("utf-8").replace("\u2013", "-").strip()
+        for old, new in prefix_map:
+            if val_u.startswith(old):
+                val_u = new + val_u[len(old) :]
+                break
+        try:
+            res = phonenumbers.format_number(
+                phonenumbers.parse(
+                    val_u,
+                    region=(None if val_u[0] == "+" else region),
+                ),
+                phonenumbers.PhoneNumberFormat.INTERNATIONAL,
+            ).encode("ascii")
+        except phonenumbers.phonenumberutil.NumberParseException as err:
+            raise ValueError(f"{val_u!r} cannot be parsed as valid phone number") from err
+        return res
+    
+    return phone_sanitizer
+
+
+# Default phone sanitizer for backward compatibility
+phone_sanitizer = create_phone_sanitizer()
 
 
 def unicode_strip(val: bytes) -> bytes:
