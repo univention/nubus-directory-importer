@@ -889,7 +889,7 @@ true
 			<td>global.imagePullPolicy</td>
 			<td>string</td>
 			<td><pre lang="json">
-"IfNotPresent"
+null
 </pre>
 </td>
 			<td>Define an ImagePullPolicy.  Ref.: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy </td>
@@ -917,7 +917,7 @@ true
 			<td>object</td>
 			<td><pre lang="json">
 {
-  "imagePullPolicy": "",
+  "pullPolicy": null,
   "registry": "",
   "repository": "nubus-dev/images/directory-importer",
   "sha256": null,

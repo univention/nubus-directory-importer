@@ -2,6 +2,16 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 services:
+  test-helm:
+    image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.0"
+    pull_policy: "if_not_present"
+    command: "pytest tests/helm_unit/"
+    profiles:
+      - "test"
+    volumes:
+      - "./helm/:/app/helm/"
+      - "./tests/helm_unit/:/app/tests/helm_unit/"
+
   directory-importer:
     build:
       context: .

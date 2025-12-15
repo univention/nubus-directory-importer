@@ -68,6 +68,14 @@ check-debian-updates:
     TARGET_IMAGE: "${CI_REGISTRY_IMAGE}/${IMAGE_NAME}:latest"
 
 
+test-chart-directory-importer:
+  stage: test
+  needs: []
+  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.0"
+  script:
+    - helm dep build helm/directory-importer
+    - pytest tests/helm_unit
+
 test-e2e-with-active-directory:
   stage: test
   # This blocks the job from being runned by two pipelines simultaneously

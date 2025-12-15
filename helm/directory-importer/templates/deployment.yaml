@@ -12,6 +12,10 @@ metadata:
   namespace: {{ include "common.names.namespace" . | quote }}
   labels:
     {{- include "common.labels.standard" ( dict "customLabels" .Values.additionalLabels "context" $ ) | nindent 4 }}
+  {{- if .Values.additionalAnnotations }}
+  annotations:
+    {{- include "common.tplvalues.render" ( dict "value" .Values.additionalAnnotations "context" . ) | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -21,9 +25,12 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        checksum/config: {{ include (print $.Template.BasePath "/configmap-config-file.yaml") . | sha256sum }}
+        checksum/config-file: {{ include (print $.Template.BasePath "/configmap-config-file.yaml") . | sha256sum }}
         {{- with .Values.podAnnotations }}
           {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.additionalAnnotations }}
+          {{- include "common.tplvalues.render" ( dict "value" .Values.additionalAnnotations "context" . ) | nindent 8 }}
         {{- end }}
       labels:
         {{- include "common.labels.standard" ( dict "customLabels" .Values.additionalLabels "context" $ ) | nindent 8 }}
@@ -61,7 +68,7 @@ spec:
             {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
           {{- end }}
           image: "{{ coalesce .Values.image.registry .Values.global.imageRegistry }}/{{ .Values.image.repository }}{{ if .Values.image.sha256 }}@sha256:{{ .Values.image.sha256 }}{{ else }}:{{ .Values.image.tag }}{{ end }}"
-          imagePullPolicy: {{ coalesce .Values.image.imagePullPolicy .Values.global.imagePullPolicy | quote }}
+          imagePullPolicy: {{ coalesce .Values.image.pullPolicy .Values.global.imagePullPolicy | quote }}
           envFrom:
             - configMapRef:
                 name: {{ $name }}

@@ -17,13 +17,13 @@ global:
   #
   # Ref.: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
   #
-  imagePullPolicy: "IfNotPresent"
+  imagePullPolicy: null
 
 # -- Container image configuration
 image:
   registry: ""
   repository: "nubus-dev/images/directory-importer"
-  imagePullPolicy: ""
+  pullPolicy: null
   tag: "latest"
   # -- Define image sha256 as an alternative to `tag`
   sha256: null
