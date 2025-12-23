@@ -13,10 +13,6 @@ services:
       - "./tests/helm_unit/:/app/tests/helm_unit/"
 
   directory-importer:
-    build:
-      context: .
-      dockerfile: docker/directory-importer/Dockerfile
-      target: final
     image: artifacts.software-univention.de/nubus-dev/images/directory-importer:${IMAGE_TAG:-latest}
     read_only: true
     user: "app:app"

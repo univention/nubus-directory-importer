@@ -119,6 +119,8 @@ docker compose run -it --rm directory-importer directory-importer --help
 docker compose run -it --rm directory-importer bash
 ```
 
+**Important:** When using docker compose, the Directory Importer must run in a single instance only. Running multiple instances simultaneously can cause conflicts and data inconsistencies. If you need to sync from multiple sources, run separate docker compose setups with different configuration files, or use the Kubernetes Helm chart which supports multiple instances.
+
 Note: The parameter `--build` can be added if you want to build the container
 images from the local sources instead of fetching it from the registry.
 
@@ -209,6 +211,9 @@ At the top hierarchy level there are these config dictionaries:
   * password: (mandatory)
     The clear-text password to use with LDAP simple bind operation.
     Can be also passed via environment variable `SOURCE_PASSWORD`.
+    
+    **Note:** The configuration field name is `password`, not `bind_pw`. Some documentation
+    may incorrectly reference `source.bind_pw`, but the correct field name is `source.password`.
   * ca_cert: (optional)
     Path name of the trusted CA certificate bundle file.
     Defaults to your platform-specific CA bundle file.
@@ -216,6 +221,11 @@ At the top hierarchy level there are these config dictionaries:
     Timeout in seconds to wait for network (default 5 secs).
   * search_pagesize: (optional)
     Page size to used when searching with _Simple Paged Results_ control.
+  * phone_region: (optional)
+    ISO country code (e.g., "DE", "US", "GB") for phone number parsing.
+    When phone numbers don't include a country prefix (+), this region is used
+    to interpret the number format. Defaults to "DE" (Germany) for backward
+    compatibility. This replaces the hard-coded German country prefix.
   * user_base: (mandatory)
     search base used when searching user entries.
   * user_scope: "sub"
