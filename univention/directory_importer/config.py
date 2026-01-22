@@ -160,6 +160,7 @@ CFG_SCHEMA_SOURCE_LDAP = Map(
         Optional("trace_level", default=0): Int(),
         Optional("search_pagesize", default=500): Int(),
         Optional("ignore_dn_regex"): Str(),
+        Optional("phone_region"): Str(),  # ISO country code for phone number parsing (e.g., "DE", "US", "GB")
         "user_base": Str(),
         Optional("user_scope", default="sub"): Enum(("one", "sub")),
         Optional("user_filter", default="(objectClass=user)"): Str(),
@@ -200,6 +201,8 @@ class SourceConfig:
         # Performance config
         "timeout",
         "search_pagesize",
+        # Phone config
+        "phone_region",
         # Functional config
         "user_base",
         "user_scope",
@@ -236,6 +239,8 @@ class SourceConfig:
     group_trans: Transformer
 
     def __init__(self, yml, password=None):
+        from univention.directory_importer.sanitize import create_phone_sanitizer
+        
         self._yml = yml
         self.ldap_uri = LDAPUrl(yml["ldap_uri"].text)
         self.bind_dn = yml["bind_dn"].text
@@ -244,18 +249,73 @@ class SourceConfig:
         self.trace_level = yml["trace_level"].data
         self.timeout = yml["timeout"].data
         self.search_pagesize = yml["search_pagesize"].data
+        self.phone_region = yml.get("phone_region", None)
+        if self.phone_region is not None:
+            self.phone_region = self.phone_region.text
         self.user_base = yml["user_base"].text
         self.user_scope = SEARCH_SCOPE[yml["user_scope"].text]
         self.user_filter = yml["user_filter"].text
         self.user_attrs = yml["user_attrs"].data
         self.user_range_attrs = yml["user_range_attrs"].data
-        self.user_trans = Transformer(**self._yml["user_trans"].data)
+        
+        # Create transformer with configured phone sanitizer if phone_region is set
+        user_trans_yml = self._yml.get("user_trans")
+        user_trans_data = dict(user_trans_yml.data) if user_trans_yml else {}
+        if self.phone_region and user_trans_yml and "sanitizer" in user_trans_data:
+            configured_phone_sanitizer = create_phone_sanitizer(region=self.phone_region)
+            sanitizer = dict(user_trans_data.get("sanitizer", {}))
+            # Replace phone_sanitizer references with configured version
+            phone_attrs = [
+                "telephoneNumber", "mobile", "mobileTelephoneNumber",
+                "homePhone", "homeTelephoneNumber", "facsimileTelephoneNumber", "fax"
+            ]
+            for attr in phone_attrs:
+                if attr in sanitizer:
+                    sanitizer_list = sanitizer[attr]
+                    if not isinstance(sanitizer_list, (list, tuple)):
+                        sanitizer_list = [sanitizer_list]
+                    # Replace string references to phone_sanitizer with configured function
+                    sanitizer[attr] = [
+                        configured_phone_sanitizer if (
+                            isinstance(s, str) and "phone_sanitizer" in s
+                        ) else s
+                        for s in sanitizer_list
+                    ]
+            user_trans_data["sanitizer"] = sanitizer
+        
+        self.user_trans = Transformer(**user_trans_data) if user_trans_data else Transformer()
         self.group_base = yml["group_base"].text
         self.group_scope = SEARCH_SCOPE[yml["group_scope"].text]
         self.group_filter = yml["group_filter"].text
         self.group_attrs = yml["group_attrs"].data
         self.group_range_attrs = yml["group_range_attrs"].data
-        self.group_trans = Transformer(**self._yml["group_trans"].data)
+        
+        # Create transformer with configured phone sanitizer if phone_region is set
+        group_trans_yml = self._yml.get("group_trans")
+        group_trans_data = dict(group_trans_yml.data) if group_trans_yml else {}
+        if self.phone_region and group_trans_yml and "sanitizer" in group_trans_data:
+            configured_phone_sanitizer = create_phone_sanitizer(region=self.phone_region)
+            sanitizer = dict(group_trans_data.get("sanitizer", {}))
+            # Replace phone_sanitizer references with configured version
+            phone_attrs = [
+                "telephoneNumber", "mobile", "mobileTelephoneNumber",
+                "homePhone", "homeTelephoneNumber", "facsimileTelephoneNumber", "fax"
+            ]
+            for attr in phone_attrs:
+                if attr in sanitizer:
+                    sanitizer_list = sanitizer[attr]
+                    if not isinstance(sanitizer_list, (list, tuple)):
+                        sanitizer_list = [sanitizer_list]
+                    # Replace string references to phone_sanitizer with configured function
+                    sanitizer[attr] = [
+                        configured_phone_sanitizer if (
+                            isinstance(s, str) and "phone_sanitizer" in s
+                        ) else s
+                        for s in sanitizer_list
+                    ]
+            group_trans_data["sanitizer"] = sanitizer
+        
+        self.group_trans = Transformer(**group_trans_data) if group_trans_data else Transformer()
 
     @property
     def ignore_dn_regex(self):

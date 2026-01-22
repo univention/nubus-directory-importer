@@ -16,7 +16,7 @@ udm:
 source:
     ldap_uri: "ldap://my_active_directory_server.test:1234" # "ldaps://"
     bind_dn: "CN=readonly-ad-machine-user,CN=Users,DC=ad,DC=test"
-    password: "supersecret"
+    password: "supersecret"  # Note: field name is 'password', not 'bind_pw'
     # ca_cert: "/etc/ssl/certs/ca-certificates-ad.crt"
     timeout: 5
     search_pagesize: 500
