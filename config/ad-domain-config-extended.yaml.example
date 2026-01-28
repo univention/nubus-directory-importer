@@ -1,0 +1,176 @@
+---
+# Configuration example for syncing from a typical MS AD domain controller
+# the name 'ad-domain-example' is used for various parameters
+
+udm:
+    uri: "https://nubus-kubernetes-deployment.test/univention/udm/"
+    user: "Administrator"
+    password: "supersecret"
+    # ca_cert: "/etc/ssl/certs/ca-certificates-nubus.crt"
+    skip_writes: false
+    user_ou: "ou=ad-domain-example"
+    user_primary_key_property: "univentionObjectIdentifier"
+    group_ou: "ou=ad-domain-example"
+    group_primary_key_property: "univentionObjectIdentifier"
+    user_properties:
+      - "city"
+      - "country"
+      - "departmentNumber"
+      - "description"
+      - "e-mail"
+      - "employeeNumber"
+      - "employeeType"
+      - "firstname"
+      - "homePostalAddress"
+      - "homeTelephoneNumber"
+      - "initials"
+      - "jpegPhoto"
+      - "lastname"
+      - "mailPrimaryAddress"
+      - "mobileTelephoneNumber"
+      - "organisation"
+      - "phone"
+      - "physicalDeliveryOfficeName"
+      - "postOfficeBox"
+      - "postcode"
+      - "preferredDeliveryMethod"
+      - "preferredLanguage"
+      - "roomNumber"
+      - "secretary"
+      - "street"
+      - "title"
+      - "username"
+      - "univentionObjectIdentifier"
+      - "mailAlternativeAddress"
+      - "YourCustomProperty"
+
+source:
+    ldap_uri: "ldap://my_active_directory_server.test:1234" # "ldaps://"
+    bind_dn: "CN=readonly-ad-machine-user,CN=Users,DC=ad,DC=test"
+    password: "supersecret"
+    # ca_cert: "/etc/ssl/certs/ca-certificates-ad.crt"
+    timeout: 5
+    search_pagesize: 500
+    # search paramaters for groups
+    group_base: "CN=Groups,DC=ad,DC=test"
+    group_scope: "sub"
+    #group_filter: "(&(objectClass=group)(!(|(isCriticalSystemObject=TRUE)(cn=Domain *)(cn=* Controllers))))"
+    # search paramaters for users
+    user_base: "CN=Users,DC=ad,DC=test"
+    user_scope: "sub"
+    user_filter: "(&(objectClass=user)(sAMAccountType=805306368)(givenName=*)(sn=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))"
+    user_attrs:
+        - "objectGUID"
+        - "sAMAccountName"
+        - "givenName"
+        - "description"
+        - "sn"
+        - "ou"
+        - "o"
+        - "street"
+        - "l"
+        - "postalCode"
+        - "st"
+        - "c"
+        - "telephoneNumber"
+        - "mobile"
+        - "employeeNumber"
+        - "employeeType"
+        - "proxyAddresses"
+        - "mailAlternativeAddress"
+        - "YourCustomProperty"
+    user_trans:
+        # function sequences to sanitize input values
+        sanitizer:
+            objectGUID:
+              - univention.directory_importer.sanitize:guid2uuid
+            telephoneNumber:
+              - univention.directory_importer.sanitize:phone_sanitizer
+            mobile:
+              - univention.directory_importer.sanitize:phone_sanitizer
+            mobileTelephoneNumber:
+              - univention.directory_importer.sanitize:phone_sanitizer
+            homePhone:
+              - univention.directory_importer.sanitize:phone_sanitizer
+            homeTelephoneNumber:
+              - univention.directory_importer.sanitize:phone_sanitizer
+            facsimileTelephoneNumber:
+              - univention.directory_importer.sanitize:phone_sanitizer
+            fax:
+              - univention.directory_importer.sanitize:phone_sanitizer
+            mail:
+              - univention.directory_importer.sanitize:mail_sanitizer
+              - bytes.lower
+            mailPrimaryAddress:
+              - univention.directory_importer.sanitize:mail_sanitizer
+              - bytes.lower
+            mailLocalAddress:
+              - univention.directory_importer.sanitize:mail_sanitizer
+              - bytes.lower
+            mailAlternativeAddress:
+              - univention.directory_importer.sanitize:mail_sanitizer
+              - bytes.lower
+        # attributes to be renamed (dict-key is UDM property name)
+        rename_attrs:
+            # the primary key property <- attribute mapping
+            univentionObjectIdentifier: "objectGUID"
+            # the e-mail address for contact addressbooks (mailbox not managed by UCS)
+            "e-mail": "mail"
+            username: "sAMAccountName"
+            firstname: "givenName"
+            lastname: "sn"
+            mobileTelephoneNumber: "mobile"
+            organisation: "o"
+            phone: "telephoneNumber"
+            city: "l"
+            country: "c"
+            postcode: "postalCode"
+        # attributes set to a fixed attribute value list no matter what
+        # typically those are not mentioned in search_attrs
+        #fixed_attrs:
+        #    primaryGroup:
+        #        - "cn=Domain Users,cn=groups,dc=ucs-4,dc=local"
+        # single-valued(!) attributes which will be composed from other attributes no matter what
+        # the 1st attr value of referenced attrs is used
+        # composing stops at first completed variant (no KeyError)
+        # Note: Composed attributes must not depend on each other!
+        #compose_attrs:
+        #    # the primary e-mail address for a mailbox managed by UCS (e.g. for OX)
+        #    mailPrimaryAddress:
+        #      - "{e-mail}"
+        # List of attributes to be removed after compose pass
+        remove_attrs:
+            - "objectGUID"
+            - "objectSid"
+            - "proxyAddresses"
+        # mapping defined per attribute type for deleting certain attribute values
+        remove_values:
+            telephoneNumber:
+                - "+49"
+                - "+49 ???"
+                - "0"
+        # mapping defined per attribute type for efficiently replacing certain attribute values
+        replace_values:
+            c:
+                "Deutschland": "DE"
+                "Bundesrepublik Deutschland": "DE"
+                "Frankreich": "FR"
+        # decompose attribute values into potentially multiple other attributes
+        # by using name-based regex matching
+        # first regex-match terminates processing!
+        decompose_attrs:
+            proxyAddresses:
+                - "^SMTP:(?P<mail>.+)$"
+                - "^smtp:(?P<mailAlternativeAddress>.+)$"
+
+    group_trans:
+        # attributes to be renamed
+        rename_attrs:
+            # the primary key property <- attribute mapping
+            univentionObjectIdentifier: "objectGUID"
+            name: "cn"
+            users: "member"
+        # List of attributes to be removed after compose pass
+        remove_attrs:
+            - "objectGUID"
+            - "objectSid"
