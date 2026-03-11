@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.5](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.6.4...v1.6.5) (2026-03-11)
+
+
+### Bug Fixes
+
+* Dependency updates ([ec2d45e](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/ec2d45ea95f0815bebae9defa2b3c09ae3eeb745)), closes [univention/dev/internal/team-nubus#1477](https://git.knut.univention.de/univention/dev/internal/team-nubus/issues/1477)
+
 ## [1.6.4](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.6.3...v1.6.4) (2026-02-25)
 
 
