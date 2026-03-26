@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.7](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.6.6...v1.6.7) (2026-03-26)
+
+
+### Bug Fixes
+
+* **deps:** Update gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base:5.2.5-build.20260326 Docker digest to 8381ca7 ([56afa7c](https://git.knut.univention.de/univention/dev/projects/directory-importer/commit/56afa7cc477c505cc0713a83dc1935c72624ca3e)), closes [#0](https://git.knut.univention.de/univention/dev/projects/directory-importer/issues/0)
+
 ## [1.6.6](https://git.knut.univention.de/univention/dev/projects/directory-importer/compare/v1.6.5...v1.6.6) (2026-03-26)
 
 
