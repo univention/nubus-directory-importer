@@ -26,6 +26,9 @@ include:
       helm_chart_name: "directory-importer"
       helm_values: "--helm-values ${CI_PROJECT_DIR}/helm/directory-importer/linter_values.yaml"
 
+variables:
+  RENOVATE_USER_ID: "1393"
+
 .build-matrix: &build-matrix
   - IMAGE_NAME: "directory-importer"
     KANIKO_BUILD_CONTEXT: $CI_PROJECT_DIR
@@ -82,9 +85,11 @@ test-e2e-with-active-directory:
   resource_group: kvm
   extends: .dind
   image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
-  rules:
+  rules: &rules_dind
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: "never"
+    - if: '$GITLAB_USER_ID == $RENOVATE_USER_ID && $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_LABELS !~ /Renovate run dind/'
+      when: "manual"
     - when: "on_success"
   variables:
     KVM_SERVER: "skurup.knut.univention.de"
@@ -139,10 +144,7 @@ test-unit-and-integration::
   stage: test
   extends: .dind
   image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-      when: "never"
-    - when: "on_success"
+  rules: *rules_dind
   before_script:
     - cd tests
     # Allow that the Docker API version is negotiated between client and server
