@@ -4,8 +4,8 @@
 
 # Inspired by: https://hynek.me/articles/docker-uv/
 
-ARG UCS_BASE_IMAGE_TAG=5.2.5-build.20260514@sha256:81b104694a78cf36043f84b5d9e4b3b0cbbe6777e46877239a44f08249379119
-ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base
+ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base-python
+ARG UCS_BASE_IMAGE_TAG=5.3.0-build.20260702@sha256:8787ee424a1322ba25fa285f1840fe4bba62d7ec1f44a14a39b6e2024ad3e735
 
 FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS build
 SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
@@ -15,7 +15,6 @@ COPY --from=ghcr.io/astral-sh/uv:0.5.8@sha256:0bc959d4cc56e42cbd9aa9b63374d84481
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
   build-essential \
   python3-dev \
-  python3 \
   libldap2-dev \
   libsasl2-dev \
   libssl-dev \
@@ -26,7 +25,7 @@ RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
 ENV UV_LINK_MODE=copy \
   UV_COMPILE_BYTECODE=1 \
   UV_PYTHON_DOWNLOADS=never \
-  UV_PYTHON=python3.11
+  UV_PYTHON=python3.13
 # UV_PROJECT_ENVIRONMENT=/app
 
 WORKDIR /app
@@ -64,8 +63,7 @@ RUN \
   useradd -r -d /app -g app -N app -u 1000
 
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
-  python3 \
-  libldap-2.5-0 \
+  libldap2 \
   && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 COPY --from=ghcr.io/astral-sh/uv:0.5.8@sha256:0bc959d4cc56e42cbd9aa9b63374d84481ee96c32803eea30bd7f16fd99d8d56 /uv /usr/local/bin/uv
@@ -79,6 +77,6 @@ WORKDIR /app
 CMD ["directory-importer"]
 
 RUN \
-  .venv/bin/python3.11 -V && \
-  .venv/bin/python3.11 -m site && \
-  .venv/bin/python3.11 -c 'import univention.directory_importer'
+  .venv/bin/python3.13 -V && \
+  .venv/bin/python3.13 -m site && \
+  .venv/bin/python3.13 -c 'import univention.directory_importer'
