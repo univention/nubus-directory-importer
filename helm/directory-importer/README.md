@@ -706,6 +706,24 @@ null
 			<td></td>
 		</tr>
 		<tr>
+			<td>configFile.udm.deletion_grace_period_days</td>
+			<td>int</td>
+			<td><pre lang="json">
+0
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>configFile.udm.deprovision_timestamp_property</td>
+			<td>string</td>
+			<td><pre lang="json">
+"directoryImporterDeprovisionedAt"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
 			<td>configFile.udm.group_ou</td>
 			<td>string</td>
 			<td><pre lang="json">
