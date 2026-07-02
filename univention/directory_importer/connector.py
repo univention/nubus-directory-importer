@@ -111,7 +111,11 @@ class Connector:
         ldap_conn = self.ldap_conn
         # send a synchronous LDAP Who Am I? operation to trigger
         # reconnecting after longer silent period on LDAP connection
-        ldap_conn.whoami_s()
+        try:
+            ldap_conn.whoami_s()
+        except ldap.PROTOCOL_ERROR:
+            # e.g. Samba AD does not support the Who Am I? extended operation
+            pass
         # start searching with simple paged results control
         page_size = self._config.src.search_pagesize
         ignore_dn_regex = self._config.src.ignore_dn_regex
