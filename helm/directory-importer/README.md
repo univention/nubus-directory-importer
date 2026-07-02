@@ -187,7 +187,7 @@ null
 			<td>configFile.source.user_attrs[10]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"st"
+"postalCode"
 </pre>
 </td>
 			<td></td>
@@ -196,7 +196,7 @@ null
 			<td>configFile.source.user_attrs[11]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"c"
+"st"
 </pre>
 </td>
 			<td></td>
@@ -205,7 +205,7 @@ null
 			<td>configFile.source.user_attrs[12]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"telephoneNumber"
+"c"
 </pre>
 </td>
 			<td></td>
@@ -214,7 +214,7 @@ null
 			<td>configFile.source.user_attrs[13]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"mobile"
+"telephoneNumber"
 </pre>
 </td>
 			<td></td>
@@ -223,7 +223,7 @@ null
 			<td>configFile.source.user_attrs[14]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"employeeNumber"
+"mobile"
 </pre>
 </td>
 			<td></td>
@@ -232,13 +232,22 @@ null
 			<td>configFile.source.user_attrs[15]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"employeeType"
+"employeeNumber"
 </pre>
 </td>
 			<td></td>
 		</tr>
 		<tr>
 			<td>configFile.source.user_attrs[16]</td>
+			<td>string</td>
+			<td><pre lang="json">
+"employeeType"
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>configFile.source.user_attrs[17]</td>
 			<td>string</td>
 			<td><pre lang="json">
 "proxyAddresses"
@@ -259,7 +268,7 @@ null
 			<td>configFile.source.user_attrs[2]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"givenName"
+"mail"
 </pre>
 </td>
 			<td></td>
@@ -268,7 +277,7 @@ null
 			<td>configFile.source.user_attrs[3]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"description"
+"givenName"
 </pre>
 </td>
 			<td></td>
@@ -277,7 +286,7 @@ null
 			<td>configFile.source.user_attrs[4]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"sn"
+"description"
 </pre>
 </td>
 			<td></td>
@@ -286,7 +295,7 @@ null
 			<td>configFile.source.user_attrs[5]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"ou"
+"sn"
 </pre>
 </td>
 			<td></td>
@@ -295,7 +304,7 @@ null
 			<td>configFile.source.user_attrs[6]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"o"
+"ou"
 </pre>
 </td>
 			<td></td>
@@ -304,7 +313,7 @@ null
 			<td>configFile.source.user_attrs[7]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"street"
+"o"
 </pre>
 </td>
 			<td></td>
@@ -313,7 +322,7 @@ null
 			<td>configFile.source.user_attrs[8]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"l"
+"street"
 </pre>
 </td>
 			<td></td>
@@ -322,7 +331,7 @@ null
 			<td>configFile.source.user_attrs[9]</td>
 			<td>string</td>
 			<td><pre lang="json">
-"postalCode"
+"l"
 </pre>
 </td>
 			<td></td>
