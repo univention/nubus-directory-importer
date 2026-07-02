@@ -101,6 +101,11 @@ CFG_SCHEMA_UDM = Map(
         Optional("skip_writes", default=False): Bool(),
         Optional("connect_timeout", default=6.0): Float(),
         Optional("read_timeout", default=1800.0): Float(),
+        Optional("deletion_grace_period_days", default=0): Int(),
+        Optional(
+            "deprovision_timestamp_property",
+            default="directoryImporterDeprovisionedAt",
+        ): Str(),
         "user_ou": Str(),
         Optional("user_primary_key_property", default="uniqueIdentifier"): Str(),
         Optional("user_properties", default=CFG_USER_PROPS_DEFAULT): Seq(Str()),
@@ -283,6 +288,8 @@ class UDMConfig:
         "connect_timeout",
         "read_timeout",
         # Functional config
+        "deletion_grace_period_days",
+        "deprovision_timestamp_property",
         "user_ou",
         "user_primary_key_property",
         "user_properties",
@@ -311,6 +318,10 @@ class UDMConfig:
         self.skip_writes = yml["skip_writes"].data
         self.connect_timeout = yml["connect_timeout"].data
         self.read_timeout = yml["read_timeout"].data
+        self.deletion_grace_period_days = yml["deletion_grace_period_days"].data
+        self.deprovision_timestamp_property = yml[
+            "deprovision_timestamp_property"
+        ].text
         self.user_ou = yml["user_ou"].text
         self.user_primary_key_property = yml["user_primary_key_property"].text
         self.user_properties = set(yml["user_properties"].data)

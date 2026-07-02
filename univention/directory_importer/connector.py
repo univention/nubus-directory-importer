@@ -7,6 +7,7 @@ univention.directory_importer.connector - the connector
 
 import logging
 import time
+from datetime import datetime, timedelta, timezone
 
 import ldap
 from ldap.controls.pagedresults import SimplePagedResultsControl
@@ -18,6 +19,9 @@ from . import gen_password
 from .config import ConnectorConfig
 from .trans import MemberRefsTransformer
 from .udm import UDMClient, UDMEntry, UDMMethod, UDMModel
+
+
+DEPROVISION_TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
 
 class ReadSourceDirectoryError(Exception):
@@ -262,19 +266,89 @@ class Connector:
                         count,
                     )
 
+    def _grace_period_active(self, model) -> bool:
+        """
+        returns whether the deletion grace period applies to this model
+        """
+        return (
+            model == UDMModel.USER
+            and self._config.udm.deletion_grace_period_days > 0
+        )
+
+    def _deprovision_entry(self, model, entry: UDMEntry, now: datetime) -> bool:
+        """
+        disable an entry gone from source or delete it once the grace period
+        has expired, returns True if the entry was deleted
+        """
+        ts_property = self._config.udm.deprovision_timestamp_property
+        ts_value = entry.properties.get(ts_property)
+        if not ts_value:
+            self._udm.modify(
+                model,
+                entry.dn,
+                {
+                    "disabled": True,
+                    ts_property: now.strftime(DEPROVISION_TS_FORMAT),
+                },
+            )
+            logging.info(
+                "Deprovisioned target %s entry %s, deletion in %d days",
+                model.value,
+                entry.source_primary_key,
+                self._config.udm.deletion_grace_period_days,
+            )
+            return False
+        deprovisioned_at = datetime.strptime(
+            ts_value,
+            DEPROVISION_TS_FORMAT,
+        ).replace(tzinfo=timezone.utc)
+        grace_period = timedelta(days=self._config.udm.deletion_grace_period_days)
+        if now - deprovisioned_at < grace_period:
+            logging.debug(
+                "Grace period of target %s entry %s not expired (since %s)",
+                model.value,
+                entry.source_primary_key,
+                ts_value,
+            )
+            return False
+        self._udm.delete(model, entry.dn)
+        logging.info(
+            "Removed target %s entry %s after grace period (since %s)",
+            model.value,
+            entry.source_primary_key,
+            ts_value,
+        )
+        return True
+
     def delete_old_entries(self, model, old_users: dict[str, UDMEntry], id2dn):
         """
-        delete entries which do not exists in source anymore
+        delete entries which do not exists in source anymore,
+        optionally deferred by a deletion grace period for users
         """
         ctr = 0
+        grace_period_active = self._grace_period_active(model)
+        now = datetime.now(timezone.utc)
         for old_primary_key in old_users:
             if old_primary_key in id2dn:
                 continue
             try:
-                self._udm.delete(
-                    model,
-                    old_users[old_primary_key].dn,
-                )
+                if grace_period_active:
+                    deleted = self._deprovision_entry(
+                        model,
+                        old_users[old_primary_key],
+                        now,
+                    )
+                else:
+                    self._udm.delete(
+                        model,
+                        old_users[old_primary_key].dn,
+                    )
+                    deleted = True
+                    logging.info(
+                        "Removed target %s entry %s",
+                        model.value,
+                        old_primary_key,
+                    )
             except Exception as err:
                 logging.warning(
                     "Error removing target %s entry %s: %s",
@@ -283,8 +357,8 @@ class Connector:
                     err,
                 )
             else:
-                ctr += 1
-                logging.info("Removed target %s entry %s", model.value, old_primary_key)
+                if deleted:
+                    ctr += 1
         return ctr
 
     def _prep_updates(self, model, props_list, new_props, old_props) -> dict:
@@ -324,11 +398,19 @@ class Connector:
         """
         returns 2-tuple of dict instances containing existing target entries
         """
+        user_query_properties = set(self._config.udm.user_properties)
+        if self._grace_period_active(UDMModel.USER):
+            # needed to evaluate the deprovision state, deliberately kept out
+            # of user_properties so they are not part of the update diff
+            user_query_properties |= {
+                "disabled",
+                self._config.udm.deprovision_timestamp_property,
+            }
         users = self._udm.list(
             UDMModel.USER,
             self._config.udm.user_primary_key_property,
             position=f"{self._config.udm.user_ou},{self._udm.base_position}",
-            properties=self._config.udm.user_properties,
+            properties=sorted(user_query_properties),
         )
         groups = self._udm.list(
             UDMModel.GROUP,
@@ -383,6 +465,16 @@ class Connector:
                         target_props,
                         old_entries[target_primary_key].properties,
                     )
+                    if self._grace_period_active(model):
+                        ts_property = self._config.udm.deprovision_timestamp_property
+                        if old_entries[target_primary_key].properties.get(ts_property):
+                            update_props[ts_property] = None
+                            update_props.setdefault("disabled", False)
+                            logging.info(
+                                "Reprovisioning %s entry with primary key %r",
+                                model.value,
+                                target_primary_key,
+                            )
                     # TODO: move user properties update logic to user model
                     # if model == UDMModel.USER and 'mailPrimaryAddress' in update_props.keys():
                     #     del update_props['mailPrimaryAddress']
