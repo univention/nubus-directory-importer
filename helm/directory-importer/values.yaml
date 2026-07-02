@@ -104,6 +104,7 @@ configFile:
     user_attrs:
       - "objectGUID"
       - "sAMAccountName"
+      - "mail"
       - "givenName"
       - "description"
       - "sn"
