@@ -79,6 +79,11 @@ configFile:
     password: null
     # ca_cert: "/etc/ssl/certs/ca-certificates-nubus.crt"
     skip_writes: false
+    # Number of days a user vanished from the source is kept disabled before
+    # it is actually deleted. 0 deletes immediately. Requires the extended
+    # attribute referenced by deprovision_timestamp_property on users/user.
+    deletion_grace_period_days: 0
+    deprovision_timestamp_property: "directoryImporterDeprovisionedAt"
     user_ou: "ou=ad-domain-example"
     user_primary_key_property: "univentionObjectIdentifier"
     group_ou: "ou=ad-domain-example"
@@ -104,6 +109,7 @@ configFile:
     user_attrs:
       - "objectGUID"
       - "sAMAccountName"
+      - "mail"
       - "givenName"
       - "description"
       - "sn"
