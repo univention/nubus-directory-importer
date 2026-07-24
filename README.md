@@ -298,6 +298,47 @@ The connector does not provide a monitoring end-point itself.
 Some metrics could be extracted from log messages with tools like
 _mtail_, _promtail_ or similar.
 
+## Deletion grace period
+
+When enabled, deleted users are not immediately removed from Nubus but
+are first marked as deprovisioned and then deleted after a configurable
+grace period.
+
+To enable it, set `deletion_grace_period_days` in the `udm` config section:
+
+```yaml
+udm:
+    deletion_grace_period_days: 1
+```
+
+During the grace period the user entry is disabled and the
+`deprovision_timestamp_property` (default: `directoryImporterDeprovisionedAt`)
+is set to the deprovision timestamp. Once the grace period expires, the
+user is deleted from Nubus.
+
+### Extended attribute
+
+The deprovision timestamp property requires a UDM extended attribute to be
+created before the grace period can be used. Use the helper script to
+create it:
+
+```bash
+# Create the extended attribute
+docker compose --profile test run --rm directory-importer-ea
+
+# Delete the extended attribute (e.g. for re-creation)
+docker compose --profile test run --rm \
+  directory-importer-ea --delete
+
+# Recreate (delete then create)
+docker compose --profile test run --rm \
+  directory-importer-ea --force
+```
+
+The script reads the UDM connection from `config/ad-domain-config.yaml`
+and creates the extended attribute using the value of
+`udm.deprovision_timestamp_property` as the EA name.
+
 ## Running tests
 
 ### Manual testing

@@ -23,6 +23,7 @@ dependencies = [
     "phonenumbers",
     "pytest-helm>=0.0.1.dev0",
     "python-ldap",
+    "pyyaml",
     "requests",
     "strictyaml",
     "typer",

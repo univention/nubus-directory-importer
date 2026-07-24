@@ -12,6 +12,8 @@ udm:
     user_primary_key_property: "univentionObjectIdentifier"
     group_ou: "ou=ad-domain-example"
     group_primary_key_property: "univentionObjectIdentifier"
+    deletion_grace_period_days: 0
+    deprovision_timestamp_property: "directoryImporterDeprovisionedAt"
 
 source:
     ldap_uri: "ldap://my_active_directory_server.test:1234" # "ldaps://"

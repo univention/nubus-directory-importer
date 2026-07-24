@@ -24,6 +24,7 @@ services:
       - ALL
     volumes:
       - ./config/ad-domain-config.yaml:/etc/directory-importer/config.yaml:ro
+      - ./examples/create_extended_attribute.py:/etc/directory-importer/create_extended_attribute.py:ro
       #- ./config/ca_nubus.crt:/etc/ssl/certs/ca-certificates-nubus.crt:ro
       #- ./config/ca_ad.crt:/etc/ssl/certs/ca-certificates-ad.crt:ro
     environment:
@@ -32,3 +33,10 @@ services:
       REPEAT_DELAY: 300
       CONFIG_FILENAME: "/etc/directory-importer/config.yaml"
     network_mode: host
+
+  directory-importer-ea:
+    profiles:
+      - "test"
+    extends:
+      service: directory-importer
+    entrypoint: [".venv/bin/python3.13", "/etc/directory-importer/create_extended_attribute.py", "--base", "dc=swp-ldap,dc=internal", "--config", "/etc/directory-importer/config.yaml"]
