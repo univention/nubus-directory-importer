@@ -55,7 +55,8 @@ services:
     volumes:
       - ldap-shared-data:/var/lib/univention-ldap/:rw
       - ldap-shared-run:/var/run/slapd/:rw
-      - ./base-defaults.conf:/etc/univention/base-defaults.conf:ro
+      # Mounted as base.conf, not base-defaults.conf, so the image's own defaults layer still applies.
+      - ./base-defaults.conf:/etc/univention/base.conf:ro
 
 volumes:
   ldap-shared-data:
