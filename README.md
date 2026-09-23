@@ -9,6 +9,11 @@ not have to maintain any local state.
 
 [[_TOC_]]
 
+## Documentation
+
+For detailed information about installing, configuring, and operating the **Nubus Directory Importer**,
+see the [Nubus for Kubernetes Operation Manual](https://docs.software-univention.de/nubus-kubernetes-operation/latest/en/connect-external-iam/directory-importer.html).
+
 ## Implementation notes
 
   * The connector always reads the full source and target data (users and groups)
