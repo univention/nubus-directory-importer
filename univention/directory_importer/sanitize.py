@@ -61,3 +61,23 @@ def guid2uuid(val: bytes) -> bytes:
     returns GUID as UUID string representation
     """
     return str(uuid.UUID(bytes_le=val)).encode("ascii")
+
+
+_TRUE_VALUES = frozenset((b"true", b"yes", b"1", b"on", b"ok"))
+_FALSE_VALUES = frozenset((b"false", b"no", b"0", b"off", b"not"))
+
+
+def str2bool(val: bytes) -> bool:
+    """
+    sanitize a string representation of a boolean value to a Python bool
+
+    Accepted true values (case-insensitive): true, yes, 1, on, ok
+    Accepted false values (case-insensitive): false, no, 0, off, not
+    Raises ValueError for any unrecognized value.
+    """
+    normalized = val.strip().lower()
+    if normalized in _TRUE_VALUES:
+        return True
+    if normalized in _FALSE_VALUES:
+        return False
+    raise ValueError(f"{val!r} cannot be parsed as a boolean value")

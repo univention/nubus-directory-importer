@@ -24,8 +24,6 @@ from typing import (
 import ldap
 import requests
 
-from junkaptor import decode_list
-
 from .__about__ import __version__
 
 JSON_MIME_TYPE = "application/json"
@@ -175,7 +173,7 @@ class UDMClient:
         res: Dict[str, Union[str, list]] = {}
         single_val_attrs = set(self.single_valued_props(model))
         for key, vals in attrs.items():
-            new_vals = decode_list(vals, encoding=encoding)
+            new_vals = [v if not isinstance(v, bytes) else v.decode(encoding) for v in vals]
             if key in single_val_attrs:
                 if len(new_vals) > 1:
                     raise ValueError(f"Expected only one value, got {len(new_vals):d}")
