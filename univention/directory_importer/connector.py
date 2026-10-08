@@ -172,7 +172,7 @@ class Connector:
                                 while True:
                                     # parse something like member;range=0-1499
                                     range_lower, range_upper = atype[
-                                        len(range_prefix) :
+                                        len(range_prefix):
                                     ].split("-", 1)
                                     logging.debug(
                                         "range_attr = %r, range_lower = %r, range_upper = %r",
@@ -319,16 +319,23 @@ class Connector:
         )
         return True
 
-    def delete_old_entries(self, model, old_users: dict[str, UDMEntry], id2dn):
+    def delete_old_entries(
+        self,
+        model,
+        old_users: dict[str, UDMEntry],
+        source_primary_keys,
+    ):
         """
         delete entries which do not exists in source anymore,
-        optionally deferred by a deletion grace period for users
+        optionally deferred by a deletion grace period for users,
+
+        source_primary_keys contains the primary key of every source entry
         """
         ctr = 0
         grace_period_active = self._grace_period_active(model)
         now = datetime.now(timezone.utc)
         for old_primary_key in old_users:
-            if old_primary_key in id2dn:
+            if old_primary_key in source_primary_keys:
                 continue
             try:
                 if grace_period_active:
@@ -437,14 +444,21 @@ class Connector:
         trans,
         old_entries: dict[str, UDMEntry],
     ):
+
         new_id2dn = {}
-        source_results_count = error_count = 0
+        error_count = 0
+        source_primary_keys = set()
+        pending_adds = []
+        pending_modifies = []
+
+        # transform all objects for later use
         for source_dn, source_entry in source.items():
-            source_results_count += 1
             logging.debug("source_dn = %r", source_dn)
             logging.debug("source_entry = %r", source_entry)
             try:
                 target_props = self._udm.prep_properties(model, trans(source_entry))
+                logging.debug("target_props = %r", target_props)
+                target_primary_key = target_props[primary_key]
             except Exception as err:
                 logging.error(
                     "Error transforming to target properties, source_entry = %r : %s",
@@ -454,85 +468,129 @@ class Connector:
                 )
                 error_count += 1
                 continue
-            logging.debug("target_props = %r", target_props)
-            target_primary_key = target_props[primary_key]
+            source_primary_keys.add(target_primary_key)
+
+            target_entry = old_entries.get(target_primary_key)
+            if target_entry is None:
+                # does not exist in target yet, add it below
+                pending_adds.append(
+                    (target_primary_key, source_dn, target_props),
+                )
+                continue
+
+            new_id2dn[target_primary_key] = target_entry.dn
             try:
-                if target_primary_key in old_entries:
-                    update_props = self._prep_updates(
-                        model,
-                        properties,
-                        target_props,
-                        old_entries[target_primary_key].properties,
-                    )
-                    if self._grace_period_active(model):
-                        ts_property = self._config.udm.deprovision_timestamp_property
-                        if old_entries[target_primary_key].properties.get(ts_property):
-                            update_props[ts_property] = None
-                            update_props.setdefault("disabled", False)
-                            logging.info(
-                                "Reprovisioning %s entry with primary key %r",
-                                model.value,
-                                target_primary_key,
-                            )
-                    # TODO: move user properties update logic to user model
-                    # if model == UDMModel.USER and 'mailPrimaryAddress' in update_props.keys():
-                    #     del update_props['mailPrimaryAddress']
-                    target_dn = old_entries[target_primary_key].dn
-                    new_id2dn[target_primary_key] = target_dn
-                    if not update_props:
-                        # skip processing current entry
-                        continue
-                    self._udm.modify(
-                        model,
-                        target_dn,
-                        update_props,
-                        position=position,
-                    )
-                    logging.info(
-                        "Modified %s entry %s with primary key %r: %s",
-                        model.value,
-                        target_dn,
-                        target_primary_key,
-                        ", ".join(update_props.keys()),
-                    )
-                else:
-                    # TODO: move user properties update logic to user model
-                    if model == UDMModel.USER:
-                        target_props["password"] = gen_password()
-                        # target_props['mailPrimaryAddress'] = target_props['e-mail'][0]
-                    self._udm.add(
-                        model,
-                        target_props,
-                        position=position,
-                    )
-                    # FIX ME!
-                    # We always have to compose the DNs even with UCS 5+ because
-                    # in case skip_writes: true is used there's no real UDM response.
-                    # Basically skip_writes: true sucks!
-                    if model == UDMModel.USER:
-                        target_dn = f'uid={target_props["username"]},{position}'
-                    elif model == UDMModel.GROUP:
-                        target_dn = f'cn={target_props["name"]},{position}'
-                    new_id2dn[target_primary_key] = target_dn
-                    logging.info(
-                        "Added %s entry %s with primary key %r",
-                        model.value,
-                        target_dn,
-                        target_primary_key,
-                    )
+                update_props = self._prep_updates(
+                    model,
+                    properties,
+                    target_props,
+                    target_entry.properties,
+                )
+                if self._grace_period_active(model):
+                    ts_property = self._config.udm.deprovision_timestamp_property
+                    if target_entry.properties.get(ts_property):
+                        update_props[ts_property] = None
+                        update_props.setdefault("disabled", False)
+                        logging.info(
+                            "Reprovisioning %s entry with primary key %r",
+                            model.value,
+                            target_primary_key,
+                        )
+                # TODO: move user properties update logic to user model
+                # if model == UDMModel.USER and 'mailPrimaryAddress' in update_props.keys():
+                #     del update_props['mailPrimaryAddress']
             except Exception as err:
                 logging.error(
-                    "UDMError adding/modifying %s from %s: %s",
+                    "Error preparing updates for %s entry %r, source_entry = %r : %s",
+                    model.value,
+                    target_primary_key,
+                    source_entry,
+                    err,
+                    exc_info=__debug__,
+                )
+                error_count += 1
+                continue
+            if not update_props:
+                # skip processing current entry
+                continue
+            pending_modifies.append(
+                (target_primary_key, source_dn, target_entry.dn, update_props),
+            )
+
+        # remove obsolete entries first, so that unique properties are free
+        delete_count = self.delete_old_entries(
+            model,
+            old_entries,
+            source_primary_keys,
+        )
+
+        # apply updates to entries which still exist in target
+        for target_primary_key, source_dn, target_dn, update_props in pending_modifies:
+            try:
+                self._udm.modify(
+                    model,
+                    target_dn,
+                    update_props,
+                    position=position,
+                )
+            except Exception as err:
+                logging.error(
+                    "UDMError modifying %s from %s: %s",
+                    update_props,
+                    source_dn,
+                    err,
+                    exc_info=__debug__,
+                )
+                error_count += 1
+                continue
+            logging.info(
+                "Modified %s entry %s with primary key %r: %s",
+                model.value,
+                target_dn,
+                target_primary_key,
+                ", ".join(update_props.keys()),
+            )
+
+        # add the source entries which did not exist in target before
+        for target_primary_key, source_dn, target_props in pending_adds:
+            # TODO: move user properties update logic to user model
+            if model == UDMModel.USER:
+                target_props["password"] = gen_password()
+                # target_props['mailPrimaryAddress'] = target_props['e-mail'][0]
+            # FIX ME!
+            # We always have to compose the DNs even with UCS 5+ because
+            # in case skip_writes: true is used there's no real UDM response.
+            # Basically skip_writes: true sucks!
+            if model == UDMModel.USER:
+                target_dn = f'uid={target_props["username"]},{position}'
+            elif model == UDMModel.GROUP:
+                target_dn = f'cn={target_props["name"]},{position}'
+            try:
+                self._udm.add(
+                    model,
+                    target_props,
+                    position=position,
+                )
+            except Exception as err:
+                logging.error(
+                    "UDMError adding %s from %s: %s",
                     target_props,
                     source_dn,
                     err,
                     exc_info=__debug__,
                 )
                 error_count += 1
+                continue
+            new_id2dn[target_primary_key] = target_dn
+            logging.info(
+                "Added %s entry %s with primary key %r",
+                model.value,
+                target_dn,
+                target_primary_key,
+            )
+
         # logging.debug('new_id2dn = %r', new_id2dn)
-        # remove obsolete entries not found in source
-        delete_count = self.delete_old_entries(model, old_entries, new_id2dn)
-        return source_results_count, error_count, delete_count, new_id2dn
+        return len(source), error_count, delete_count, new_id2dn
         # end of .sync_entries()
 
     def __call__(self):

@@ -44,7 +44,7 @@ def ldap_connection(ldap_config) -> Generator[ldap3.Connection, None, None]:
 # DIRECTORY IMPORTER
 
 
-def trigger_sync(connector_config: ConnectorConfig) -> None:
+def trigger_sync(connector_config: ConnectorConfig) -> tuple[int, int, int]:
     """Trigger the sync process between AD and LDAP using the Connector"""
     logger.info("Triggering sync between AD and LDAP")
 
@@ -66,6 +66,8 @@ def trigger_sync(connector_config: ConnectorConfig) -> None:
         logger.error("Error during sync: %s", str(e))
         raise
 
+    return source_count, delete_count, error_count
+
 
 # MISCELANEOUS
 
@@ -76,9 +78,10 @@ def ad_user(
     ldap_base_dn,
     faker,
     extra_attrs=None,
+    user_name=None,
 ):
     """Create a test user in Active Directory"""
-    user_name = f"user{faker.user_name()}"
+    user_name = user_name or f"user{faker.user_name()}"
     user_ad_dn = ad_connection.dn_builder(user_name)
     user_ldap_dn = (
         f"uid={user_name},{directory_importer_config.udm.user_ou},{ldap_base_dn}"
@@ -446,3 +449,86 @@ def test_delete_group_with_users(
         ldap_connection,
         user_ldap_dn,
     ), "User should not be deleted from LDAP"
+
+
+def test_recreate_user_with_same_username(
+    ad_connection: ADConnection,
+    ldap_connection: ldap3.Connection,
+    faker,
+    directory_importer_config,
+    ldap_base_dn,
+):
+    """
+    Create a user, delete it and add it again under the same username.
+
+    The last step deletes and re-creates the user without an intervening
+    sync, so a single run sees both the obsolete entry and its replacement.
+    That run has to release the username of the obsolete entry before the new
+    entry is created, otherwise the username and its DN are still taken and
+    the run fails.
+    """
+    user_name = f"user{faker.user_name()}".lower()
+    expected_attrs = {"uid": user_name}
+
+    _, user_ad_dn, user_ldap_dn = ad_user(
+        ad_connection,
+        directory_importer_config,
+        ldap_base_dn,
+        faker,
+        user_name=user_name,
+    )
+
+    # create the user
+    _, _, error_count = trigger_sync(directory_importer_config)
+    assert error_count == 0, "Initial sync must not report errors"
+    assert verify_ldap_object(
+        ldap_connection,
+        user_ldap_dn,
+        expected_attrs=expected_attrs,
+    ), "User should be created in LDAP with its username"
+
+    # delete the user
+    ad_connection.conn.delete(user_ad_dn)
+    _, delete_count, error_count = trigger_sync(directory_importer_config)
+    assert error_count == 0, "Sync after deletion must not report errors"
+    assert delete_count >= 1, "The user should have been removed from LDAP"
+    assert not verify_ldap_object(
+        ldap_connection,
+        user_ldap_dn,
+    ), "User should be deleted from LDAP"
+
+    # add the user again
+    ad_user(
+        ad_connection,
+        directory_importer_config,
+        ldap_base_dn,
+        faker,
+        user_name=user_name,
+    )
+    _, _, error_count = trigger_sync(directory_importer_config)
+    assert error_count == 0, "Re-adding the user must not report errors"
+    assert verify_ldap_object(
+        ldap_connection,
+        user_ldap_dn,
+        expected_attrs=expected_attrs,
+    ), "User should be created in LDAP again with its username"
+
+    # delete and add the user again without an intervening sync
+    ad_connection.conn.delete(user_ad_dn)
+    ad_user(
+        ad_connection,
+        directory_importer_config,
+        ldap_base_dn,
+        faker,
+        user_name=user_name,
+    )
+    _, _, error_count = trigger_sync(directory_importer_config)
+    assert error_count == 0, (
+        "Deleting and re-adding a user with the same username "
+        "within a single run must not report errors"
+    )
+    assert verify_ldap_object(
+        ldap_connection,
+        user_ldap_dn,
+        expected_attrs=expected_attrs,
+    ), "User should exist in LDAP with its original username"
