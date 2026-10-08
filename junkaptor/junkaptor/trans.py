@@ -106,6 +106,21 @@ class Transformer:
             for key, vals in (decompose_attrs or {}).items()
         }
 
+    def _apply_sanitizer(self, key, vals):
+        sani_funcs = self._sanitizer.get(key, ()) + self._sanitizer.get("*", ())
+        if not sani_funcs:
+            return list(vals)
+        new_vals = OrderedDict()
+        for val in vals:
+            try:
+                new_val = val
+                for sani_func in sani_funcs:
+                    new_val = sani_func(new_val)
+                new_vals[new_val] = None
+            except ValueError as err:
+                self._log.debug("Error processing %s value %r: %s", key, val, err)
+        return list(new_vals.keys())
+
     @staticmethod
     def _apply_decompose_attrs(patterns, vals):
         entry = defaultdict(lambda: [])
@@ -207,10 +222,12 @@ class Transformer:
         # process parameter fallback_attrs to add default values for
         # non-existent attributes
         for key in self._fallback_attrs:
-            res[key] = res.pop(key, self._fallback_attrs[key])
+            if key not in res:
+                res[key] = self._apply_sanitizer(key, self._fallback_attrs[key])
         # process parameter fixed_attrs to set fixed values for
         # some attributes even if they existed
-        res.update(self._fixed_attrs)
+        for key, vals in self._fixed_attrs.items():
+            res[key] = self._apply_sanitizer(key, vals)
         # process parameter remove_attrs to remove some attributes completely
         for key in self._remove_attrs:
             res.pop(key, None)

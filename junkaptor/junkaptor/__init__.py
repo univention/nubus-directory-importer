@@ -42,7 +42,7 @@ class SingleValueDict(dict):
     def __setitem__(self, key: str, val: bytes):
         try:
             dict.__setitem__(self, key, val[0].decode(self._encoding))
-        except UnicodeDecodeError:
+        except (UnicodeDecodeError, AttributeError):
             pass
 
 
