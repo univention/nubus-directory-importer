@@ -379,8 +379,11 @@ To run them, just execute the following commands:
 
 ```bash
 cd tests
-# Start the test dependencies
-docker compose down -v && docker compose up --pull always udm-rest-api ldap-server -d
+# Build custom images (udm-rest-api with OX handlers, udm-data-loader with OX extended attributes)
+docker compose build udm-rest-api udm-data-loader
+
+# Start the test dependencies; wait until udm-data-loader completes loading OX extended attributes
+docker compose down -v && docker compose up --no-build --wait ldap-server udm-rest-api udm-data-loader
 
 # Create the example.org maildomain
 ./maildomain.sh

@@ -19,3 +19,18 @@ To run the tests, you need to add the following entry to your `/etc/hosts` file:
 
 Then, you need to create the file `tests/e2e/importer-config.yaml` with the
 content from the CI/CD variable `$E2E_DIRECTORY_IMPORTER_CONFIG`.
+
+Then run from the `tests/` directory:
+
+```bash
+cd tests
+
+# Build custom images (udm-rest-api with OX handlers, udm-data-loader with OX extended attributes)
+docker compose build udm-rest-api udm-data-loader
+
+# Start dependencies; udm-data-loader loads OX extended attributes into LDAP before completing
+docker compose down -v && docker compose up --no-build --wait udm-data-loader
+
+# Run the e2e tests
+docker compose run test -- pytest tests/e2e --connector-config=tests/e2e/importer-config.yaml
+```
