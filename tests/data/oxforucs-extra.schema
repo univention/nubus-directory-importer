@@ -1,0 +1,20 @@
+# cyrus imapd access control list
+# acls work with users and groups
+attributetype ( 1.3.6.1.4.1.19414.2.1.651
+  NAME 'acl'
+  EQUALITY caseIgnoreIA5Match
+  SUBSTR caseIgnoreIA5SubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} )
+
+# flag for allowing unrestriced length of mails
+attributetype ( 1.3.6.1.4.1.19419.1.1.1.2
+  NAME 'unrestrictedMailSize'
+  EQUALITY booleanMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+# user specific quota on the cyrus imap server
+attributetype ( 1.3.6.1.4.1.19414.2.1.605
+  NAME 'cyrus-userquota'
+  DESC 'Mailbox hard quota limit in MB'
+  EQUALITY integerMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )

@@ -1,0 +1,1026 @@
+#
+# Owner of OID prefix 1.3.6.1.4.1.10176 is Univention GmbH
+# Owner of OID prefix 1.3.6.1.4.1.31353 is iKu Systems & Services GmbH & Co. KG
+#
+attributetype ( 1.3.6.1.4.1.31353.2.2.1 NAME ( 'oxBirthday' )
+	DESC 'oxBirthday'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.2 NAME ( 'oxNumOfChildren' )
+	DESC 'oxNumOfChildren'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.3 NAME ( 'oxLanguage' )
+	DESC 'oxLanguage'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.4 NAME ( 'oxTimeZone' )
+	DESC 'oxTimeZone'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.5 NAME ( 'oxDisplayName' )
+	DESC 'ox display name'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.6 NAME ( 'oxMobileHome' )
+	DESC 'oxMobileHome'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.7 NAME ( 'oxMobileBusiness' )
+	DESC 'oxMobileBusiness'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.8 NAME ( 'oxAnniversary' )
+	DESC 'oxAnniversary'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.9 NAME ( 'oxAccess' )
+	DESC 'oxAccess'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.13 NAME ( 'oxAccessForum' )
+	DESC 'oxAccessForum'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.14 NAME ( 'oxAccessPinboardWrite' )
+	DESC 'oxAccessPinboardWrite'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.15 NAME ( 'oxAccessProjects' )
+	DESC 'oxAccessProjects'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.16 NAME ( 'oxAccessRssBookmarks' )
+	DESC 'oxAccessRssBookmarks'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.17 NAME ( 'oxAccessSyncMl' )
+	DESC 'oxAccessSyncMl'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.18 NAME ( 'oxAccessUSM' )
+	DESC 'oxAccessUSM'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.24 NAME ( 'oxMiddleName' )
+	DESC 'oxMiddleName'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.25 NAME ( 'oxSuffix' )
+	DESC 'oxSuffix'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.26 NAME ( 'oxNickName' )
+	DESC 'oxNickName'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.27 NAME ( 'oxDepartment' )
+	DESC 'oxDepartment'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.28 NAME ( 'oxPosition' )
+	DESC 'oxPosition'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.29 NAME ( 'oxProfession' )
+	DESC 'oxProfession'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.30 NAME ( 'oxBranches' )
+	DESC 'oxBranches'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.31 NAME ( 'oxTelephoneCompany' )
+	DESC 'oxTelephoneCompany'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.32 NAME ( 'oxTelephoneOther' )
+	DESC 'oxTelephoneOther'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.33 NAME ( 'oxTelephoneCar' )
+	DESC 'oxTelephoneCar'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.34 NAME ( 'oxFaxBusiness' )
+	DESC 'oxFaxBusiness'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.35 NAME ( 'oxFaxHome' )
+	DESC 'oxFaxHome'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.36 NAME ( 'oxFaxOther' )
+	DESC 'oxFaxOther'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.37 NAME ( 'oxManagerName' )
+	DESC 'oxManagerName'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.38 NAME ( 'oxTelephoneAssistant' )
+	DESC 'oxTelephoneAssistant'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.39 NAME ( 'oxEmail2' )
+	DESC 'oxEmail2'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.40 NAME ( 'oxEmail3' )
+	DESC 'oxEmail3'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.41 NAME ( 'oxInstantMessenger1' )
+	DESC 'oxInstantMessenger1'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.42 NAME ( 'oxInstantMessenger2' )
+	DESC 'oxInstantMessenger2'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.43 NAME ( 'oxTelephoneIp' )
+	DESC 'oxTelephoneIp'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.44 NAME ( 'oxTelephonePager' )
+	DESC 'oxTelephonePager'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.45 NAME ( 'oxTelephoneTelex' )
+	DESC 'oxTelephoneTelex'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.46 NAME ( 'oxTelephoneTtydd' )
+	DESC 'oxTelephoneTtydd'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.47 NAME ( 'oxUrl' )
+	DESC 'oxUrl'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.48 NAME ( 'oxTaxId' )
+	DESC 'oxTaxId'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.49 NAME ( 'oxCommercialRegister' )
+	DESC 'oxCommercialRegister'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.50 NAME ( 'oxSalesVolume' )
+	DESC 'oxSalesVolume'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.51 NAME ( 'oxMarialStatus' )
+	DESC 'oxMarialStatus'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.52 NAME ( 'oxSpouseName' )
+	DESC 'oxSpouseName'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.53 NAME ( 'oxStateBusiness' )
+	DESC 'oxStateBusiness'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.54 NAME ( 'oxCountryBusiness' )
+	DESC 'oxCountryBusiness'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.55 NAME ( 'oxStreetHome' )
+	DESC 'oxStreetHome'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.56 NAME ( 'oxPostalCodeHome' )
+	DESC 'oxPostalCodeHome'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.57 NAME ( 'oxCityHome' )
+	DESC 'oxCityHome'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.58 NAME ( 'oxStateHome' )
+	DESC 'oxStateHome'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.59 NAME ( 'oxCountryHome' )
+	DESC 'oxCountryHome'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.60 NAME ( 'oxStreetOther' )
+	DESC 'oxStreetOther'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.61 NAME ( 'oxPostalCodeOther' )
+	DESC 'oxPostalCodeOther'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.62 NAME ( 'oxCityOther' )
+	DESC 'oxCityOther'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.63 NAME ( 'oxStateOther' )
+	DESC 'oxStateOther'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.64 NAME ( 'oxCountryOther' )
+	DESC 'oxCountryOther'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.65 NAME ( 'oxUserfield01' )
+	DESC 'oxUserfield01'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.66 NAME ( 'oxUserfield02' )
+	DESC 'oxUserfield02'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.67 NAME ( 'oxUserfield03' )
+	DESC 'oxUserfield03'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.68 NAME ( 'oxUserfield04' )
+	DESC 'oxUserfield04'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.69 NAME ( 'oxUserfield05' )
+	DESC 'oxUserfield05'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.70 NAME ( 'oxUserfield06' )
+	DESC 'oxUserfield06'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.71 NAME ( 'oxUserfield07' )
+	DESC 'oxUserfield07'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.72 NAME ( 'oxUserfield08' )
+	DESC 'oxUserfield08'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.73 NAME ( 'oxUserfield09' )
+	DESC 'oxUserfield09'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.74 NAME ( 'oxUserfield10' )
+	DESC 'oxUserfield10'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.75 NAME ( 'oxUserfield11' )
+	DESC 'oxUserfield11'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.76 NAME ( 'oxUserfield12' )
+	DESC 'oxUserfield12'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.77 NAME ( 'oxUserfield13' )
+	DESC 'oxUserfield13'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.78 NAME ( 'oxUserfield14' )
+	DESC 'oxUserfield14'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.79 NAME ( 'oxUserfield15' )
+	DESC 'oxUserfield15'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.80 NAME ( 'oxUserfield16' )
+	DESC 'oxUserfield16'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.81 NAME ( 'oxUserfield17' )
+	DESC 'oxUserfield17'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.82 NAME ( 'oxUserfield18' )
+	DESC 'oxUserfield18'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.83 NAME ( 'oxUserfield19' )
+	DESC 'oxUserfield19'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.84 NAME ( 'oxUserfield20' )
+	DESC 'oxUserfield20'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.85 NAME ( 'oxNote' )
+	DESC 'oxNote'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.86 NAME ( 'isOxGroup' )
+	DESC 'isOxGroup'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.87 NAME ( 'isOxUser' )
+	DESC 'isOxUser'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.89 NAME 'oxHomeServer'
+	DESC 'server which keeps the users ox context'
+	EQUALITY caseIgnoreIA5Match
+	SUBSTR caseIgnoreIA5SubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.90 NAME 'oxHomeMTA'
+	DESC 'MTA server for user'
+	EQUALITY caseIgnoreIA5Match
+	SUBSTR caseIgnoreIA5SubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.91 NAME 'univentionDefaultOxHomeServer'
+	DESC 'Default OX Home Server'
+	EQUALITY caseIgnoreIA5Match
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.92 NAME 'univentionOxUserNamespace'
+	DESC 'use namespace "user" instead of "shared" for shared folders'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.93 NAME 'univentionOxMember'
+	DESC 'Mailinglist member'
+	EQUALITY caseIgnoreIA5Match
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256})
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.94 NAME 'oxQuota'
+	DESC 'Quota for OX Context'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.95 NAME 'oxContextIDNum'
+	DESC 'Numeric value of Context'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.97 NAME 'oxDomainName'
+	DESC 'Domain Name'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.98 NAME 'oxContextName'
+	DESC 'Primary Name of OX Context'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.99 NAME 'oxImapServer'
+	DESC 'IMAP server for Mail Domain'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.100 NAME ( 'oxAccessResources' )
+	DESC 'oxAccessResources'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.101 NAME ( 'univentionOxSharedFolderDeliveryAddress' )
+	DESC 'univentionOxSharedFolderDeliveryAddress'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.102 NAME 'oxIntegrationVersion'
+	DESC 'Installed OX integration version for context'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.103 NAME 'oxGuiVersion'
+	DESC 'Installed version of OX GUI for context'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.104 NAME 'oxGroupwareVersion'
+	DESC 'Installed version of OX groupware for context'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.105 NAME 'oxAdminDaemonVersion'
+	DESC 'Installed version of OX admin daemons for context'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.106 NAME 'remoteServer'
+	DESC 'fetchmail remoteServer'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.107 NAME 'protocol'
+	DESC 'fetchmail protocol'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.108 NAME 'useSSL'
+	DESC 'fetchmail useSSL'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.109 NAME 'remoteUser'
+	DESC 'fetchmail remoteUser'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.110 NAME 'remotePassword'
+	DESC 'fetchmail remotePassword'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.111 NAME 'leaveMessagesOnServer'
+	DESC 'fetchmail leaveMessagesOnServer'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.112 NAME 'envelopeHeader'
+	DESC 'fetchmail envelopeHeader'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.113 NAME 'localDomainName'
+	DESC 'fetchmail localDomainName'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.114 NAME 'qmailPrefix'
+	DESC 'fetchmail qmailPrefix'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.115 NAME 'localRecipient'
+	DESC 'fetchmail local recipient'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.116 NAME 'oxTelephoneBusiness1'
+	DESC 'oxTelephoneBusiness1'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.117 NAME 'oxTelephoneBusiness2'
+	DESC 'oxTelephoneBusiness2'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.118 NAME 'oxTelephoneHome1'
+	DESC 'oxTelephoneHome1'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.119 NAME 'oxTelephoneHome2'
+	DESC 'oxTelephoneHome1'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.120 NAME 'oxEnableResource'
+	DESC 'oxEnableResource'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.121 NAME 'oxResourceObject'
+	DESC 'oxResourceObject'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.122 NAME 'oxResourceAdmin'
+	DESC 'oxResourceAdmin'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.123 NAME 'oxVacation'
+	DESC 'oxVacation'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.124 NAME 'oxVacationSubject'
+	DESC 'oxVacationSubject'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.125 NAME 'oxVacationText'
+	DESC 'oxVacationText'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.126 NAME 'oxVacationDays'
+	DESC 'oxVacationDays'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.127 NAME 'oxDBServer'
+	DESC 'oxDBServer'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.128 NAME 'oxResourceMailAddress'
+	DESC 'oxResourceMailAddress'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.129 NAME 'oxDrive'
+	DESC 'is OX drive enabled?'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.130 NAME 'oxUserQuota'
+	DESC 'Quota for OX user'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.157 NAME 'oxDeputyPermissionFrom'
+	DESC 'DEPRECATED'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.158 NAME 'oxDeputyPermissionFor'
+	DESC 'DEPRECATED'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.159 NAME 'oxDeputyPermissionGivenTo'
+	DESC 'Another user is my Deputy and may write emails / manage calendar on my behalf'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.1 NAME 'oxUserObject' SUP top AUXILIARY
+	DESC 'Additional Settings for OX Users'
+	MAY ( oxAccessUSM $ isOxUser $ oxBirthday $ oxNumOfChildren $ oxLanguage $ oxTimeZone $ oxDisplayName $ oxAnniversary $ oxAccess $ oxAccessResources $ oxAccessForum $ oxAccessPinboardWrite $ oxAccessProjects $ oxAccessRssBookmarks $ oxAccessSyncMl $ oxMiddleName $ oxSuffix $ oxNickName $ oxDepartment $ oxPosition $ oxProfession $ oxBranches $ oxTelephoneCompany $ oxTelephoneBusiness1 $ oxTelephoneBusiness2 $ oxTelephoneHome1 $ oxTelephoneHome2 $ oxTelephoneOther $ oxTelephoneCar $ oxFaxBusiness $ oxFaxHome $ oxFaxOther $ oxManagerName $ oxTelephoneAssistant $ oxEmail2 $ oxEmail3 $ oxInstantMessenger1 $ oxInstantMessenger2 $ oxTelephoneIp $ oxTelephonePager $ oxTelephoneTelex $ oxTelephoneTtydd $ oxUrl $ oxTaxId $ oxCommercialRegister $ oxSalesVolume $ oxMarialStatus $ oxSpouseName $ oxStateBusiness $ oxCountryBusiness $ oxStreetHome $ oxPostalCodeHome $ oxCityHome $ oxStateHome $ oxCountryHome $ oxMobileBusiness $ oxMobileHome $ oxStreetOther $ oxPostalCodeOther $ oxCityOther $ oxStateOther $ oxCountryOther $ oxUserfield01 $ oxUserfield02 $ oxUserfield03 $ oxUserfield04 $ oxUserfield05 $ oxUserfield06 $ oxUserfield07 $ oxUserfield08 $ oxUserfield09 $ oxUserfield10 $ oxUserfield11 $ oxUserfield12 $ oxUserfield13 $ oxUserfield14 $ oxUserfield15 $ oxUserfield16 $ oxUserfield17 $ oxUserfield18 $ oxUserfield19 $ oxUserfield20 $ oxNote $ oxHomeServer $ oxImapServer $ oxHomeMTA $ unrestrictedMailSize $ cyrus-userquota $ oxVacation $ oxVacationSubject $ oxVacationText $ oxVacationDays $ oxResourceMailAddress $ oxContextIDNum $ oxDrive $ oxUserQuota $ oxDeputyPermissionFor $ oxDeputyPermissionFrom $ oxDeputyPermissionGivenTo ) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.2 NAME 'oxGroup' SUP top AUXILIARY
+	DESC 'Open-Xchange Group Ext.'
+	MAY  ( isOxGroup $ oxContextIDNum ))
+
+objectclass (1.3.6.1.4.1.31353.2.1.5 NAME 'oxDefault' SUP top AUXILIARY
+	DESC 'Additional Default Setting for univentionDefaultOxHomeServer'
+	MAY (univentionDefaultOxHomeServer) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.6 NAME 'oxSharedFolder'
+	DESC 'Open-Xchange public shared folder'
+	SUP top STRUCTURAL
+	MUST ( cn $ oxDomainName )
+	MAY ( acl $ cyrus-userquota $ mailPrimaryAddress $ univentionOxUserNamespace $ univentionOxSharedFolderDeliveryAddress) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.8 NAME 'univentionOxGroup'
+	DESC 'Univention mailinglist'
+	SUP top STRUCTURAL
+	MUST ( cn )
+	MAY ( mailPrimaryAddress $ description $ univentionOxMember ) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.9 NAME 'oxContext'
+	DESC 'Open-Xchange Context object'
+	SUP top STRUCTURAL
+	MUST ( cn $ oxContextIDNum )
+	MAY ( oxGuiVersion $ oxIntegrationVersion $ oxHomeServer $ oxGroupwareVersion $ oxAdminDaemonVersion $ oxQuota $ oxDBServer ) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.10 NAME 'oxMailDomainName'
+	DESC 'Open-Xchange Domain object'
+	SUP top STRUCTURAL
+	MUST ( cn ) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.11 NAME 'oxMailDomainServerSettings'
+	DESC 'Open-Xchange Domain extension'
+	SUP top AUXILIARY
+	MAY ( oxImapServer $ oxContextName ) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.12 NAME 'oxFetchmailSingleDrop'
+	DESC 'Open-Xchange fetchmail object - single drop'
+	SUP top STRUCTURAL
+	MUST ( cn $ localRecipient $ protocol $ remoteServer $ remoteUser $ remotePassword )
+	MAY ( useSSL $ leaveMessagesOnServer ) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.13 NAME 'oxFetchmailMultiDrop'
+	DESC 'Open-Xchange fetchmail object - multi drop'
+	SUP top STRUCTURAL
+	MUST ( cn $ protocol $ remoteServer $ remoteUser $ remotePassword $ envelopeHeader )
+	MAY ( qmailPrefix $ useSSL $ leaveMessagesOnServer $ localDomainName ) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.14 NAME 'oxResourceObject' SUP top STRUCTURAL
+	DESC 'Resource Object for OX'
+	MUST ( cn $ displayName $ oxResourceAdmin $ mailPrimaryAddress )
+	MAY ( oxEnableResource $ description $ oxContextIDNum ) )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.15 NAME 'oxDirectory' SUP top AUXILIARY
+	DESC 'Open-Xchange Resource Directory'
+	MUST ( oxResourceObject ))
+
+
+
+
+# ox/accessprofile
+attributetype ( 1.3.6.1.4.1.31353.2.2.131 NAME ( 'oxRightUsm' )
+	DESC 'Open-Xchange Access right usm'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.132 NAME ( 'oxRightActivesync' )
+	DESC 'Open-Xchange Access right activeSync'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.133 NAME ( 'oxRightCalendar' )
+	DESC 'Open-Xchange Access right calendar'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.134 NAME ( 'oxRightCollectemailaddresses' )
+	DESC 'Open-Xchange Access right collectEmailAddresses'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.135 NAME ( 'oxRightContacts' )
+	DESC 'Open-Xchange Access right contacts'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.136 NAME ( 'oxRightDelegatetask' )
+	DESC 'Open-Xchange Access right delegateTask'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.137 NAME ( 'oxRightDeniedportal' )
+	DESC 'Open-Xchange Access right deniedPortal'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.138 NAME ( 'oxRightEditgroup' )
+	DESC 'Open-Xchange Access right editGroup'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.139 NAME ( 'oxRightEditpassword' )
+	DESC 'Open-Xchange Access right editPassword'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.140 NAME ( 'oxRightEditpublicfolders' )
+	DESC 'Open-Xchange Access right editPublicFolders'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.141 NAME ( 'oxRightEditresource' )
+	DESC 'Open-Xchange Access right editResource'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.142 NAME ( 'oxRightGlobaladdressbookdisabled' )
+	DESC 'Open-Xchange Access right globalAddressBookDisabled'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.143 NAME ( 'oxRightIcal' )
+	DESC 'Open-Xchange Access right ical'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.144 NAME ( 'oxRightInfostore' )
+	DESC 'Open-Xchange Access right infostore'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.145 NAME ( 'oxRightMultiplemailaccounts' )
+	DESC 'Open-Xchange Access right multipleMailAccounts'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.146 NAME ( 'oxRightPublicfoldereditable' )
+	DESC 'Open-Xchange Access right publicFolderEditable'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.147 NAME ( 'oxRightReadcreatesharedfolders' )
+	DESC 'Open-Xchange Access right readCreateSharedFolders'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.148 NAME ( 'oxRightSubscription' )
+	DESC 'Open-Xchange Access right subscription'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.149 NAME ( 'oxRightSyncml' )
+	DESC 'Open-Xchange Access right syncml'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.150 NAME ( 'oxRightTasks' )
+	DESC 'Open-Xchange Access right tasks'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.151 NAME ( 'oxRightVcard' )
+	DESC 'Open-Xchange Access right vcard'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.152 NAME ( 'oxRightWebdav' )
+	DESC 'Open-Xchange Access right webdav'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.153 NAME ( 'oxRightWebdavxml' )
+	DESC 'Open-Xchange Access right webdavXml'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.154 NAME ( 'oxRightWebmail' )
+	DESC 'Open-Xchange Access right webmail'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.16 NAME 'oxAccessProfile' SUP top STRUCTURAL
+	DESC 'Open-Xchange Access Profile'
+	MUST ( cn $ displayName )
+	MAY (
+		oxRightUsm $
+		oxRightActivesync $
+		oxRightCalendar $
+		oxRightCollectemailaddresses $
+		oxRightContacts $
+		oxRightDelegatetask $
+		oxRightDeniedportal $
+		oxRightEditgroup $
+		oxRightEditpassword $
+		oxRightEditpublicfolders $
+		oxRightEditresource $
+		oxRightGlobaladdressbookdisabled $
+		oxRightIcal $
+		oxRightInfostore $
+		oxRightMultiplemailaccounts $
+		oxRightPublicfoldereditable $
+		oxRightReadcreatesharedfolders $
+		oxRightSubscription $
+		oxRightSyncml $
+		oxRightTasks $
+		oxRightVcard $
+		oxRightWebdav $
+		oxRightWebdavxml $
+		oxRightWebmail
+	) )
+
+# oxmail/function_account
+attributetype ( 1.3.6.1.4.1.31353.2.2.155 NAME ( 'oxPersonal' )
+	DESC 'Open-Xchange personal name for functional account'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.17 NAME 'oxFunctionalAccount' SUP top STRUCTURAL
+	DESC 'Open-Xchange Functional Account / Mailbox'
+	MUST ( cn $ mailPrimaryAddress )
+	MAY (
+		oxQuota $
+		oxPersonal $
+		uniqueMember
+	) )
+
+
+# default account for oxmail/function_account
+attributetype ( 1.3.6.1.4.1.31353.2.2.156 NAME ( 'oxFunctionalAccountDefaultContainer' )
+       DESC 'is standard container for ox functional accounts'
+       EQUALITY caseIgnoreMatch
+       SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+       )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.18 NAME 'oxDefaultContainers' SUP top AUXILIARY
+       DESC 'Open-Xchange default containers'
+       MAY (
+               oxFunctionalAccountDefaultContainer
+               )
+       )
+
+
+# oxmail/shared_account_permission
+attributetype ( 1.3.6.1.4.1.31353.2.2.160 NAME ( 'oxSendAs' )
+	DESC 'Open-Xchange permission to send as another user'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.161 NAME ( 'oxSendOnBehalf' )
+	DESC 'Open-Xchange permission to send on behalf of another user'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.162 NAME ( 'oxSnippets' )
+	DESC 'Open-Xchange permission to use snippets'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.163 NAME ( 'oxWriteSnippets' )
+	DESC 'Open-Xchange permission to write snippets'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.164 NAME ( 'oxManageSieve' )
+	DESC 'Open-Xchange permission to manage Sieve filters'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.165 NAME ( 'oxWriteJSlob' )
+	DESC 'Open-Xchange permission to write JSlob settings'
+	EQUALITY booleanMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.166 NAME ( 'oxPermissionMail' )
+	DESC 'Open-Xchange permissions for mail'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.167 NAME ( 'oxPermissionCalendar' )
+	DESC 'Open-Xchange permissions for calendar'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE)
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.19 NAME 'oxSharedAccountPermission' SUP top STRUCTURAL
+	DESC 'Open-Xchange shared account permission'
+	MUST ( cn $ displayName )
+	MAY (
+		oxPermissionMail $
+		oxPermissionCalendar $
+		oxSendAs $
+		oxSendOnBehalf $
+		oxSnippets $
+		oxWriteSnippets $
+		oxManageSieve $
+		oxWriteJSlob
+	) )
+
+# oxmail/shared_account
+attributetype ( 1.3.6.1.4.1.31353.2.2.168 NAME ( 'oxLinkUsers' )
+	DESC 'Open-Xchange users linked to a shared account'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1.3.6.1.4.1.31353.2.2.169 NAME ( 'oxLinkGroups' )
+	DESC 'Open-Xchange groups linked to a shared account'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( 1.3.6.1.4.1.31353.2.1.20 NAME 'oxSharedAccount' SUP top STRUCTURAL
+	DESC 'Open-Xchange Shared Account'
+	MUST ( cn $ mailPrimaryAddress $ displayName )
+	MAY (
+		oxLinkUsers $
+		oxLinkGroups $
+		oxContextIDNum
+	) )

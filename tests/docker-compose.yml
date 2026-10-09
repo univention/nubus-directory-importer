@@ -12,19 +12,64 @@ services:
     image: gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/directory-importer/testrunner:${IMAGE_TAG:-latest}
     cap_drop:
       - ALL
+    depends_on:
+      udm-data-loader:
+        condition: service_completed_successfully
     volumes:
       - ./:/app/tests:ro
       - ../helm:/app/helm:ro
     extra_hosts:
       - "WIN-N8V5GD1V1L.ad.test:10.207.116.197"
 
+  udm-data-loader:
+    build:
+      context: .
+      dockerfile: docker/udm-data-loader/Dockerfile
+    depends_on:
+      udm-rest-api:
+        condition: service_healthy
+    environment:
+      UDM_API_URL: http://udm-rest-api:9979/udm/
+      UDM_API_PORT: "9979"
+      UDM_API_USER: cn=admin
+      UDM_API_PASSWORD: univention
+      UDM_API_PASSWORD_FILE: /tmp/udm-password
+      LDAP_BASE_DN: dc=univention-organization,dc=intranet
+      OX_DEFAULT_CONTEXT: "10"
+    command:
+      - sh
+      - -c
+      - |
+        printf '%s' "$$UDM_API_PASSWORD" > /tmp/udm-password
+        printf "ldapBaseDn: %s\noxDefaultContext: \"%s\"\n" \
+          "$$LDAP_BASE_DN" "$$OX_DEFAULT_CONTEXT" > /tmp/context.yaml
+        exec process-all.sh --template-context /tmp/context.yaml
+
   udm-rest-api:
-    # pin to 0.33.0 for now until https://forge.univention.org/bugzilla/show_bug.cgi?id=58318 is integrated
-    # causes test failure otherwise
-    # image: gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/udm-rest-api/udm-rest-api:0.35.2
-    image: artifacts.software-univention.de/nubus/images/udm-rest-api:0.33.0
+    build:
+      context: .
+      dockerfile: docker/udm-rest-api/Dockerfile
+    # To upgrade: bump UDM_REST_API_IMAGE in ./docker/udm-rest-api/Dockerfile
     container_name: "udm-rest-api"
     platform: "linux/amd64"
+    depends_on:
+      ldap-server:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - "CMD"
+        - "python3"
+        - "-c"
+        - |
+          import urllib.request, urllib.error, sys
+          try:
+            urllib.request.urlopen('http://localhost:9979/udm/', timeout=5)
+          except urllib.error.HTTPError as e:
+            sys.exit(0 if e.code < 500 else 1)
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
     ports:
       - 9979:9979
     volumes:
@@ -49,6 +94,25 @@ services:
       LDAP_BASEDN: dc=univention-organization,dc=intranet
       PYTHON_LOG_LEVEL: "DEBUG"
       UPDATE_INDEX_ON_STARTUP: "true"
+    healthcheck:
+      test:
+        - "CMD"
+        - "ldapsearch"
+        - "-x"
+        - "-H"
+        - "ldap://localhost:389"
+        - "-b"
+        - "dc=univention-organization,dc=intranet"
+        - "-D"
+        - "cn=admin,dc=univention-organization,dc=intranet"
+        - "-w"
+        - "univention"
+        - "-s"
+        - "base"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
     ports:
       - 389:389
       - 636:636
@@ -57,6 +121,9 @@ services:
       - ldap-shared-run:/var/run/slapd/:rw
       # Mounted as base.conf, not base-defaults.conf, so the image's own defaults layer still applies.
       - ./base-defaults.conf:/etc/univention/base.conf:ro
+      # Custom schemas — picked up automatically by 25univention-ldap-server_local-schema template
+      - ./data/oxforucs.schema:/var/lib/univention-ldap-local/local-schema/oxforucs.schema:ro
+      - ./data/oxforucs-extra.schema:/var/lib/univention-ldap-local/local-schema/oxforucs-extra.schema:ro
 
 volumes:
   ldap-shared-data:

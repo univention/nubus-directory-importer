@@ -122,7 +122,8 @@ test-e2e-with-active-directory:
     - echo -e "\e[0Ksection_start:`date +%s`:docker_compose_config[collapsed=true]\r\e[0KDocker Compose configuration"
     - docker compose config test
     - echo -e "\e[0Ksection_end:`date +%s`:docker_compose_config\r\e[0K"
-    - docker compose up --no-build --quiet-pull --wait --wait-timeout 60 ldap-server udm-rest-api
+    - docker compose build udm-rest-api udm-data-loader
+    - docker compose up --no-build --quiet-pull --wait --wait-timeout 60 ldap-server udm-rest-api udm-data-loader
   script:
     - docker compose run --quiet-pull test -- pytest tests/e2e --connector-config=tests/e2e/importer-config.yaml
   after_script:
@@ -157,7 +158,8 @@ test-unit-and-integration::
     - echo -e "\e[0Ksection_start:`date +%s`:docker_compose_config[collapsed=true]\r\e[0KDocker Compose configuration"
     - docker compose config test
     - echo -e "\e[0Ksection_end:`date +%s`:docker_compose_config\r\e[0K"
-    - docker compose up --no-build --quiet-pull --wait --wait-timeout 60 ldap-server udm-rest-api
+    - docker compose build udm-rest-api udm-data-loader
+    - docker compose up --no-build --quiet-pull --wait --wait-timeout 60 ldap-server udm-rest-api udm-data-loader
   script:
     - docker compose run --quiet-pull test -- pytest tests/unit tests/integration
   after_script:

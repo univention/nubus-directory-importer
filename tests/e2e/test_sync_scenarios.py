@@ -90,6 +90,7 @@ def ad_user(
         "givenName": "Test",
         "mail": f"{user_name}@example.com",
         "sAMAccountName": user_name,
+        "description": "False",
     }
     if extra_attrs:
         user_data.update(extra_attrs)
@@ -171,6 +172,32 @@ def test_create_group_and_user(
     assert verify_ldap_object(
         ldap_connection,
         user_ldap_dn,
+    ), "User should be created in LDAP"
+
+
+def test_user_extended_attribute(
+    ad_connection: ADConnection,
+    ldap_connection: ldap3.Connection,
+    directory_importer_config,
+    ldap_base_dn,
+    faker,
+):
+    """Test creation of a user, verify they appear in LDAP after sync"""
+
+    _, _, user_ldap_dn = ad_user(
+        ad_connection,
+        directory_importer_config,
+        ldap_base_dn,
+        faker,
+        {"description": "True"},
+    )
+
+    trigger_sync(directory_importer_config)
+
+    assert verify_ldap_object(
+        ldap_connection,
+        user_ldap_dn,
+        expected_attrs={"isOxUser": "OK"},
     ), "User should be created in LDAP"
 
 
