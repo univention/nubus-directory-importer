@@ -127,10 +127,16 @@ def verify_ldap_object(
     )
 
     if not ldap_conn.entries:
+        logger.debug("LDAP entry not found: %s", dn)
         return False
 
     if expected_attrs:
         entry = ldap_conn.entries[0]
+        logger.debug(
+            "LDAP entry %s attributes: %s",
+            dn,
+            {attr: str(getattr(entry, attr, None)) for attr in entry.entry_attributes},
+        )
         return all(
             str(getattr(entry, attr, None)) == str(value)
             for attr, value in expected_attrs.items()
@@ -194,11 +200,14 @@ def test_user_extended_attribute(
 
     trigger_sync(directory_importer_config)
 
+    assert verify_ldap_object(ldap_connection, user_ldap_dn), (
+        f"User not found in LDAP at {user_ldap_dn}"
+    )
     assert verify_ldap_object(
         ldap_connection,
         user_ldap_dn,
         expected_attrs={"isOxUser": "OK"},
-    ), "User should be created in LDAP"
+    ), "User found in LDAP but isOxUser is not OK"
 
 
 def test_modify_user_property(

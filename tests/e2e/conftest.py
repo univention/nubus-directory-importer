@@ -5,6 +5,7 @@ import logging
 import random
 
 import pytest
+import requests
 from src.ad_connection import ADConfig
 
 from univention.directory_importer.config import ConnectorConfig
@@ -76,6 +77,34 @@ def directory_importer_config(pytestconfig) -> ConnectorConfig:
 def ldap_base_dn(pytestconfig) -> str:
     """Provide LDAP base DN for tests"""
     return pytestconfig.option.ldap_base_dn
+
+
+@pytest.fixture(scope="session", autouse=True)
+def mail_domain(directory_importer_config, ldap_base_dn) -> None:
+    """Ensure the example.com mail domain exists in UDM before tests run.
+
+    UDM rejects mailPrimaryAddress values whose domain is not registered,
+    which in turn prevents isOxUser from being set to OK.
+    """
+    udm = directory_importer_config.udm
+    base_url = udm.uri.rstrip("/")
+    auth = (udm.user, udm.password)
+    headers = {"Accept": "application/json", "Content-Type": "application/json"}
+    domain = "example.com"
+    position = f"cn=domain,cn=mail,{ldap_base_dn}"
+    response = requests.post(
+        f"{base_url}/mail/domain/",
+        auth=auth,
+        headers=headers,
+        json={"properties": {"name": domain}, "position": position},
+        timeout=10,
+    )
+    if response.status_code in (200, 201):
+        logger.info("Created mail domain %s", domain)
+    elif "already exists" in response.text:
+        logger.debug("Mail domain %s already exists", domain)
+    else:
+        logger.warning("Failed to create mail domain %s: %s", domain, response.text)
 
 
 def udm_config(pytestconfig) -> dict:
