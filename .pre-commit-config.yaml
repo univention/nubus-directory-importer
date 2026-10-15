@@ -89,6 +89,7 @@ repos:
     hooks:
       - id: "addlicense"
         name: "Check or add license headers to files"
+        exclude: "^junkaptor/"
 
   - repo: "https://github.com/norwoodj/helm-docs"
     rev: "v1.12.0"

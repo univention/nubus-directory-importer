@@ -1,6 +1,3 @@
-# SPDX-License-Identifier: AGPL-3.0-only
-# SPDX-FileCopyrightText: 2025 Univention GmbH
-
 """
 junkaptor - a data sanitizer package
 see https://code.stroeder.com/pymod/junkaptor
