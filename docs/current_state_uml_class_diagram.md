@@ -11,6 +11,10 @@ classDiagram
     UDMClient --> UDMEntry
     Connector --> UDMClient
     Connector --> Transformer
+    Connector --> LastRunCollector : record_run()
+    UDMClient --> LastRunCollector : UDM request counters
+    LastRunCollector --> RunSnapshot
+    RunSnapshot --> ModelStats
 
     class SourceConfig {
         -LDAPUrl ldap_uri
@@ -71,6 +75,28 @@ classDiagram
         +_get_existing_udm_objects()
         +sync_entries(model, position, source, primary_key, properties, trans, old_entries)
         +__call__()
+        -_sync(sync_start_time, model_stats)
+    }
+
+    %% module univention.directory_importer.metrics, see README "Monitoring"
+    class LastRunCollector {
+        -Optional~RunSnapshot~ snapshot
+        +collect()
+        +publish(snapshot)
+    }
+
+    class RunSnapshot {
+        +bool success
+        +float finished_at
+        +float duration
+        +Optional~float~ last_success_at
+        +Dict~str,ModelStats~ models
+    }
+
+    class ModelStats {
+        +int source_entries
+        +int errors
+        +int deleted_entries
     }
 
     class Transformer {
