@@ -21,6 +21,7 @@ dependencies = [
     "certifi",
     "junkaptor",
     "phonenumbers",
+    "prometheus-client",
     "pytest-helm>=0.0.1.dev0",
     "python-ldap",
     "pyyaml",

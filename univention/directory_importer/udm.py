@@ -24,6 +24,7 @@ from typing import (
 import ldap
 import requests
 
+from . import metrics
 from .__about__ import __version__
 
 JSON_MIME_TYPE = "application/json"
@@ -197,6 +198,7 @@ class UDMClient:
         """
         req_url = self._url_path(model, entry_dn)
         self._req_count[method.value][model.value] += 1
+        metrics.UDM_REQUESTS.labels(method.value, model.value).inc()
         req_headers = {
             "Accept": JSON_MIME_TYPE,
             "Content-Type": JSON_MIME_TYPE,
@@ -233,6 +235,11 @@ class UDMClient:
             ),
         )
         self._status_count[method.value][model.value][response.status_code] += 1
+        metrics.UDM_RESPONSES.labels(
+            method.value,
+            model.value,
+            str(response.status_code),
+        ).inc()
         logging.debug(
             "Received %s response status %d from UDM at %r: %r Etag = %r",
             method.value,

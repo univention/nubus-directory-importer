@@ -276,3 +276,37 @@ def test_repeat_with_custom_delay_env(mocker):
 
     assert result.exit_code == 0
     repeater_mock.assert_called_once_with(target=mock.ANY, delay=10)
+
+
+def test_metrics_disabled_by_default(mocker):
+    mocker.patch.dict("os.environ")
+    os.environ.pop("METRICS_PORT", None)
+    start_server_mock = mocker.patch.object(__main__.metrics, "start_server")
+
+    result = runner.invoke(app, catch_exceptions=False)
+
+    assert result.exit_code == 0
+    start_server_mock.assert_not_called()
+
+
+def test_metrics_port_via_cli(mocker):
+    start_server_mock = mocker.patch.object(__main__.metrics, "start_server")
+
+    result = runner.invoke(app, ["--metrics-port", "9464"], catch_exceptions=False)
+
+    assert result.exit_code == 0
+    start_server_mock.assert_called_once_with(9464, "0.0.0.0")
+
+
+def test_metrics_via_environment(mocker):
+    mocker.patch.dict("os.environ")
+    os.environ |= {
+        "METRICS_PORT": "9464",
+        "METRICS_BIND_ADDRESS": "127.0.0.1",
+    }
+    start_server_mock = mocker.patch.object(__main__.metrics, "start_server")
+
+    result = runner.invoke(app, catch_exceptions=False)
+
+    assert result.exit_code == 0
+    start_server_mock.assert_called_once_with(9464, "127.0.0.1")

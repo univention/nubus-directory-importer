@@ -70,6 +70,25 @@ config:
   repeat: true
   repeatDelay: 300
 
+# -- Prometheus metrics endpoint of the directory importer
+metrics:
+  # -- Enable the Prometheus metrics endpoint `/metrics`.
+  enabled: false
+  # -- Port of the Prometheus metrics endpoint.
+  port: 9464
+  service:
+    # -- Additional annotations for the metrics Service.
+    annotations: {}
+  serviceMonitor:
+    # -- Create a ServiceMonitor for the Prometheus Operator. Requires `metrics.enabled`.
+    enabled: false
+    # -- Scrape interval, the Prometheus default is used if empty.
+    interval: ""
+    # -- Scrape timeout, the Prometheus default is used if empty.
+    scrapeTimeout: ""
+    # -- Additional labels for the ServiceMonitor, e.g. to match the selector of the Prometheus instance.
+    labels: {}
+
 configFile:
   udm:
     uri: "https://nubus-kubernetes-deployment.test/univention/udm/"

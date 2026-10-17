@@ -298,10 +298,83 @@ The following parameters are relevant for this mode:
 
 ## Monitoring
 
-The connector does not provide a monitoring end-point itself.
+The directory importer can expose metrics in the Prometheus text format via an
+HTTP endpoint `/metrics`. The endpoint is disabled by default.
 
-Some metrics could be extracted from log messages with tools like
-_mtail_, _promtail_ or similar.
+The following parameters are relevant:
+
+  * `METRICS_PORT` / `--metrics-port`
+    Enables the metrics endpoint on the given port.
+  * `METRICS_BIND_ADDRESS` / `--metrics-bind-address`
+    Address the metrics endpoint binds to, `0.0.0.0` by default.
+
+The endpoint is only reachable while the process is running. Therefore, it is
+mainly useful together with `REPEAT=1`. When running several instances on the
+same host with host networking, every instance needs its own port.
+
+| Metric | Type | Description |
+|---|---|---|
+| `nubus_directory_importer_build_info{version}` | Info | Version of the directory importer |
+| `nubus_directory_importer_runs_total{result}` | Counter | Finished sync runs, `result` is `success` or `failed` |
+| `nubus_directory_importer_last_run_success` | Gauge | `1` if the last sync run finished completely, `0` if it was aborted |
+| `nubus_directory_importer_last_run_timestamp_seconds` | Gauge | Unix time when the last sync run finished |
+| `nubus_directory_importer_last_success_timestamp_seconds` | Gauge | Unix time when the last successful sync run finished |
+| `nubus_directory_importer_last_run_duration_seconds` | Gauge | Duration of the last finished sync run |
+| `nubus_directory_importer_last_run_source_entries{model}` | Gauge | Source entries processed in the last sync run |
+| `nubus_directory_importer_last_run_errors{model}` | Gauge | Errors when processing source entries in the last sync run |
+| `nubus_directory_importer_last_run_deleted_entries{model}` | Gauge | Obsolete target entries removed in the last sync run |
+| `nubus_directory_importer_udm_requests_total{method,model}` | Counter | Requests sent to the UDM REST API |
+| `nubus_directory_importer_udm_responses_total{method,model,status}` | Counter | Responses from the UDM REST API by HTTP status code |
+
+The `last_run_*` and `last_success_*` values are published together at the end
+of every sync run and always belong to the same run. They match the summary
+that is logged at the end of the run. `model` is `users/user` or
+`groups/group`. The metrics `process_*` and `python_*` of the Prometheus client
+library are exposed as well.
+
+A sync run is successful if it finished completely, i.e. it was not aborted by
+an error like an unreachable source directory. Errors when processing single
+entries do not make a run fail. They are counted in
+`nubus_directory_importer_last_run_errors` instead. If a run is aborted, the
+`model` values contain only the models synced completely in this run. Models
+not reached have no values.
+
+The `last_run_*` metrics appear after the first finished sync run,
+`nubus_directory_importer_last_success_timestamp_seconds` after the first successful
+one. Counters start at zero again when the process restarts. Prefer the gauges
+for alerting. Example alerting rules, assuming the default `REPEAT_DELAY` of
+300 seconds:
+
+```yaml
+groups:
+  - name: "directory-importer"
+    rules:
+      - alert: "DirectoryImporterDown"
+        # the process exits e.g. if the source directory is unreachable,
+        # adjust the job label to your scrape configuration
+        expr: 'up{job="directory-importer"} == 0'
+        for: "5m"
+      - alert: "DirectoryImporterNoSuccessfulRun"
+        expr: "time() - nubus_directory_importer_last_success_timestamp_seconds > 3 * 300"
+        for: "5m"
+      - alert: "DirectoryImporterNeverSucceeded"
+        # allow enough time for the initial sync
+        expr: "absent(nubus_directory_importer_last_success_timestamp_seconds)"
+        for: "2h"
+      - alert: "DirectoryImporterRunFailed"
+        expr: "nubus_directory_importer_last_run_success == 0"
+      - alert: "DirectoryImporterEntryErrors"
+        expr: "nubus_directory_importer_last_run_errors > 0"
+      - alert: "DirectoryImporterManyDeletions"
+        expr: "nubus_directory_importer_last_run_deleted_entries > 50"
+      - alert: "DirectoryImporterUDMConflicts"
+        expr: 'increase(nubus_directory_importer_udm_responses_total{status="409"}[1h]) > 0'
+```
+
+In Kubernetes, the Helm chart enables the endpoint with `metrics.enabled=true`.
+This adds a container port and a Service. With
+`metrics.serviceMonitor.enabled=true`, it also creates a `ServiceMonitor` for
+the Prometheus Operator.
 
 ## Deletion grace period
 

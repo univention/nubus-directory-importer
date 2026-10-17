@@ -964,6 +964,90 @@ null
 			<td>Define image sha256 as an alternative to `tag`</td>
 		</tr>
 		<tr>
+			<td>metrics</td>
+			<td>object</td>
+			<td><pre lang="json">
+{
+  "enabled": false,
+  "port": 9464,
+  "service": {
+    "annotations": {}
+  },
+  "serviceMonitor": {
+    "enabled": false,
+    "interval": "",
+    "labels": {},
+    "scrapeTimeout": ""
+  }
+}
+</pre>
+</td>
+			<td>Prometheus metrics endpoint of the directory importer</td>
+		</tr>
+		<tr>
+			<td>metrics.enabled</td>
+			<td>bool</td>
+			<td><pre lang="json">
+false
+</pre>
+</td>
+			<td>Enable the Prometheus metrics endpoint `/metrics`.</td>
+		</tr>
+		<tr>
+			<td>metrics.port</td>
+			<td>int</td>
+			<td><pre lang="json">
+9464
+</pre>
+</td>
+			<td>Port of the Prometheus metrics endpoint.</td>
+		</tr>
+		<tr>
+			<td>metrics.service.annotations</td>
+			<td>object</td>
+			<td><pre lang="json">
+{}
+</pre>
+</td>
+			<td>Additional annotations for the metrics Service.</td>
+		</tr>
+		<tr>
+			<td>metrics.serviceMonitor.enabled</td>
+			<td>bool</td>
+			<td><pre lang="json">
+false
+</pre>
+</td>
+			<td>Create a ServiceMonitor for the Prometheus Operator. Requires `metrics.enabled`.</td>
+		</tr>
+		<tr>
+			<td>metrics.serviceMonitor.interval</td>
+			<td>string</td>
+			<td><pre lang="json">
+""
+</pre>
+</td>
+			<td>Scrape interval, the Prometheus default is used if empty.</td>
+		</tr>
+		<tr>
+			<td>metrics.serviceMonitor.labels</td>
+			<td>object</td>
+			<td><pre lang="json">
+{}
+</pre>
+</td>
+			<td>Additional labels for the ServiceMonitor, e.g. to match the selector of the Prometheus instance.</td>
+		</tr>
+		<tr>
+			<td>metrics.serviceMonitor.scrapeTimeout</td>
+			<td>string</td>
+			<td><pre lang="json">
+""
+</pre>
+</td>
+			<td>Scrape timeout, the Prometheus default is used if empty.</td>
+		</tr>
+		<tr>
 			<td>podSecurityContext.enabled</td>
 			<td>bool</td>
 			<td><pre lang="json">

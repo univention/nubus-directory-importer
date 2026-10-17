@@ -20,3 +20,6 @@ data:
   REPEAT: {{ .Values.config.repeat | required ".Values.config.repeat is required" | quote }}
   REPEAT_DELAY: {{ .Values.config.repeatDelay | required ".Values.config.repeatDelay is required" | quote }}
   CONFIG_FILENAME: "/etc/directory-importer/config.yaml"
+  {{- if .Values.metrics.enabled }}
+  METRICS_PORT: {{ .Values.metrics.port | required ".Values.metrics.port is required" | quote }}
+  {{- end }}

@@ -69,6 +69,12 @@ spec:
           {{- end }}
           image: "{{ coalesce .Values.image.registry .Values.global.imageRegistry }}/{{ .Values.image.repository }}{{ if .Values.image.sha256 }}@sha256:{{ .Values.image.sha256 }}{{ else }}:{{ .Values.image.tag }}{{ end }}"
           imagePullPolicy: {{ coalesce .Values.image.pullPolicy .Values.global.imagePullPolicy | quote }}
+          {{- if .Values.metrics.enabled }}
+          ports:
+            - name: "metrics"
+              containerPort: {{ .Values.metrics.port }}
+              protocol: "TCP"
+          {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ $name }}

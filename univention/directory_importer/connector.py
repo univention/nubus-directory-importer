@@ -15,7 +15,7 @@ from ldap.ldapobject import ReconnectLDAPObject
 
 from junkaptor.trans import TransformerSeq
 
-from . import gen_password
+from . import gen_password, metrics
 from .config import ConnectorConfig
 from .trans import MemberRefsTransformer
 from .udm import UDMClient, UDMEntry, UDMMethod, UDMModel
@@ -598,6 +598,17 @@ class Connector:
         run the sync process one time
         """
         sync_start_time = time.time()
+        # counters per UDM model, published together at the end of the run
+        model_stats = {}
+        try:
+            result = self._sync(sync_start_time, model_stats)
+        except Exception:
+            metrics.record_run(sync_start_time, False, model_stats)
+            raise
+        metrics.record_run(sync_start_time, True, model_stats)
+        return result
+
+    def _sync(self, sync_start_time: float, model_stats: dict):
         old_users, old_groups = self._get_existing_udm_objects()
         logging.info(
             "Found %d existing entries: %d users / %d groups",
@@ -626,6 +637,11 @@ class Connector:
             properties=self._config.udm.user_properties,
             trans=self._config.src.user_trans,
             old_entries=old_users,
+        )
+        model_stats[UDMModel.USER] = metrics.ModelStats(
+            source_count,
+            error_count,
+            delete_count,
         )
         source_count_all += source_count
         delete_count_all += delete_count
@@ -668,6 +684,11 @@ class Connector:
                 ),
             ),
             old_groups,
+        )
+        model_stats[UDMModel.GROUP] = metrics.ModelStats(
+            source_count,
+            error_count,
+            delete_count,
         )
         source_count_all += source_count
         delete_count_all += delete_count

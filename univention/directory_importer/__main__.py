@@ -13,6 +13,7 @@ from typing import Annotated, Optional
 
 import typer
 
+from . import metrics
 from .__about__ import __version__
 from .config import ConnectorConfig
 from .connector import Connector, ReadSourceDirectoryError
@@ -73,6 +74,20 @@ def cli(
             help=f"Delay in seconds between repeated runs, {Repeater.DEFAULT_DELAY} seconds by default.",
         ),
     ] = None,
+    metrics_port: Annotated[
+        Optional[int],
+        typer.Option(
+            envvar="METRICS_PORT",
+            help="Port of the HTTP endpoint exposing Prometheus metrics. Disabled if not set.",
+        ),
+    ] = None,
+    metrics_bind_address: Annotated[
+        str,
+        typer.Option(
+            envvar="METRICS_BIND_ADDRESS",
+            help="Address the Prometheus metrics endpoint binds to.",
+        ),
+    ] = "0.0.0.0",
     source_password: Annotated[
         Optional[str],
         typer.Option(
@@ -102,6 +117,9 @@ def cli(
         __version__,
         config_filename,
     )
+
+    if metrics_port is not None:
+        metrics.start_server(metrics_port, metrics_bind_address)
 
     config = ConnectorConfig(
         config_filename,
