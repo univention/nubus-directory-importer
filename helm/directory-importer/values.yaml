@@ -82,6 +82,8 @@ metrics:
   serviceMonitor:
     # -- Create a ServiceMonitor for the Prometheus Operator. Requires `metrics.enabled`.
     enabled: false
+    # -- Namespace of the ServiceMonitor, the release namespace is used if empty.
+    namespace: ""
     # -- Scrape interval, the Prometheus default is used if empty.
     interval: ""
     # -- Scrape timeout, the Prometheus default is used if empty.

@@ -977,6 +977,7 @@ null
     "enabled": false,
     "interval": "",
     "labels": {},
+    "namespace": "",
     "scrapeTimeout": ""
   }
 }
@@ -1037,6 +1038,15 @@ false
 </pre>
 </td>
 			<td>Additional labels for the ServiceMonitor, e.g. to match the selector of the Prometheus instance.</td>
+		</tr>
+		<tr>
+			<td>metrics.serviceMonitor.namespace</td>
+			<td>string</td>
+			<td><pre lang="json">
+""
+</pre>
+</td>
+			<td>Namespace of the ServiceMonitor, the release namespace is used if empty.</td>
 		</tr>
 		<tr>
 			<td>metrics.serviceMonitor.scrapeTimeout</td>

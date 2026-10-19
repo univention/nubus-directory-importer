@@ -107,3 +107,25 @@ class TestMetrics(Base):
         ]
         selector = service_monitor["spec"]["selector"]["matchLabels"]
         assert selector.items() <= service["metadata"]["labels"].items()
+        assert (
+            service_monitor["metadata"]["namespace"]
+            == service["metadata"]["namespace"]
+            == service_monitor["spec"]["namespaceSelector"]["matchNames"][0]
+        )
+
+    def test_service_monitor_namespace(self, helm, chart_path):
+        values = metrics_values(
+            serviceMonitor={"enabled": True, "namespace": "monitoring"},
+        )
+        service_monitor = self.render(
+            helm,
+            chart_path,
+            values,
+            "templates/servicemonitor.yaml",
+        )
+        service = self.render(helm, chart_path, values, "templates/service-metrics.yaml")
+
+        assert service_monitor["metadata"]["namespace"] == "monitoring"
+        assert service_monitor["spec"]["namespaceSelector"]["matchNames"] == [
+            service["metadata"]["namespace"],
+        ]
