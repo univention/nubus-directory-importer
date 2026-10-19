@@ -44,8 +44,9 @@ dev = [
 ]
 
 [tool.uv.sources]
-junkaptor = { path = "junkaptor" }
 # For easier development with local dependencies, you can temporarily replace the following two lines with the ones below them.
+junkaptor = { path = "junkaptor" }
+#junkaptor = { path = "junkaptor", editable= true }
 pytest-helm = { index = "gitlab" }
 helm-test-harness = { index = "gitlab" }
 # pytest-helm = { path = "../common-helm/pytest-helm", editable = true }
