@@ -115,7 +115,7 @@ class Transformer:
                     new_val = sani_func(new_val)
                 new_vals[new_val] = None
             except ValueError as err:
-                self._log.debug("Error processing %s value %r: %s", key, val, err)
+                self._log.warning("Dropping %s value %r: %s", key, val, err)
         return list(new_vals.keys())
 
     @staticmethod
@@ -202,8 +202,8 @@ class Transformer:
                         new_val = sani_func(new_val)
                     new_vals[new_val] = None
                 except (ValueError, UnicodeError) as err:
-                    self._log.debug(
-                        "Error processing %s value %r: %s",
+                    self._log.warning(
+                        "Dropping %s value %r: %s",
                         key,
                         val,
                         err,
