@@ -22,4 +22,7 @@ data:
   CONFIG_FILENAME: "/etc/directory-importer/config.yaml"
   {{- if .Values.metrics.enabled }}
   METRICS_PORT: {{ .Values.metrics.port | required ".Values.metrics.port is required" | quote }}
+  {{- if .Values.metrics.bindAddress }}
+  METRICS_BIND_ADDRESS: {{ .Values.metrics.bindAddress | quote }}
+  {{- end }}
   {{- end }}

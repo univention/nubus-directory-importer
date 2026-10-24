@@ -968,6 +968,7 @@ null
 			<td>object</td>
 			<td><pre lang="json">
 {
+  "bindAddress": "",
   "enabled": false,
   "port": 9464,
   "service": {
@@ -984,6 +985,15 @@ null
 </pre>
 </td>
 			<td>Prometheus metrics endpoint of the directory importer</td>
+		</tr>
+		<tr>
+			<td>metrics.bindAddress</td>
+			<td>string</td>
+			<td><pre lang="json">
+""
+</pre>
+</td>
+			<td>Address the metrics endpoint binds to, the application default `0.0.0.0` is used if empty.</td>
 		</tr>
 		<tr>
 			<td>metrics.enabled</td>

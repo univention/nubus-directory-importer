@@ -372,6 +372,7 @@ groups:
 ```
 
 In Kubernetes, the Helm chart enables the endpoint with `metrics.enabled=true`.
+The bind address can be set with `metrics.bindAddress`.
 This adds a container port and a Service. With
 `metrics.serviceMonitor.enabled=true`, it also creates a `ServiceMonitor` for
 the Prometheus Operator.

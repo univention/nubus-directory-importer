@@ -76,6 +76,8 @@ metrics:
   enabled: false
   # -- Port of the Prometheus metrics endpoint.
   port: 9464
+  # -- Address the metrics endpoint binds to, the application default `0.0.0.0` is used if empty.
+  bindAddress: ""
   service:
     # -- Additional annotations for the metrics Service.
     annotations: {}

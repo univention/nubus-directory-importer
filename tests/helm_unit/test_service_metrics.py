@@ -24,6 +24,7 @@ class TestMetrics(Base):
     def test_disabled_by_default_configmap(self, helm, chart_path):
         configmap = self.render(helm, chart_path, {}, "templates/configmap.yaml")
         assert "METRICS_PORT" not in configmap["data"]
+        assert "METRICS_BIND_ADDRESS" not in configmap["data"]
 
     def test_disabled_by_default_container_port(self, helm, chart_path):
         deployment = self.render(helm, chart_path, {}, "templates/deployment.yaml")
@@ -38,6 +39,16 @@ class TestMetrics(Base):
             "templates/configmap.yaml",
         )
         assert configmap["data"]["METRICS_PORT"] == "9999"
+        assert "METRICS_BIND_ADDRESS" not in configmap["data"]
+
+    def test_configmap_metrics_bind_address(self, helm, chart_path):
+        configmap = self.render(
+            helm,
+            chart_path,
+            metrics_values(bindAddress="::"),
+            "templates/configmap.yaml",
+        )
+        assert configmap["data"]["METRICS_BIND_ADDRESS"] == "::"
 
     def test_container_port(self, helm, chart_path):
         deployment = self.render(
