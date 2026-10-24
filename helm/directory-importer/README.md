@@ -742,6 +742,24 @@ null
 			<td></td>
 		</tr>
 		<tr>
+			<td>configFile.udm.max_deletion_ratio</td>
+			<td>float</td>
+			<td><pre lang="json">
+0.1
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>configFile.udm.max_deletions</td>
+			<td>string</td>
+			<td><pre lang="json">
+null
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
 			<td>configFile.udm.password</td>
 			<td>string</td>
 			<td><pre lang="json">

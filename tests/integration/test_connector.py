@@ -118,6 +118,8 @@ class TestUDMDirectoryConnector(SlapdTestCase):
         )
         cls.server.ldapadd(ldif_data)
         cls.config = ConnectorConfig("tests/data/connector.yml")
+        # the small test data would exceed the limit of the deletion safeguard
+        cls.config.udm.max_deletion_ratio = None
         cls.connector = Connector(cls.config)
         cls.config.src.ldap_uri = LDAPUrl(cls.server.default_ldap_uri)
 

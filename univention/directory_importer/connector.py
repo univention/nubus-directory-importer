@@ -6,6 +6,7 @@ univention.directory_importer.connector - the connector
 """
 
 import logging
+import math
 import time
 from datetime import datetime, timedelta, timezone
 
@@ -27,6 +28,12 @@ class ReadSourceDirectoryError(Exception):
     ...
 
 
+class DeletionsBlockedError(Exception):
+    """
+    obsolete target entries were not removed to prevent mass deletions
+    """
+
+
 class Connector:
     """
     The connector for syncing data
@@ -34,7 +41,9 @@ class Connector:
 
     __slots__ = (
         "_config",
+        "_deletions_blocked",
         "_error_count",
+        "_force_deletions",
         "_ldap_conn",
         "_source_results_count",
         "_udm",
@@ -43,7 +52,9 @@ class Connector:
     )
 
     _config: ConnectorConfig
+    _deletions_blocked: list[UDMModel]
     _error_count: int
+    _force_deletions: bool
     _ldap_conn: ReconnectLDAPObject
     _source_results_count: int
     _udm: UDMClient
@@ -51,8 +62,11 @@ class Connector:
     def __init__(
         self,
         config: ConnectorConfig,
+        force_deletions: bool = False,
     ):
         self._config = config
+        self._force_deletions = force_deletions
+        self._deletions_blocked = []
         self._udm = UDMClient(
             self._config.udm.uri,
             self._config.udm.user,
@@ -274,6 +288,23 @@ class Connector:
             and self._config.udm.deletion_grace_period_days > 0
         )
 
+    def _awaiting_deletion(self, entry: UDMEntry, now: datetime) -> bool:
+        """
+        returns whether an entry is already deprovisioned and its grace
+        period has not expired yet
+        """
+        ts_value = entry.properties.get(
+            self._config.udm.deprovision_timestamp_property,
+        )
+        if not ts_value:
+            return False
+        deprovisioned_at = datetime.strptime(
+            ts_value,
+            DEPROVISION_TS_FORMAT,
+        ).replace(tzinfo=timezone.utc)
+        grace_period = timedelta(days=self._config.udm.deletion_grace_period_days)
+        return now - deprovisioned_at < grace_period
+
     def _deprovision_entry(self, model, entry: UDMEntry, now: datetime) -> bool:
         """
         disable an entry gone from source or delete it once the grace period
@@ -297,12 +328,7 @@ class Connector:
                 self._config.udm.deletion_grace_period_days,
             )
             return False
-        deprovisioned_at = datetime.strptime(
-            ts_value,
-            DEPROVISION_TS_FORMAT,
-        ).replace(tzinfo=timezone.utc)
-        grace_period = timedelta(days=self._config.udm.deletion_grace_period_days)
-        if now - deprovisioned_at < grace_period:
+        if self._awaiting_deletion(entry, now):
             logging.debug(
                 "Grace period of target %s entry %s not expired (since %s)",
                 model.value,
@@ -319,11 +345,78 @@ class Connector:
         )
         return True
 
+    def _deletion_limit(self, existing_count: int) -> int | None:
+        """
+        returns the maximum number of target entries to remove in one run
+        or None if not limited
+        """
+        limits = []
+        if self._config.udm.max_deletion_ratio is not None:
+            # round first to avoid float artifacts like 0.7 * 10 = 6.999999999999999,
+            # then round down to never exceed the ratio
+            limits.append(
+                math.floor(
+                    round(self._config.udm.max_deletion_ratio * existing_count, 6),
+                ),
+            )
+        if self._config.udm.max_deletions is not None:
+            limits.append(self._config.udm.max_deletions)
+        return min(limits, default=None)
+
+    def _deletions_allowed(
+        self,
+        model,
+        obsolete_count: int,
+        limited_count: int,
+        existing_count: int,
+        reasons: list[str],
+    ) -> bool:
+        """
+        safeguard against mass deletions, e.g. caused by an incomplete search
+        result from the source directory or a broken transformation
+
+        obsolete_count is the number of entries to delete or deprovision in
+        this run, limited_count the part of them counting against the limit,
+        reasons contains the reasons found by the caller to block the removal
+        """
+        if not obsolete_count:
+            return True
+        reasons = list(reasons)
+        limit = self._deletion_limit(existing_count)
+        if limit is not None and limited_count > limit:
+            reasons.append(
+                f"{limited_count} removals exceed the limit of {limit}"
+                f" for {existing_count} existing entries"
+                f" (max_deletion_ratio={self._config.udm.max_deletion_ratio},"
+                f" max_deletions={self._config.udm.max_deletions})",
+            )
+        if not reasons:
+            return True
+        if self._force_deletions:
+            logging.warning(
+                "Removing %d obsolete target %s entries despite %s, forced by --force-deletions",
+                obsolete_count,
+                model.value,
+                " and ".join(reasons),
+            )
+            return True
+        logging.error(
+            "Not removing %d obsolete target %s entries: %s. "
+            "Check the source directory and the configuration, "
+            "use --force-deletions for a single run if the removal is intended.",
+            obsolete_count,
+            model.value,
+            " and ".join(reasons),
+        )
+        self._deletions_blocked.append(model)
+        return False
+
     def delete_old_entries(
         self,
         model,
         old_users: dict[str, UDMEntry],
         source_primary_keys,
+        transform_error_count: int = 0,
     ):
         """
         delete entries which do not exists in source anymore,
@@ -334,6 +427,47 @@ class Connector:
         ctr = 0
         grace_period_active = self._grace_period_active(model)
         now = datetime.now(timezone.utc)
+        ts_property = self._config.udm.deprovision_timestamp_property
+        # entries to delete or deprovision in this run, with a grace period
+        # only deprovisioning counts against the limit, the deletion after the
+        # grace period was already checked when deprovisioning the entry
+        obsolete_count = limited_count = invalid_ts_count = 0
+        for old_primary_key, entry in old_users.items():
+            if old_primary_key in source_primary_keys:
+                continue
+            if not grace_period_active or not entry.properties.get(ts_property):
+                obsolete_count += 1
+                limited_count += 1
+                continue
+            try:
+                if self._awaiting_deletion(entry, now):
+                    continue
+            except ValueError as err:
+                logging.error(
+                    "Invalid deprovision timestamp of target %s entry %s: %s",
+                    model.value,
+                    old_primary_key,
+                    err,
+                )
+                invalid_ts_count += 1
+            obsolete_count += 1
+        reasons = []
+        if transform_error_count:
+            reasons.append(
+                f"{transform_error_count} source entries could not be transformed",
+            )
+        if invalid_ts_count:
+            reasons.append(
+                f"{invalid_ts_count} target entries have an invalid deprovision timestamp",
+            )
+        if not self._deletions_allowed(
+            model,
+            obsolete_count,
+            limited_count,
+            len(old_users),
+            reasons,
+        ):
+            return ctr
         for old_primary_key in old_users:
             if old_primary_key in source_primary_keys:
                 continue
@@ -447,6 +581,7 @@ class Connector:
 
         new_id2dn = {}
         error_count = 0
+        transform_error_count = 0
         source_primary_keys = set()
         pending_adds = []
         pending_modifies = []
@@ -467,6 +602,7 @@ class Connector:
                     exc_info=__debug__,
                 )
                 error_count += 1
+                transform_error_count += 1
                 continue
             source_primary_keys.add(target_primary_key)
 
@@ -522,6 +658,7 @@ class Connector:
             model,
             old_entries,
             source_primary_keys,
+            transform_error_count,
         )
 
         # apply updates to entries which still exist in target
@@ -593,46 +730,10 @@ class Connector:
         return len(source), error_count, delete_count, new_id2dn
         # end of .sync_entries()
 
-    def __call__(self):
+    def _sync_groups(self, source_users, id2dn_users, old_groups):
         """
-        run the sync process one time
+        sync the groups after the users, returns the counters like sync_entries()
         """
-        sync_start_time = time.time()
-        old_users, old_groups = self._get_existing_udm_objects()
-        logging.info(
-            "Found %d existing entries: %d users / %d groups",
-            len(old_users) + len(old_groups),
-            len(old_users),
-            len(old_groups),
-        )
-
-        source_count_all = delete_count_all = error_count_all = 0
-
-        id2dn_users = {user.source_primary_key: user.dn for user in old_users.values()}
-        source_users = dict(
-            self.source_search(
-                self._config.src.user_base,
-                self._config.src.user_scope,
-                self._config.src.user_filter,
-                self._config.src.user_attrs,
-                self._config.src.user_range_attrs,
-            ),
-        )
-        source_count, error_count, delete_count, id2dn = self.sync_entries(
-            model=UDMModel.USER,
-            position=f"{self._config.udm.user_ou},{self._udm.base_position}",
-            source=source_users,
-            primary_key=self._config.udm.user_primary_key_property,
-            properties=self._config.udm.user_properties,
-            trans=self._config.src.user_trans,
-            old_entries=old_users,
-        )
-        source_count_all += source_count
-        delete_count_all += delete_count
-        error_count_all += error_count
-        id2dn_users.update(id2dn)
-        logging.debug("id2dn_users = %r", id2dn_users)
-
         id2dn_groups = {
             group.source_primary_key: group.dn for group in old_groups.values()
         }
@@ -669,9 +770,65 @@ class Connector:
             ),
             old_groups,
         )
+        return source_count, error_count, delete_count
+
+    def __call__(self):
+        """
+        run the sync process one time
+        """
+        sync_start_time = time.time()
+        self._deletions_blocked = []
+        old_users, old_groups = self._get_existing_udm_objects()
+        logging.info(
+            "Found %d existing entries: %d users / %d groups",
+            len(old_users) + len(old_groups),
+            len(old_users),
+            len(old_groups),
+        )
+
+        source_count_all = delete_count_all = error_count_all = 0
+
+        id2dn_users = {user.source_primary_key: user.dn for user in old_users.values()}
+        source_users = dict(
+            self.source_search(
+                self._config.src.user_base,
+                self._config.src.user_scope,
+                self._config.src.user_filter,
+                self._config.src.user_attrs,
+                self._config.src.user_range_attrs,
+            ),
+        )
+        source_count, error_count, delete_count, id2dn = self.sync_entries(
+            model=UDMModel.USER,
+            position=f"{self._config.udm.user_ou},{self._udm.base_position}",
+            source=source_users,
+            primary_key=self._config.udm.user_primary_key_property,
+            properties=self._config.udm.user_properties,
+            trans=self._config.src.user_trans,
+            old_entries=old_users,
+        )
         source_count_all += source_count
         delete_count_all += delete_count
         error_count_all += error_count
+        id2dn_users.update(id2dn)
+        logging.debug("id2dn_users = %r", id2dn_users)
+
+        if UDMModel.USER in self._deletions_blocked:
+            # the user search result is presumably incomplete or users could
+            # not be transformed, syncing the groups could remove these users
+            # from their groups
+            logging.error(
+                "Skipping sync of groups, because the removal of users was blocked",
+            )
+        else:
+            source_count, error_count, delete_count = self._sync_groups(
+                source_users,
+                id2dn_users,
+                old_groups,
+            )
+            source_count_all += source_count
+            delete_count_all += delete_count
+            error_count_all += error_count
 
         # finally log summary messages
         self.log_summary(
@@ -680,6 +837,11 @@ class Connector:
             delete_count_all,
             error_count_all,
         )
+
+        if self._deletions_blocked:
+            raise DeletionsBlockedError(
+                ", ".join(model.value for model in self._deletions_blocked),
+            )
 
         # return counters as result mainly for automated tests
         return (source_count_all, delete_count_all, error_count_all)

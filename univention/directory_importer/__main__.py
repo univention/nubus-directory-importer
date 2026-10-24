@@ -15,7 +15,11 @@ import typer
 
 from .__about__ import __version__
 from .config import ConnectorConfig
-from .connector import Connector, ReadSourceDirectoryError
+from .connector import (
+    Connector,
+    DeletionsBlockedError,
+    ReadSourceDirectoryError,
+)
 from .util import Repeater
 
 # log format to use when logging to console
@@ -73,6 +77,15 @@ def cli(
             help=f"Delay in seconds between repeated runs, {Repeater.DEFAULT_DELAY} seconds by default.",
         ),
     ] = None,
+    force_deletions: Annotated[
+        bool,
+        typer.Option(
+            envvar="FORCE_DELETIONS",
+            help="Remove obsolete target entries even if their number exceeds "
+            "max_deletion_ratio or max_deletions or source entries could not be "
+            "transformed. Intended for a single run only.",
+        ),
+    ] = False,
     source_password: Annotated[
         Optional[str],
         typer.Option(
@@ -108,7 +121,11 @@ def cli(
         source_password=source_password,
         udm_password=udm_password,
     )
-    connector = Connector(config)
+    connector = Connector(config, force_deletions=force_deletions)
+    if force_deletions:
+        logging.warning(
+            "The safeguard against mass deletions is disabled by --force-deletions",
+        )
 
     def run_connector():
         try:
@@ -117,6 +134,12 @@ def cli(
             logging.warning(
                 "Synchnonization failed due to an error reading the source LDAP direcyory. "
                 "A new synchronization attempt will be started after the configured repeat delay",
+            )
+        except DeletionsBlockedError as err:
+            logging.warning(
+                "Synchronization finished without removing obsolete %s entries. "
+                "A new synchronization attempt will be started after the configured repeat delay",
+                err,
             )
 
     if repeat:
@@ -129,6 +152,12 @@ def cli(
         except ReadSourceDirectoryError:
             logging.error(
                 "Synchnonization failed due to an error reading the source LDAP direcyory.",
+            )
+            sys.exit(1)
+        except DeletionsBlockedError as err:
+            logging.error(
+                "Synchronization finished without removing obsolete %s entries.",
+                err,
             )
             sys.exit(1)
 

@@ -22,9 +22,13 @@ def make_connector(connector_yaml_path):
     def _make(grace_days=0):
         config = ConnectorConfig(connector_yaml_path)
         config.udm.deletion_grace_period_days = grace_days
+        # the deletion safeguard is tested in test_deletion_safeguard.py
+        config.udm.max_deletion_ratio = None
         connector = Connector.__new__(Connector)
         connector._config = config
         connector._udm = mock.Mock()
+        connector._force_deletions = False
+        connector._deletions_blocked = []
         return connector
 
     return _make

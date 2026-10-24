@@ -40,3 +40,50 @@ def test_udm_config_password_from_yaml(connector_yaml_path, connector_yaml):
     """Test that UDMConfig takes password from YAML if env variable is not set"""
     config = ConnectorConfig(connector_yaml_path)
     assert config.udm.password == connector_yaml["udm"]["password"].text
+
+
+@pytest.fixture()
+def write_udm_config(tmp_path, connector_yaml_path):
+    """writes the test config with additional lines in the udm section"""
+
+    def _write(*udm_lines):
+        with open(connector_yaml_path, "r") as f:
+            content = f.read()
+        extra = "".join(f"    {line}\n" for line in udm_lines)
+        content = content.replace("udm:\n", f"udm:\n{extra}", 1)
+        path = tmp_path / "connector.yml"
+        path.write_text(content)
+        return path
+
+    return _write
+
+
+def test_udm_config_deletion_safeguard_defaults(connector_yaml_path):
+    config = ConnectorConfig(connector_yaml_path)
+    assert config.udm.max_deletion_ratio == 0.1
+    assert config.udm.max_deletions is None
+
+
+def test_udm_config_deletion_safeguard(write_udm_config):
+    config = ConnectorConfig(
+        write_udm_config("max_deletion_ratio: 0.01", "max_deletions: 50"),
+    )
+    assert config.udm.max_deletion_ratio == 0.01
+    assert config.udm.max_deletions == 50
+
+
+def test_udm_config_deletion_safeguard_disabled(write_udm_config):
+    config = ConnectorConfig(
+        write_udm_config("max_deletion_ratio: null", "max_deletions: null"),
+    )
+    assert config.udm.max_deletion_ratio is None
+    assert config.udm.max_deletions is None
+
+
+@pytest.mark.parametrize(
+    "line",
+    ["max_deletion_ratio: 1.5", "max_deletion_ratio: -0.1", "max_deletions: -1"],
+)
+def test_udm_config_deletion_safeguard_invalid(write_udm_config, line):
+    with pytest.raises(ValueError):
+        ConnectorConfig(write_udm_config(line))

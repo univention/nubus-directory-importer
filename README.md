@@ -182,6 +182,14 @@ At the top hierarchy level there are these config dictionaries:
     Timeout in seconds to wait for connection to UDM (default 6.0 secs).
   * read_timeout: (optional)
     Timeout in seconds to wait for UDM results (default 1800 secs).
+  * max_deletion_ratio: (optional)
+    Maximum share of the existing target entries of a model removed in one
+    run (default `0.1`), `1.0` disables the check.
+    See [Deletion safeguard](#deletion-safeguard).
+  * max_deletions: (optional)
+    Maximum number of target entries of a model removed in one run
+    (default `null` for no limit).
+    See [Deletion safeguard](#deletion-safeguard).
   * user_ou: (mandatory)
     Name of the OU used as target container for user entries.
     The Directory Importer considers itself the exclusive owner of this ou.
@@ -302,6 +310,80 @@ The connector does not provide a monitoring end-point itself.
 
 Some metrics could be extracted from log messages with tools like
 _mtail_, _promtail_ or similar.
+
+## Deletion safeguard
+
+The directory importer removes every target entry whose source entry is not
+found in the current run. An incomplete search result from the source
+directory, for example caused by an ACL or permission problem, a wrong search
+base or a wrong filter, would therefore remove all affected users and groups in
+a single run. The deletion safeguard prevents this.
+
+Before removing entries, the directory importer counts the target entries of
+each model (`users/user`, `groups/group`) that are missing in the source. If
+there are more of them than the limit allows, it removes none of them in this
+run:
+
+  * `max_deletion_ratio` (default `0.1`)
+    Maximum share of the existing target entries of the model, rounded down.
+    With 35,000 users and the default, at most 3,500 users are removed in one
+    run. With fewer than 10 entries, the default allows no removal at all.
+    `1.0` disables the check. With the Helm chart, `null` does not work,
+    because Helm drops keys set to `null`.
+  * `max_deletions` (default `null`)
+    Maximum absolute number of entries of the model, `null` for no limit.
+
+If both are set, the lower limit applies. For a small source directory, set
+`max_deletion_ratio: 1.0` and limit the removals with `max_deletions` only.
+
+```yaml
+udm:
+    max_deletion_ratio: 0.01
+    max_deletions: 50
+```
+
+Choose the limits depending on the user lifecycle of the source directory: the
+limit has to allow the largest number of users that regularly leave between
+two runs, for example at the end of a school year or after a reorganization.
+For critical environments, set the limits as low as possible. The default of
+10 % is a protection against a complete loss, not a recommendation.
+
+With the [deletion grace period](#deletion-grace-period), only deactivating a
+user counts against the limit. The deletion after the grace period does not
+count again, because the user was already checked when it was deactivated.
+
+In addition, the directory importer removes no entries of a model in a run if
+
+  * source entries of this model could not be transformed, for example because
+    of a second value for a single-valued attribute or a missing primary key
+    attribute. Otherwise, the target entries of these source entries would be
+    removed although they still exist in the source.
+  * a target entry has an invalid deprovision timestamp.
+
+If the removal of users is blocked for any of these reasons, the directory
+importer does not sync the groups in this run. Otherwise, it could remove the
+affected users from their groups. As long as a source entry of a user cannot
+be transformed, the groups are therefore not synced at all.
+
+If removals are blocked, the directory importer
+
+  * logs an error starting with `Not removing`,
+  * still adds and modifies entries,
+  * exits with code `1` in a single run,
+  * tries again in the next run with `REPEAT`.
+
+If the removal is intended, run the directory importer once with
+`--force-deletions` / `FORCE_DELETIONS=true`. Make sure that no other instance
+is running at the same time:
+
+```shell
+docker compose stop directory-importer
+docker compose run --rm -e REPEAT=false -e FORCE_DELETIONS=true directory-importer
+docker compose start directory-importer
+```
+
+`FORCE_DELETIONS` applies to every run as long as it is set. Do not set it
+permanently together with `REPEAT`.
 
 ## Deletion grace period
 

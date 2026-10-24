@@ -20,6 +20,7 @@ from strictyaml import (
     Int,
     Map,
     MapPattern,
+    NullNone,
     Optional,
     Seq,
     Str,
@@ -102,6 +103,8 @@ CFG_SCHEMA_UDM = Map(
         Optional("connect_timeout", default=6.0): Float(),
         Optional("read_timeout", default=1800.0): Float(),
         Optional("deletion_grace_period_days", default=0): Int(),
+        Optional("max_deletion_ratio", default=0.1): NullNone() | Float(),
+        Optional("max_deletions"): NullNone() | Int(),
         Optional(
             "deprovision_timestamp_property",
             default="directoryImporterDeprovisionedAt",
@@ -290,6 +293,8 @@ class UDMConfig:
         # Functional config
         "deletion_grace_period_days",
         "deprovision_timestamp_property",
+        "max_deletion_ratio",
+        "max_deletions",
         "user_ou",
         "user_primary_key_property",
         "user_properties",
@@ -304,6 +309,8 @@ class UDMConfig:
     ca_cert: str
     skip_writes: bool
     timeout: float
+    max_deletion_ratio: float | None
+    max_deletions: int | None
     user_ou: str
     group_ou: str
     user_primary_key_property: str
@@ -322,6 +329,15 @@ class UDMConfig:
         self.deprovision_timestamp_property = yml[
             "deprovision_timestamp_property"
         ].text
+        self.max_deletion_ratio = yml["max_deletion_ratio"].data
+        if self.max_deletion_ratio is not None and not (
+            0.0 <= self.max_deletion_ratio <= 1.0
+        ):
+            raise ValueError("max_deletion_ratio must be between 0.0 and 1.0")
+        max_deletions = yml.get("max_deletions", None)
+        self.max_deletions = max_deletions.data if max_deletions is not None else None
+        if self.max_deletions is not None and self.max_deletions < 0:
+            raise ValueError("max_deletions must not be negative")
         self.user_ou = yml["user_ou"].text
         self.user_primary_key_property = yml["user_primary_key_property"].text
         self.user_properties = set(yml["user_properties"].data)

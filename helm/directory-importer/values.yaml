@@ -84,6 +84,14 @@ configFile:
     # attribute referenced by deprovision_timestamp_property on users/user.
     deletion_grace_period_days: 0
     deprovision_timestamp_property: "directoryImporterDeprovisionedAt"
+    # Safeguard against mass deletions, e.g. caused by an incomplete search result
+    # from the source directory: obsolete entries of a model are not removed in a
+    # run if their number exceeds this ratio of the existing entries, rounded down.
+    # Set it as low as the user lifecycle of the source directory allows.
+    # 1.0 disables the check, null is not possible because Helm drops the key.
+    max_deletion_ratio: 0.1
+    # Maximum number of obsolete entries of a model removed in one run, null for no limit.
+    max_deletions: null
     user_ou: "ou=ad-domain-example"
     user_primary_key_property: "univentionObjectIdentifier"
     group_ou: "ou=ad-domain-example"

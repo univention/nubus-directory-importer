@@ -224,6 +224,62 @@ def test_calls_connector_by_default_only_once(mock_connector):
     mock_connector().assert_called_once()
 
 
+def test_force_deletions_disabled_by_default(mock_connector, mock_connector_config):
+    result = runner.invoke(app)
+    assert result.exit_code == 0
+    mock_connector.assert_called_once_with(
+        mock_connector_config(),
+        force_deletions=False,
+    )
+
+
+def test_force_deletions_via_cli(mock_connector, mock_connector_config):
+    result = runner.invoke(app, ["--force-deletions"])
+    assert result.exit_code == 0
+    mock_connector.assert_called_once_with(
+        mock_connector_config(),
+        force_deletions=True,
+    )
+
+
+def test_force_deletions_via_environment(
+    mock_connector,
+    mock_connector_config,
+    mocker,
+):
+    mocker.patch.dict("os.environ")
+    os.environ["FORCE_DELETIONS"] = "true"
+    result = runner.invoke(app)
+    assert result.exit_code == 0
+    mock_connector.assert_called_once_with(
+        mock_connector_config(),
+        force_deletions=True,
+    )
+
+
+def test_blocked_deletions_fail_single_run(mock_connector):
+    mock_connector().side_effect = __main__.DeletionsBlockedError("users/user")
+    result = runner.invoke(app)
+    assert result.exit_code == 1
+
+
+def test_blocked_deletions_continue_repeated_runs(mock_connector):
+    mock_connector_instance = mock_connector()
+    mock_connector_instance.side_effect = [
+        __main__.DeletionsBlockedError("users/user"),
+        StopException("STOP"),
+    ]
+
+    with pytest.raises(StopException):
+        runner.invoke(
+            app,
+            ["--repeat", "--repeat-delay", "0.002"],
+            catch_exceptions=False,
+        )
+
+    assert mock_connector_instance.call_count == 2
+
+
 def test_calls_connector_repeatedly(mock_connector, mocker):
     mock_connector_instance = mock_connector()
     mock_connector_instance.side_effect = [None, StopException("STOP")]
