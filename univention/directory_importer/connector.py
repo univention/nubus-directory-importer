@@ -328,7 +328,17 @@ class Connector:
                 self._config.udm.deletion_grace_period_days,
             )
             return False
-        if self._awaiting_deletion(entry, now):
+        try:
+            awaiting = self._awaiting_deletion(entry, now)
+        except ValueError as err:
+            logging.error(
+                "Invalid deprovision timestamp of target %s entry %s: %s — deleting",
+                model.value,
+                entry.source_primary_key,
+                err,
+            )
+            awaiting = False
+        if awaiting:
             logging.debug(
                 "Grace period of target %s entry %s not expired (since %s)",
                 model.value,

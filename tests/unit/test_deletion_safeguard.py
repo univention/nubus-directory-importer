@@ -255,6 +255,21 @@ def test_grace_period_invalid_timestamp_blocks_deletions(make_connector):
     assert connector._deletions_blocked == [UDMModel.USER]
 
 
+def test_grace_period_invalid_timestamp_forced(make_connector):
+    connector = make_connector(grace_days=30, force=True)
+    active = _entries(90)
+    invalid = _entries(1, {TS_PROPERTY: "yesterday", "disabled": True}, prefix="bad")
+    expired = _entries(1, {TS_PROPERTY: _ts(31), "disabled": True}, prefix="old")
+    ctr = connector.delete_old_entries(
+        UDMModel.USER,
+        active | invalid | expired,
+        set(active),
+    )
+    # both the invalid-timestamp entry and the expired entry are deleted
+    assert ctr == 2
+    assert connector._deletions_blocked == []
+
+
 def _prep_properties(model, attrs):
     """simplified UDMClient.prep_properties: single values as str"""
     res = {}
