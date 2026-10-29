@@ -297,7 +297,7 @@ def udm_connector(make_connector):
     return _make
 
 
-def test_sync_entries_add_and_modify_despite_blocked_deletions(udm_connector):
+def test_sync_entries_add_and_modify_skipped_if_deletions_blocked(udm_connector):
     connector = udm_connector()
     entries = _entries(10)
     source = {
@@ -323,10 +323,8 @@ def test_sync_entries_add_and_modify_despite_blocked_deletions(udm_connector):
     assert delete_count == 0
     connector._udm.delete.assert_not_called()
     assert connector._deletions_blocked == [UDMModel.GROUP]
-    connector._udm.modify.assert_called_once()
-    assert connector._udm.modify.call_args.args[2] == {"name": "changed"}
-    connector._udm.add.assert_called_once()
-    assert connector._udm.add.call_args.args[1]["name"] == "new"
+    connector._udm.modify.assert_not_called()
+    connector._udm.add.assert_not_called()
 
 
 def test_sync_entries_transform_error_keeps_target_entry(udm_connector):

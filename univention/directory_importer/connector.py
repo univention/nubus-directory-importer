@@ -329,7 +329,14 @@ class Connector:
             )
             return False
         try:
-            awaiting = self._awaiting_deletion(entry, now)
+            if self._awaiting_deletion(entry, now):
+                logging.debug(
+                    "Grace period of target %s entry %s not expired (since %s)",
+                    model.value,
+                    entry.source_primary_key,
+                    ts_value,
+                )
+                return False
         except ValueError as err:
             logging.error(
                 "Invalid deprovision timestamp of target %s entry %s: %s — deleting",
@@ -337,15 +344,6 @@ class Connector:
                 entry.source_primary_key,
                 err,
             )
-            awaiting = False
-        if awaiting:
-            logging.debug(
-                "Grace period of target %s entry %s not expired (since %s)",
-                model.value,
-                entry.source_primary_key,
-                ts_value,
-            )
-            return False
         self._udm.delete(model, entry.dn)
         logging.info(
             "Removed target %s entry %s after grace period (since %s)",
@@ -671,6 +669,9 @@ class Connector:
             transform_error_count,
         )
 
+        if model in self._deletions_blocked:
+            return len(source), error_count, delete_count, new_id2dn
+
         # apply updates to entries which still exist in target
         for target_primary_key, source_dn, target_dn, update_props in pending_modifies:
             try:
@@ -824,21 +825,16 @@ class Connector:
         logging.debug("id2dn_users = %r", id2dn_users)
 
         if UDMModel.USER in self._deletions_blocked:
-            # the user search result is presumably incomplete or users could
-            # not be transformed, syncing the groups could remove these users
-            # from their groups
-            logging.error(
-                "Skipping sync of groups, because the removal of users was blocked",
-            )
-        else:
-            source_count, error_count, delete_count = self._sync_groups(
-                source_users,
-                id2dn_users,
-                old_groups,
-            )
-            source_count_all += source_count
-            delete_count_all += delete_count
-            error_count_all += error_count
+            raise DeletionsBlockedError(UDMModel.USER.value)
+
+        source_count, error_count, delete_count = self._sync_groups(
+            source_users,
+            id2dn_users,
+            old_groups,
+        )
+        source_count_all += source_count
+        delete_count_all += delete_count
+        error_count_all += error_count
 
         # finally log summary messages
         self.log_summary(
