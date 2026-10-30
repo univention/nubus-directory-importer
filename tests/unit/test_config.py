@@ -10,7 +10,7 @@ UDM_PASSWORD = "udm_password"
 SOURCE_PASSWORD = "source_password"
 
 
-@pytest.fixture()
+@pytest.fixture
 def connector_yaml(connector_yaml_path):
     with open(connector_yaml_path, "r") as f:
         return strictyaml.load(f.read())
@@ -42,7 +42,7 @@ def test_udm_config_password_from_yaml(connector_yaml_path, connector_yaml):
     assert config.udm.password == connector_yaml["udm"]["password"].text
 
 
-@pytest.fixture()
+@pytest.fixture
 def write_udm_config(tmp_path, connector_yaml_path):
     """writes the test config with additional lines in the udm section"""
 
@@ -85,5 +85,6 @@ def test_udm_config_deletion_safeguard_disabled(write_udm_config):
     ["max_deletion_ratio: 1.5", "max_deletion_ratio: -0.1", "max_deletions: -1"],
 )
 def test_udm_config_deletion_safeguard_invalid(write_udm_config, line):
+    config = write_udm_config(line)
     with pytest.raises(ValueError):
-        ConnectorConfig(write_udm_config(line))
+        ConnectorConfig(config)

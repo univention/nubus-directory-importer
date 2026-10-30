@@ -17,7 +17,7 @@ from univention.directory_importer.udm import UDMEntry, UDMModel
 TS_PROPERTY = "directoryImporterDeprovisionedAt"
 
 
-@pytest.fixture()
+@pytest.fixture
 def make_connector(connector_yaml_path):
     def _make(ratio=0.1, max_deletions=None, force=False, grace_days=0):
         config = ConnectorConfig(connector_yaml_path)
@@ -279,7 +279,7 @@ def _prep_properties(model, attrs):
     return res
 
 
-@pytest.fixture()
+@pytest.fixture
 def udm_connector(make_connector):
     """connector with the real transformation and a mocked UDM"""
 
@@ -365,7 +365,7 @@ USER_TARGET_DN = "uid=user1,ou=users,dc=example,dc=test"
 GROUP_TARGET_DN = "cn=group1,ou=groups,dc=example,dc=test"
 
 
-@pytest.fixture()
+@pytest.fixture
 def membership(mocker):
     """
     a user in a group, the entryUUID of the user is not readable in the
@@ -467,7 +467,7 @@ def test_membership_sync_forced(udm_connector, membership):
     assert _group_modifications(connector) == [{"users": []}]
 
 
-@pytest.fixture()
+@pytest.fixture
 def run_connector(make_connector, mocker):
     """
     connector with mocked source and sync, `blocked` simulates blocked
