@@ -9,7 +9,7 @@ import pytest
 from src.ad_connection import ADConnection
 
 from univention.directory_importer.config import ConnectorConfig
-from univention.directory_importer.connector import Connector
+from univention.directory_importer.connector import Connector, DeletionsBlockedError
 
 logger = logging.getLogger(__name__)
 
@@ -532,3 +532,56 @@ def test_recreate_user_with_same_username(
         user_ldap_dn,
         expected_attrs=expected_attrs,
     ), "User should exist in LDAP with its original username"
+
+
+def test_deletion_limit_blocks_sync(
+    ad_connection: ADConnection,
+    ldap_connection: ldap3.Connection,
+    pytestconfig,
+    directory_importer_config,
+    ldap_base_dn,
+    faker,
+):
+    """
+    Test that the deletion safeguard blocks sync when the number of removals
+    exceeds the configured limit, and that --force-deletions overrides it.
+
+    Uses max_deletions=1 (absolute cap) so the assertion is deterministic
+    regardless of how many other entries already exist in the environment.
+    """
+    # Create 3 users and sync them into LDAP
+    users = [
+        ad_user(ad_connection, directory_importer_config, ldap_base_dn, faker)
+        for _ in range(3)
+    ]
+    trigger_sync(directory_importer_config)
+    for _, _, user_ldap_dn in users:
+        assert verify_ldap_object(ldap_connection, user_ldap_dn), (
+            "All users must exist in LDAP before testing the limit"
+        )
+
+    # Remove 2 users from AD — exceeds the cap of 1
+    for _, user_ad_dn, _ in users[:2]:
+        ad_connection.conn.delete(user_ad_dn)
+
+    # Sync with max_deletions=1: 2 removals > 1 → blocked
+    limited_config = ConnectorConfig(pytestconfig.option.connector_config)
+    limited_config.udm.max_deletions = 1
+    limited_config.udm.max_deletion_ratio = None
+
+    with pytest.raises(DeletionsBlockedError):
+        Connector(limited_config)()
+
+    # Both removed users must still exist in LDAP
+    for _, _, user_ldap_dn in users[:2]:
+        assert verify_ldap_object(ldap_connection, user_ldap_dn), (
+            "Users must not be deleted from LDAP when the deletion limit is exceeded"
+        )
+
+    # --force-deletions overrides the safeguard: both users are now removed
+    Connector(limited_config, force_deletions=True)()
+
+    for _, _, user_ldap_dn in users[:2]:
+        assert not verify_ldap_object(ldap_connection, user_ldap_dn), (
+            "Users must be deleted from LDAP when force-deletions is used"
+        )
