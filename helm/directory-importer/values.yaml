@@ -69,6 +69,7 @@ config:
   loggingConfig: null
   repeat: true
   repeatDelay: 300
+  forceDeletions: false
 
 configFile:
   udm:

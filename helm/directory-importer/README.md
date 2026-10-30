@@ -31,6 +31,15 @@ https://docs.software-univention.de/nubus-kubernetes-operation/latest/en/howto-c
 	</thead>
 	<tbody>
 		<tr>
+			<td>config.forceDeletions</td>
+			<td>bool</td>
+			<td><pre lang="json">
+false
+</pre>
+</td>
+			<td></td>
+		</tr>
+		<tr>
 			<td>config.logLevel</td>
 			<td>string</td>
 			<td><pre lang="json">

@@ -20,3 +20,4 @@ data:
   REPEAT: {{ .Values.config.repeat | required ".Values.config.repeat is required" | quote }}
   REPEAT_DELAY: {{ .Values.config.repeatDelay | required ".Values.config.repeatDelay is required" | quote }}
   CONFIG_FILENAME: "/etc/directory-importer/config.yaml"
+  FORCE_DELETIONS: {{ .Values.config.forceDeletions | required ".Values.config.forceDeletions is required" | quote }}
