@@ -368,9 +368,8 @@ be transformed, the groups are therefore not synced at all.
 If removals are blocked, the directory importer
 
   * logs an error starting with `Not removing`,
-  * still adds and modifies entries,
-  * exits with code `1` in a single run,
-  * tries again in the next run with `REPEAT`.
+  * skips all additions and modifications for the affected model,
+  * exits with code `1`.
 
 If the removal is intended, run the directory importer once with
 `--force-deletions` / `FORCE_DELETIONS=true`. Make sure that no other instance

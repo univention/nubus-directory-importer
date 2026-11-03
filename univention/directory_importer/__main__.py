@@ -135,16 +135,17 @@ def cli(
                 "Synchnonization failed due to an error reading the source LDAP direcyory. "
                 "A new synchronization attempt will be started after the configured repeat delay",
             )
-        except DeletionsBlockedError as err:
-            logging.warning(
-                "Synchronization finished without removing obsolete %s entries. "
-                "A new synchronization attempt will be started after the configured repeat delay",
-                err,
-            )
 
     if repeat:
-        repeater = Repeater(target=run_connector, delay=repeat_delay)
-        repeater.call()
+        try:
+            repeater = Repeater(target=run_connector, delay=repeat_delay)
+            repeater.call()
+        except DeletionsBlockedError as err:
+            logging.error(
+                "Synchronization finished without removing obsolete %s entries.",
+                err,
+            )
+            sys.exit(1)
 
     else:
         try:
