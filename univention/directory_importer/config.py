@@ -335,7 +335,7 @@ class UDMConfig:
         ):
             raise ValueError("max_deletion_ratio must be between 0.0 and 1.0")
         max_deletions = yml.get("max_deletions", None)
-        self.max_deletions = max_deletions.data if max_deletions is not None else None
+        self.max_deletions = max_deletions.data if max_deletions is not None else 100
         if self.max_deletions is not None and self.max_deletions < 0:
             raise ValueError("max_deletions must not be negative")
         self.user_ou = yml["user_ou"].text

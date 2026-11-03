@@ -61,7 +61,7 @@ def write_udm_config(tmp_path, connector_yaml_path):
 def test_udm_config_deletion_safeguard_defaults(connector_yaml_path):
     config = ConnectorConfig(connector_yaml_path)
     assert config.udm.max_deletion_ratio == 0.1
-    assert config.udm.max_deletions is None
+    assert config.udm.max_deletions == 100
 
 
 def test_udm_config_deletion_safeguard(write_udm_config):

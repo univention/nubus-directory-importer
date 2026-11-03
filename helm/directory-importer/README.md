@@ -761,9 +761,9 @@ null
 		</tr>
 		<tr>
 			<td>configFile.udm.max_deletions</td>
-			<td>string</td>
+			<td>int</td>
 			<td><pre lang="json">
-null
+100
 </pre>
 </td>
 			<td></td>

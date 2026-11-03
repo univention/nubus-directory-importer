@@ -188,7 +188,7 @@ At the top hierarchy level there are these config dictionaries:
     See [Deletion safeguard](#deletion-safeguard).
   * max_deletions: (optional)
     Maximum number of target entries of a model removed in one run
-    (default `null` for no limit).
+    (default `100`), `null` disables the check.
     See [Deletion safeguard](#deletion-safeguard).
   * user_ou: (mandatory)
     Name of the OU used as target container for user entries.
@@ -330,7 +330,7 @@ run:
     run. With fewer than 10 entries, the default allows no removal at all.
     `1.0` disables the check. With the Helm chart, `null` does not work,
     because Helm drops keys set to `null`.
-  * `max_deletions` (default `null`)
+  * `max_deletions` (default `100`)
     Maximum absolute number of entries of the model, `null` for no limit.
 
 If both are set, the lower limit applies. For a small source directory, set

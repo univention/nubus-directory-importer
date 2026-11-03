@@ -92,7 +92,7 @@ configFile:
     # 1.0 disables the check, null is not possible because Helm drops the key.
     max_deletion_ratio: 0.1
     # Maximum number of obsolete entries of a model removed in one run, null for no limit.
-    max_deletions: null
+    max_deletions: 100
     user_ou: "ou=ad-domain-example"
     user_primary_key_property: "univentionObjectIdentifier"
     group_ou: "ou=ad-domain-example"
