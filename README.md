@@ -188,7 +188,7 @@ At the top hierarchy level there are these config dictionaries:
     See [Deletion safeguard](#deletion-safeguard).
   * max_deletions: (optional)
     Maximum number of target entries of a model removed in one run
-    (default `100`), `null` disables the check.
+    (default `100`), raise this to allow more removals per run.
     See [Deletion safeguard](#deletion-safeguard).
   * user_ou: (mandatory)
     Name of the OU used as target container for user entries.
@@ -321,8 +321,8 @@ a single run. The deletion safeguard prevents this.
 
 Before removing entries, the directory importer counts the target entries of
 each model (`users/user`, `groups/group`) that are missing in the source. If
-there are more of them than the limit allows, it removes none of them in this
-run:
+there are more of them than the limit allows, it stops the entire sync for
+that model in this run (no removals, no additions, no modifications):
 
   * `max_deletion_ratio` (default `0.1`)
     Maximum share of the existing target entries of the model, rounded down.
@@ -331,7 +331,8 @@ run:
     `1.0` disables the check. With the Helm chart, `null` does not work,
     because Helm drops keys set to `null`.
   * `max_deletions` (default `100`)
-    Maximum absolute number of entries of the model, `null` for no limit.
+    Maximum absolute number of entries of the model that can be removed in
+    one run. Raise this to allow more removals per run.
 
 If both are set, the lower limit applies. For a small source directory, set
 `max_deletion_ratio: 1.0` and limit the removals with `max_deletions` only.
