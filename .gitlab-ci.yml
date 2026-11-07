@@ -5,7 +5,7 @@
 
 include:
   - project: "univention/dev/nubus-for-k8s/common-ci"
-    ref: "v1.70.0"
+    ref: "v1.71.0"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
@@ -21,7 +21,7 @@ include:
     ref: "master"
     file:
       - "dind.yml"
-  - component: "$CI_SERVER_FQDN/univention/dev/nubus-for-k8s/common-ci/vul-man@v1.70.0"
+  - component: "$CI_SERVER_FQDN/univention/dev/nubus-for-k8s/common-ci/vul-man@v1.71.0"
     inputs:
       helm_chart_name: "directory-importer"
       helm_values: "--helm-values ${CI_PROJECT_DIR}/helm/directory-importer/linter_values.yaml"
@@ -74,7 +74,7 @@ check-debian-updates:
 test-chart-directory-importer:
   stage: test
   needs: []
-  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.10@sha256:5cba2a8fc4c6d5fa82bcec177ad433ab74695b4e02b2a2e9ed9b53c734b34dbf"
+  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.24@sha256:1f34d54d23452475db4e92a43b669b8cb1817c4837b0003b2d897d47ed2f9d35"
   script:
     - helm dep build helm/directory-importer
     - pytest tests/helm_unit
@@ -84,7 +84,7 @@ test-e2e-with-active-directory:
   # This blocks the job from being runned by two pipelines simultaneously
   resource_group: kvm
   extends: .dind
-  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
+  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.9@sha256:9b17a9f25adf17b88d0a013b4f00160754adf4b07ccbe9986664a49886c2c98e"
   rules: &rules_dind
     - if: '$CI_PIPELINE_SOURCE == "schedule"'
       when: "never"
@@ -144,7 +144,7 @@ test-e2e-with-active-directory:
 test-unit-and-integration::
   stage: test
   extends: .dind
-  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
+  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.9@sha256:9b17a9f25adf17b88d0a013b4f00160754adf4b07ccbe9986664a49886c2c98e"
   rules: *rules_dind
   before_script:
     - cd tests
