@@ -836,6 +836,11 @@ class Connector:
         delete_count_all += delete_count
         error_count_all += error_count
 
+        if self._deletions_blocked:
+            raise DeletionsBlockedError(
+                ", ".join(model.value for model in self._deletions_blocked),
+            )
+
         # finally log summary messages
         self.log_summary(
             sync_start_time,
@@ -843,11 +848,6 @@ class Connector:
             delete_count_all,
             error_count_all,
         )
-
-        if self._deletions_blocked:
-            raise DeletionsBlockedError(
-                ", ".join(model.value for model in self._deletions_blocked),
-            )
 
         # return counters as result mainly for automated tests
         return (source_count_all, delete_count_all, error_count_all)
