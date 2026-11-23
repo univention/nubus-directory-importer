@@ -20,6 +20,7 @@ class TestConfigMap(ConfigMap):
         ("config.logLevel", "LOG_LEVEL"),
         ("config.repeat", "REPEAT"),
         ("config.repeatDelay", "REPEAT_DELAY"),
+        ("config.forceDeletions", "FORCE_DELETIONS"),
     ],
 )
 class TestRequiredConfigMapEnv(RequiredEnvVariables):

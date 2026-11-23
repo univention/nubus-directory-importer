@@ -70,7 +70,10 @@ def ldap_config(pytestconfig, directory_importer_config) -> dict:
 
 @pytest.fixture(scope="session")
 def directory_importer_config(pytestconfig) -> ConnectorConfig:
-    return ConnectorConfig(pytestconfig.option.connector_config)
+    config = ConnectorConfig(pytestconfig.option.connector_config)
+    # the few test entries would exceed the limit of the deletion safeguard
+    config.udm.max_deletion_ratio = None
+    return config
 
 
 @pytest.fixture(scope="session")

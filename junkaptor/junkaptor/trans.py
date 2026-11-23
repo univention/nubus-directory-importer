@@ -87,6 +87,16 @@ class Transformer:
             key: encode_mixed_list(vals, encoding=self._encoding)
             for key, vals in (fallback_attrs or {}).items()
         }
+        for _cfg_name, _attrs in (
+            ("fixed_attrs", self._fixed_attrs),
+            ("fallback_attrs", self._fallback_attrs),
+        ):
+            for key, vals in _attrs.items():
+                if not self._apply_sanitizer(key, vals):
+                    raise ValueError(
+                        f"{_cfg_name}[{key!r}] produces no valid values after sanitization"
+                        f" (raw: {vals!r})",
+                    )
         self._remove_values = {
             key: encode_mixed_list(vals, encoding=self._encoding)
             for key, vals in (remove_values or {}).items()
@@ -115,7 +125,7 @@ class Transformer:
                     new_val = sani_func(new_val)
                 new_vals[new_val] = None
             except ValueError as err:
-                self._log.debug("Error processing %s value %r: %s", key, val, err)
+                self._log.warning("Dropping %s value %r: %s", key, val, err)
         return list(new_vals.keys())
 
     @staticmethod
@@ -202,8 +212,8 @@ class Transformer:
                         new_val = sani_func(new_val)
                     new_vals[new_val] = None
                 except (ValueError, UnicodeError) as err:
-                    self._log.debug(
-                        "Error processing %s value %r: %s",
+                    self._log.warning(
+                        "Dropping %s value %r: %s",
                         key,
                         val,
                         err,

@@ -1,16 +1,16 @@
-# syntax=docker/dockerfile:1.9
+# syntax=docker/dockerfile:1.29@sha256:572cebbc2b15e6f84c077742952674889cb63cd5e9b80abdffcbe587b6f19183
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 # Inspired by: https://hynek.me/articles/docker-uv/
 
 ARG UCS_BASE_IMAGE=gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base-python
-ARG UCS_BASE_IMAGE_TAG=5.3.0-build.20260911@sha256:51466e4d602f2ab8c4e8dcbb1d174b00bdb8e738ca9c999b0bd0627be59aaff4
+ARG UCS_BASE_IMAGE_TAG=5.3.0-build.20261119@sha256:f5810786b9a4ed68f05cd8ecbd6fe547d241717ae855cf397ac57587603a2ab1
 
 FROM ${UCS_BASE_IMAGE}:${UCS_BASE_IMAGE_TAG} AS build
 SHELL ["/bin/bash", "-uxo", "pipefail", "-c"]
 
-COPY --from=ghcr.io/astral-sh/uv:0.5.8@sha256:0bc959d4cc56e42cbd9aa9b63374d84481ee96c32803eea30bd7f16fd99d8d56 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.13.9@sha256:d3b601f0c7b118bc1753febf7c41cc80981df678445e0254284eecf84db79a7d /uv /usr/local/bin/uv
 
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
   build-essential \
@@ -65,8 +65,6 @@ RUN \
 RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
   libldap2 \
   && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
-
-COPY --from=ghcr.io/astral-sh/uv:0.5.8@sha256:0bc959d4cc56e42cbd9aa9b63374d84481ee96c32803eea30bd7f16fd99d8d56 /uv /usr/local/bin/uv
 
 COPY --from=build --chown=app:app /app /app
 COPY docker/directory-importer/activate_venv.envsh /entrypoint.d/

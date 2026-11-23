@@ -2,7 +2,6 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 
-import os
 from unittest import mock
 
 import pytest
@@ -19,9 +18,8 @@ class StopException(Exception):
 
 
 @pytest.fixture(autouse=True)
-def set_config_in_environment(mocker):
-    mocker.patch.dict("os.environ")
-    os.environ["CONFIG_FILENAME"] = "tests/data/connector.yml"
+def set_config_in_environment(monkeypatch):
+    monkeypatch.setenv("CONFIG_FILENAME", "tests/data/connector.yml")
 
 
 @pytest.fixture(autouse=True)
@@ -148,9 +146,8 @@ def test_fails_if_config_file_does_not_exist(tmp_path):
     assert result.exit_code != 0
 
 
-def test_set_log_level_via_cli(mocker):
-    mocker.patch.dict("os.environ")
-    os.environ.pop("LOG_LEVEL", None)
+def test_set_log_level_via_cli(monkeypatch, mocker):
+    monkeypatch.delenv("LOG_LEVEL", raising=False)
     setup_logging_mock = mocker.patch.object(__main__, "setup_logging")
 
     result = runner.invoke(app, ["--log-level", "debug"])
@@ -159,8 +156,8 @@ def test_set_log_level_via_cli(mocker):
     setup_logging_mock.assert_called_once_with("DEBUG")
 
 
-def test_set_log_level_via_environment(mocker):
-    mocker.patch.dict("os.environ", {"LOG_LEVEL": "debug"})
+def test_set_log_level_via_environment(monkeypatch, mocker):
+    monkeypatch.setenv("LOG_LEVEL", "debug")
     setup_logging_mock = mocker.patch.object(__main__, "setup_logging")
 
     result = runner.invoke(app, ["--log-level", "debug"])
@@ -169,9 +166,8 @@ def test_set_log_level_via_environment(mocker):
     setup_logging_mock.assert_called_once_with("DEBUG")
 
 
-def test_logs_by_default_on_level_info(mocker):
-    mocker.patch.dict("os.environ")
-    os.environ.pop("LOG_LEVEL", None)
+def test_logs_by_default_on_level_info(monkeypatch, mocker):
+    monkeypatch.delenv("LOG_LEVEL", raising=False)
     setup_logging_mock = mocker.patch.object(__main__, "setup_logging")
 
     result = runner.invoke(app)
@@ -180,9 +176,8 @@ def test_logs_by_default_on_level_info(mocker):
     setup_logging_mock.assert_called_once_with("INFO")
 
 
-def test_set_log_conf_via_cli(mocker, stub_log_conf):
-    mocker.patch.dict("os.environ")
-    os.environ.pop("LOG_CONF", None)
+def test_set_log_conf_via_cli(monkeypatch, mocker, stub_log_conf):
+    monkeypatch.delenv("LOG_CONF", raising=False)
     file_config_mock = mocker.patch("logging.config.fileConfig")
 
     result = runner.invoke(app, ["--log-conf", str(stub_log_conf)])
@@ -191,9 +186,8 @@ def test_set_log_conf_via_cli(mocker, stub_log_conf):
     file_config_mock.assert_called_once_with(stub_log_conf)
 
 
-def test_set_log_conf_via_environment(mocker, stub_log_conf):
-    mocker.patch.dict("os.environ")
-    os.environ["LOG_CONF"] = str(stub_log_conf)
+def test_set_log_conf_via_environment(monkeypatch, mocker, stub_log_conf):
+    monkeypatch.setenv("LOG_CONF", str(stub_log_conf))
     file_config_mock = mocker.patch("logging.config.fileConfig")
 
     result = runner.invoke(app)
@@ -202,12 +196,9 @@ def test_set_log_conf_via_environment(mocker, stub_log_conf):
     file_config_mock.assert_called_once_with(stub_log_conf)
 
 
-def test_log_conf_overrides_log_level(mocker, stub_log_conf):
-    mocker.patch.dict("os.environ")
-    os.environ |= {
-        "LOG_CONF": str(stub_log_conf),
-        "LOG_LEVEL": "debug",
-    }
+def test_log_conf_overrides_log_level(monkeypatch, mocker, stub_log_conf):
+    monkeypatch.setenv("LOG_CONF", str(stub_log_conf))
+    monkeypatch.setenv("LOG_LEVEL", "debug")
     file_config_mock = mocker.patch("logging.config.fileConfig")
     setup_logging_mock = mocker.patch.object(__main__, "setup_logging")
 
@@ -222,6 +213,50 @@ def test_calls_connector_by_default_only_once(mock_connector):
     result = runner.invoke(app)
     assert result.exit_code == 0
     mock_connector().assert_called_once()
+
+
+def test_force_deletions_disabled_by_default(mock_connector, mock_connector_config):
+    result = runner.invoke(app)
+    assert result.exit_code == 0
+    mock_connector.assert_called_once_with(
+        mock_connector_config(),
+        force_deletions=False,
+    )
+
+
+def test_force_deletions_via_cli(mock_connector, mock_connector_config):
+    result = runner.invoke(app, ["--force-deletions"])
+    assert result.exit_code == 0
+    mock_connector.assert_called_once_with(
+        mock_connector_config(),
+        force_deletions=True,
+    )
+
+
+def test_force_deletions_via_environment(monkeypatch, mock_connector, mock_connector_config):
+    monkeypatch.setenv("FORCE_DELETIONS", "true")
+    result = runner.invoke(app)
+    assert result.exit_code == 0
+    mock_connector.assert_called_once_with(
+        mock_connector_config(),
+        force_deletions=True,
+    )
+
+
+def test_blocked_deletions_fail_single_run(mock_connector):
+    mock_connector().side_effect = __main__.DeletionsBlockedError("users/user")
+    result = runner.invoke(app)
+    assert result.exit_code == 1
+
+
+def test_blocked_deletions_stop_repeated_runs(mock_connector):
+    mock_connector_instance = mock_connector()
+    mock_connector_instance.side_effect = __main__.DeletionsBlockedError("users/user")
+
+    result = runner.invoke(app, ["--repeat", "--repeat-delay", "0.002"])
+
+    assert result.exit_code == 1
+    assert mock_connector_instance.call_count == 1
 
 
 def test_calls_connector_repeatedly(mock_connector, mocker):
@@ -239,13 +274,10 @@ def test_calls_connector_repeatedly(mock_connector, mocker):
 
 
 @pytest.mark.parametrize("repeat_value", ["1", "yes", "true"])
-def test_calls_connector_repeatedly_env(repeat_value, mock_connector, mocker):
+def test_calls_connector_repeatedly_env(repeat_value, monkeypatch, mock_connector):
     mock_connector_instance = mock_connector()
     mock_connector_instance.side_effect = [None, StopException("STOP")]
-    mocker.patch.dict("os.environ")
-    os.environ |= {
-        "REPEAT": repeat_value,
-    }
+    monkeypatch.setenv("REPEAT", repeat_value)
 
     with pytest.raises(StopException):
         runner.invoke(app, catch_exceptions=False)
@@ -264,12 +296,9 @@ def test_repeat_with_custom_delay(mocker):
     repeater_mock.assert_called_once_with(target=mock.ANY, delay=10)
 
 
-def test_repeat_with_custom_delay_env(mocker):
-    mocker.patch.dict("os.environ")
-    os.environ |= {
-        "REPEAT": "1",
-        "REPEAT_DELAY": "10",
-    }
+def test_repeat_with_custom_delay_env(monkeypatch, mocker):
+    monkeypatch.setenv("REPEAT", "1")
+    monkeypatch.setenv("REPEAT_DELAY", "10")
     repeater_mock = mocker.patch.object(__main__, "Repeater")
 
     result = runner.invoke(app, catch_exceptions=False)
@@ -278,9 +307,8 @@ def test_repeat_with_custom_delay_env(mocker):
     repeater_mock.assert_called_once_with(target=mock.ANY, delay=10)
 
 
-def test_metrics_disabled_by_default(mocker):
-    mocker.patch.dict("os.environ")
-    os.environ.pop("METRICS_PORT", None)
+def test_metrics_disabled_by_default(monkeypatch, mocker):
+    monkeypatch.delenv("METRICS_PORT", raising=False)
     start_server_mock = mocker.patch.object(__main__.metrics, "start_server")
 
     result = runner.invoke(app, catch_exceptions=False)
@@ -298,12 +326,9 @@ def test_metrics_port_via_cli(mocker):
     start_server_mock.assert_called_once_with(9464, "0.0.0.0")
 
 
-def test_metrics_via_environment(mocker):
-    mocker.patch.dict("os.environ")
-    os.environ |= {
-        "METRICS_PORT": "9464",
-        "METRICS_BIND_ADDRESS": "127.0.0.1",
-    }
+def test_metrics_via_environment(monkeypatch, mocker):
+    monkeypatch.setenv("METRICS_PORT", "9464")
+    monkeypatch.setenv("METRICS_BIND_ADDRESS", "127.0.0.1")
     start_server_mock = mocker.patch.object(__main__.metrics, "start_server")
 
     result = runner.invoke(app, catch_exceptions=False)

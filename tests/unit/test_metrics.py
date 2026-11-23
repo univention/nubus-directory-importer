@@ -101,9 +101,11 @@ def connector(connector_yaml_path):
     config = ConnectorConfig(connector_yaml_path)
     config.src.user_base = "cn=users,o=source"
     config.src.group_base = "cn=groups,o=source"
+    config.udm.max_deletion_ratio = None
     connector = Connector.__new__(Connector)
     connector._config = config
     connector._udm = mock.Mock()
+    connector._force_deletions = False
     return connector
 
 
