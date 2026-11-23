@@ -5,7 +5,7 @@
 
 include:
   - project: "univention/dev/nubus-for-k8s/common-ci"
-    ref: "v1.72.1"
+    ref: "v1.72.2"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
@@ -21,7 +21,7 @@ include:
     ref: "master"
     file:
       - "dind.yml"
-  - component: "$CI_SERVER_FQDN/univention/dev/nubus-for-k8s/common-ci/vul-man@v1.72.1"
+  - component: "$CI_SERVER_FQDN/univention/dev/nubus-for-k8s/common-ci/vul-man@v1.72.2"
     inputs:
       helm_chart_name: "directory-importer"
       helm_values: "--helm-values ${CI_PROJECT_DIR}/helm/directory-importer/linter_values.yaml"
@@ -74,7 +74,7 @@ check-debian-updates:
 test-chart-directory-importer:
   stage: test
   needs: []
-  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.25@sha256:ad501511d7b3ede40c1f42fc57f48838f57ba104a432934fc4925fe0d4c53088"
+  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.30.1@sha256:c11f2d5210be69da131df071a442bfef55ff5892734b33718523579a74193602"
   script:
     - helm dep build helm/directory-importer
     - pytest tests/helm_unit
