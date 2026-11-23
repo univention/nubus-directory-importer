@@ -12,7 +12,7 @@ from prometheus_client import REGISTRY
 
 from univention.directory_importer import metrics
 from univention.directory_importer.config import ConnectorConfig
-from univention.directory_importer.connector import Connector, ReadSourceDirectoryError
+from univention.directory_importer.connector import Connector, DeletionsBlockedError, ReadSourceDirectoryError
 from univention.directory_importer.udm import UDMClient, UDMEntry, UDMMethod, UDMModel
 
 USERS = UDMModel.USER.value
@@ -208,6 +208,27 @@ def test_aborted_run_drops_values_of_models_not_reached(connector, source, error
     assert sample("nubus_directory_importer_last_run_success") == 0.0
     assert sample("nubus_directory_importer_last_success_timestamp_seconds") == last_success
     assert sample("nubus_directory_importer_last_run_timestamp_seconds") > last_success
+
+
+def test_safeguard_abort_records_failed_run(connector, source):
+    source.users = source_entries("u", 5)
+    source.groups = source_entries("g", 2)
+    connector()
+    last_success = sample("nubus_directory_importer_last_success_timestamp_seconds")
+    failed_before = sample("nubus_directory_importer_runs_total", result="failed")
+
+    connector._config.udm.max_deletion_ratio = 0.1
+    source.users = source_entries("u", 4)
+    source.groups = []
+    source.old_groups = old_entries("g", 7)
+    with pytest.raises(DeletionsBlockedError):
+        connector()
+
+    assert model_samples(USERS) == (4.0, 0.0, 0.0)
+    assert model_samples(GROUPS) == (None, None, None)
+    assert sample("nubus_directory_importer_runs_total", result="failed") == failed_before + 1
+    assert sample("nubus_directory_importer_last_run_success") == 0.0
+    assert sample("nubus_directory_importer_last_success_timestamp_seconds") == last_success
 
 
 def test_values_are_published_at_the_end_of_the_run(connector, source):
