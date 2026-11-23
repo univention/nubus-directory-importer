@@ -334,18 +334,21 @@ same host with host networking, every instance needs its own port.
 | `nubus_directory_importer_udm_requests_total{method,model}` | Counter | Requests sent to the UDM REST API |
 | `nubus_directory_importer_udm_responses_total{method,model,status}` | Counter | Responses from the UDM REST API by HTTP status code |
 
-The `last_run_*` and `last_success_*` values are published together at the end
-of every sync run and always belong to the same run. They match the summary
-that is logged at the end of the run. `model` is `users/user` or
-`groups/group`. The metrics `process_*` and `python_*` of the Prometheus client
-library are exposed as well.
+The `last_run_*` values are published together at the end of every sync run.
+For completed runs, they match the log summary. After a failed run,
+`nubus_directory_importer_last_success_timestamp_seconds` retains the time of
+the previous successful run. For the per-run metrics, `model` is `users/user`
+or `groups/group`. The UDM request and response counters also use `container/ou`.
+The metrics `process_*` and `python_*` of the Prometheus client library are
+exposed as well.
 
-A sync run is successful if it finished completely, i.e. it was not aborted by
-an error like an unreachable source directory. Errors when processing single
+A sync run is successful if it finished completely. Errors when processing single
 entries do not make a run fail. They are counted in
 `nubus_directory_importer_last_run_errors` instead. If a run is aborted, the
-`model` values contain only the models synced completely in this run. Models
-not reached have no values.
+per-model `last_run_*` values contain only the models synced completely in this
+run. Models not reached have no values. With `REPEAT=1`, errors such as a missing
+source search base abort the run while the process and metrics endpoint remain
+available.
 
 The `last_run_*` metrics appear after the first finished sync run,
 `nubus_directory_importer_last_success_timestamp_seconds` after the first successful
@@ -358,7 +361,7 @@ groups:
   - name: "directory-importer"
     rules:
       - alert: "DirectoryImporterDown"
-        # the process exits e.g. if the source directory is unreachable,
+        # the metrics endpoint is unavailable when the process stops,
         # adjust the job label to your scrape configuration
         expr: 'up{job="directory-importer"} == 0'
         for: "5m"
@@ -367,7 +370,10 @@ groups:
         for: "5m"
       - alert: "DirectoryImporterNeverSucceeded"
         # allow enough time for the initial sync
-        expr: "absent(nubus_directory_importer_last_success_timestamp_seconds)"
+        expr: >-
+          (up{job="directory-importer"} == 1)
+          unless on (job, instance)
+          nubus_directory_importer_last_success_timestamp_seconds
         for: "2h"
       - alert: "DirectoryImporterRunFailed"
         expr: "nubus_directory_importer_last_run_success == 0"
