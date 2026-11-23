@@ -66,8 +66,6 @@ RUN apt-get --assume-yes --verbose-versions --no-install-recommends install \
   libldap2 \
   && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-COPY --from=ghcr.io/astral-sh/uv:0.13.9@sha256:d3b601f0c7b118bc1753febf7c41cc80981df678445e0254284eecf84db79a7d /uv /usr/local/bin/uv
-
 COPY --from=build --chown=app:app /app /app
 COPY docker/directory-importer/activate_venv.envsh /entrypoint.d/
 
